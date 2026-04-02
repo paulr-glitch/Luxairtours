@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0a0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LuxairTours Planner">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<title>LuxairTours Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0a0a0f; --surface:#12121a; --surface2:#1a1a26; --border:#2a2a3a;
+  --gold:#d4a853; --gold-dim:#8a6a2a; --gold-glow:rgba(212,168,83,0.15);
+  --text:#e8e8f0; --text-dim:#6e6e8a; --text-mid:#a0a0b8;
+  --red:#e05555; --green:#4ecf8a; --blue:#5599e0; --purple:#9966dd;
+  --r:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{
+  font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text);
+  max-width:430px; margin:0 auto; display:flex; flex-direction:column;
+  height:100vh; height:100dvh;
+}
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px 10px; background:var(--bg);
+  border-bottom:1px solid var(--border); flex-shrink:0;
+}
+.topbar-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;letter-spacing:0.08em;color:var(--gold);}
+.topbar-sub{font-size:10px;color:var(--text-dim);letter-spacing:0.12em;text-transform:uppercase;}
+.topbar-right{display:flex;gap:8px;align-items:center;}
+.ai-badge{
+  display:flex;align-items:center;gap:5px;
+  background:var(--gold-glow);border:1px solid var(--gold-dim);
+  border-radius:20px;padding:4px 10px;
+  font-size:11px;color:var(--gold);font-family:'DM Mono',monospace;cursor:pointer;
+}
+.ai-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.dest-chip{
+  display:flex;align-items:center;gap:4px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:20px;padding:4px 10px;font-size:11px;color:var(--text-mid);
+  font-family:'DM Mono',monospace;cursor:pointer;
+}
+.dest-chip span{color:var(--gold);}
+.scroll-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+.screen{display:none;padding:16px 20px 24px;animation:fadeIn 0.25s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.bottomnav{
+  display:flex;background:var(--surface);border-top:1px solid var(--border);
+  flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0);
+}
+.nav-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  padding:10px 4px 12px;gap:3px;cursor:pointer;transition:all 0.2s;
+  font-size:10px;color:var(--text-dim);letter-spacing:0.06em;
+  text-transform:uppercase;font-family:'DM Mono',monospace;position:relative;
+}
+.nav-item.active{color:var(--gold);}
+.nav-item svg{width:20px;height:20px;}
+.nav-badge{
+  position:absolute;top:5px;right:calc(50% - 20px);
+  background:var(--gold);color:var(--bg);border-radius:10px;
+  font-size:9px;font-weight:700;padding:1px 5px;min-width:16px;text-align:center;display:none;
+}
+.section-label{
+  font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.14em;
+  text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;margin-top:20px;
+}
+.section-label:first-child{margin-top:0;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;}
+.input-group{margin-bottom:12px;}
+.input-group:last-child{margin-bottom:0;}
+.input-label{font-size:11px;color:var(--text-dim);margin-bottom:5px;display:block;font-family:'DM Mono',monospace;letter-spacing:0.06em;}
+input,select,textarea{
+  width:100%;background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:10px 12px;color:var(--text);
+  font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color 0.2s;
+  -webkit-appearance:none;appearance:none;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--gold-dim);}
+textarea{resize:vertical;min-height:100px;line-height:1.5;}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236e6e8a' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:13px;border-radius:10px;border:none;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:14px;
+  cursor:pointer;transition:all 0.2s;letter-spacing:0.04em;
+}
+.btn-gold{background:var(--gold);color:var(--bg);}
+.btn-gold:hover{filter:brightness(1.08);}
+.btn-gold:active{transform:scale(0.98);}
+.btn-gold:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text-mid);}
+.btn-outline:hover{border-color:var(--gold-dim);color:var(--gold);}
+.btn-danger{background:rgba(224,85,85,0.12);border:1px solid rgba(224,85,85,0.25);color:var(--red);}
+.btn-sm{padding:7px 12px;font-size:12px;border-radius:7px;width:auto;display:inline-flex;}
+.btn-green{background:rgba(78,207,138,0.15);border:1px solid rgba(78,207,138,0.3);color:var(--green);}
+
+/* DESTINATION BANNER */
+.dest-banner{
+  background:linear-gradient(135deg,rgba(212,168,83,0.1),rgba(85,153,224,0.05));
+  border:1px solid var(--gold-dim);border-radius:var(--r);
+  padding:14px;margin-bottom:14px;
+}
+.dest-banner-title{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--gold);margin-bottom:2px;}
+.dest-banner-sub{font-size:12px;color:var(--text-mid);}
+
+/* API SETUP */
+.setup-banner{
+  background:rgba(78,207,138,0.06);border:1px solid rgba(78,207,138,0.2);
+  border-radius:var(--r);padding:12px 14px;margin-bottom:12px;
+  display:flex;align-items:flex-start;gap:10px;
+}
+.setup-banner.warn{background:rgba(212,168,83,0.08);border-color:var(--gold-dim);}
+.setup-banner-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+.setup-banner-text{font-size:12px;color:var(--text-mid);line-height:1.6;}
+.setup-banner-text strong{color:var(--gold);font-family:'DM Mono',monospace;}
+.setup-banner-text a{color:var(--gold);text-decoration:underline;cursor:pointer;}
+
+/* HOTEL CARDS */
+.hotel-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:12px 14px;margin-bottom:8px;
+  display:flex;align-items:center;gap:12px;
+}
+.hotel-code{
+  font-family:'DM Mono',monospace;font-weight:500;font-size:11px;
+  background:var(--surface2);border-radius:6px;padding:4px 7px;
+  color:var(--gold);min-width:68px;text-align:center;
+  border:1px solid var(--gold-dim);line-height:1.4;word-break:break-all;
+}
+.hotel-info{flex:1;min-width:0;}
+.hotel-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hotel-meta{font-size:11px;color:var(--text-dim);margin-top:2px;}
+.lang-tags{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap;align-items:center;}
+.lang-tag{font-size:10px;font-family:'DM Mono',monospace;padding:2px 6px;border-radius:4px;font-weight:500;flex-shrink:0;}
+.lang-FR{background:rgba(85,153,224,0.2);color:#5599e0;border:1px solid rgba(85,153,224,0.3);}
+.lang-EN{background:rgba(78,207,138,0.2);color:#4ecf8a;border:1px solid rgba(78,207,138,0.3);}
+.lang-DE{background:rgba(224,119,85,0.2);color:#e07755;border:1px solid rgba(224,119,85,0.3);}
+.lang-LU{background:rgba(153,102,221,0.2);color:#9966dd;border:1px solid rgba(153,102,221,0.3);}
+.lang-IT{background:rgba(212,168,83,0.2);color:#d4a853;border:1px solid rgba(212,168,83,0.3);}
+.lang-ES{background:rgba(224,85,85,0.2);color:#e05555;border:1px solid rgba(224,85,85,0.3);}
+.lang-PT{background:rgba(85,200,170,0.2);color:#55c8aa;border:1px solid rgba(85,200,170,0.3);}
+.lang-NL{background:rgba(180,140,80,0.2);color:#b48c50;border:1px solid rgba(180,140,80,0.3);}
+.dur-tag{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim);}
+.lang-checkboxes{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px;}
+.lang-check{
+  display:flex;align-items:center;cursor:pointer;
+  font-family:'DM Mono',monospace;font-size:11px;
+  padding:5px 10px;border-radius:7px;border:1px solid var(--border);
+  background:var(--surface);transition:all 0.15s;color:var(--text-dim);user-select:none;
+}
+.lang-check.sel-FR{background:rgba(85,153,224,0.15);border-color:rgba(85,153,224,0.4);color:#5599e0;}
+.lang-check.sel-EN{background:rgba(78,207,138,0.15);border-color:rgba(78,207,138,0.4);color:#4ecf8a;}
+.lang-check.sel-DE{background:rgba(224,119,85,0.15);border-color:rgba(224,119,85,0.3);color:#e07755;}
+.lang-check.sel-LU{background:rgba(153,102,221,0.15);border-color:rgba(153,102,221,0.3);color:#9966dd;}
+.lang-check.sel-IT{background:rgba(212,168,83,0.15);border-color:rgba(212,168,83,0.3);color:#d4a853;}
+.lang-check.sel-ES{background:rgba(224,85,85,0.15);border-color:rgba(224,85,85,0.3);color:#e05555;}
+.lang-check.sel-PT{background:rgba(85,200,170,0.15);border-color:rgba(85,200,170,0.3);color:#55c8aa;}
+.lang-check.sel-NL{background:rgba(180,140,80,0.15);border-color:rgba(180,140,80,0.3);color:#b48c50;}
+
+/* SCHEDULE */
+.week-chip{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:6px 10px;font-size:12px;
+  font-family:'DM Mono',monospace;color:var(--text-mid);margin-bottom:12px;
+}
+.week-chip span{color:var(--gold);}
+.day-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;scrollbar-width:none;}
+.day-tabs::-webkit-scrollbar{display:none;}
+.day-tab{
+  flex-shrink:0;padding:7px 14px;border-radius:20px;
+  font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;
+  background:var(--surface);border:1px solid var(--border);
+  color:var(--text-dim);transition:all 0.2s;text-align:center;
+}
+.day-tab.active{background:var(--gold);color:var(--bg);border-color:var(--gold);font-weight:600;}
+.day-tab .tab-date{font-size:9px;display:block;margin-top:1px;opacity:0.75;}
+.slot{display:flex;gap:10px;margin-bottom:4px;align-items:stretch;}
+.slot-time{
+  font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim);
+  min-width:40px;text-align:right;padding-top:11px;line-height:1.4;flex-shrink:0;
+}
+.slot-bar{width:2px;background:var(--border);border-radius:2px;flex-shrink:0;position:relative;}
+.slot-bar::before{
+  content:'';position:absolute;top:11px;left:-3px;
+  width:8px;height:8px;border-radius:50%;
+  background:var(--surface2);border:2px solid var(--border);
+}
+.slot-bar.meeting::before,.slot-bar.combo::before{border-color:var(--gold);background:rgba(212,168,83,0.2);}
+.slot-bar.airport::before{border-color:var(--blue);background:rgba(85,153,224,0.2);}
+.slot-bar.office::before{border-color:var(--text-dim);}
+.slot-bar.permanence::before{border-color:var(--purple);background:rgba(153,102,221,0.2);}
+.slot-content{
+  flex:1;background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:10px 12px;min-width:0;
+}
+.slot-content.meeting{border-left:3px solid var(--gold);}
+.slot-content.combo{border-left:3px solid var(--gold);background:rgba(212,168,83,0.04);}
+.slot-content.airport{border-left:3px solid var(--blue);}
+.slot-content.office{border-left:3px solid var(--text-dim);}
+.slot-content.permanence{border-left:3px solid var(--purple);}
+.slot-task{font-size:10px;font-family:'DM Mono',monospace;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em;}
+.slot-hotel{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin:2px 0;word-break:break-word;}
+.slot-detail{font-size:11px;color:var(--text-dim);}
+.empty-day{text-align:center;padding:40px 20px;color:var(--text-dim);font-size:13px;}
+
+/* EXPORT */
+.export-hero{
+  background:linear-gradient(135deg,rgba(212,168,83,0.12),rgba(212,168,83,0.03));
+  border:1px solid var(--gold-dim);border-radius:var(--r);padding:24px 20px;
+  text-align:center;margin-bottom:14px;
+}
+.export-icon{font-size:40px;margin-bottom:10px;}
+.export-title{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--gold);}
+.export-sub{font-size:12px;color:var(--text-dim);margin-top:4px;}
+.summary-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;
+}
+.summary-row:last-child{border-bottom:none;}
+.summary-val{font-family:'DM Mono',monospace;color:var(--gold);}
+
+/* LOADING */
+.loading-overlay{
+  position:fixed;inset:0;background:rgba(10,10,15,0.9);
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  z-index:500;gap:16px;
+}
+.loading-overlay.active{display:flex;}
+.loading-spinner{width:40px;height:40px;border:3px solid var(--gold-dim);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-family:'DM Mono',monospace;font-size:13px;color:var(--gold);}
+.loading-sub{font-size:11px;color:var(--text-dim);font-family:'DM Mono',monospace;text-align:center;padding:0 20px;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);display:none;align-items:flex-end;z-index:400;}
+.modal-overlay.active{display:flex;}
+.modal{
+  background:var(--surface);border-radius:var(--r) var(--r) 0 0;
+  border:1px solid var(--border);border-bottom:none;
+  width:100%;max-width:430px;margin:0 auto;
+  padding:20px 20px calc(20px + env(safe-area-inset-bottom,0));
+  animation:slideUp 0.3s ease;max-height:90dvh;overflow-y:auto;
+}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:none}}
+.modal-title{font-family:'Syne',sans-serif;font-weight:700;font-size:17px;margin-bottom:14px;}
+.modal-close{float:right;background:none;border:none;color:var(--text-dim);font-size:22px;cursor:pointer;margin-top:-4px;}
+
+/* TOAST */
+.toast{
+  position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-10px);
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:20px;padding:8px 18px;
+  font-size:12px;color:var(--text);font-family:'DM Mono',monospace;
+  opacity:0;transition:all 0.25s;z-index:600;white-space:nowrap;pointer-events:none;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.ok{border-color:var(--gold-dim);color:var(--gold);}
+.toast.err{border-color:rgba(224,85,85,0.4);color:var(--red);}
+
+.add-form{background:var(--surface2);border:1px dashed var(--border);border-radius:var(--r);padding:14px;margin-top:10px;}
+hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loading">
+  <div class="loading-spinner"></div>
+  <div class="loading-text" id="loading-text">Traitement...</div>
+  <div class="loading-sub" id="loading-sub"></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div>
+    <div class="topbar-logo">LUXAIRTOURS</div>
+    <div class="topbar-sub">Schedule Planner</div>
+  </div>
+  <div class="topbar-right">
+    <div class="dest-chip" onclick="nav('week')">
+      📍 <span id="top-dest">—</span>
+    </div>
+    <div class="ai-badge" onclick="openApiModal()">
+      <div class="ai-dot" id="ai-dot"></div>
+      <span id="ai-label">AI</span>
+    </div>
+  </div>
+</div>
+
+<!-- API KEY MODAL -->
+<div class="modal-overlay" id="api-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('api-modal')">×</button>
+    <div class="modal-title">🔑 Clé API Gemini</div>
+    <div class="setup-banner warn" style="margin-bottom:14px">
+      <div class="setup-banner-icon">💡</div>
+      <div class="setup-banner-text">
+        <strong>100% gratuit.</strong> Va sur <strong>aistudio.google.com</strong> → connecte-toi avec Google → <strong>Get API Key</strong> → Create → Copie la clé.<br>
+        Aucune carte bancaire requise.
+      </div>
+    </div>
+    <div class="input-group">
+      <label class="input-label">Colle ta clé Gemini</label>
+      <input type="password" id="api-input" placeholder="AIza..." autocomplete="off"/>
+    </div>
+    <button class="btn btn-gold" onclick="saveApiKey()">Sauvegarder</button>
+    <button class="btn btn-outline" onclick="closeModal('api-modal')" style="margin-top:8px">Annuler</button>
+  </div>
+</div>
+
+<!-- DESTINATION MODAL -->
+<div class="modal-overlay" id="dest-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('dest-modal')">×</button>
+    <div class="modal-title">📍 Destination</div>
+    <p style="font-size:13px;color:var(--text-mid);margin-bottom:14px;line-height:1.6">
+      Entre le pays et la ville de ta destination. L'IA adaptera automatiquement les zones géographiques, les trajets et les clusters hôteliers pour cette ville.
+    </p>
+    <div class="input-group">
+      <label class="input-label">Pays</label>
+      <input type="text" id="dest-country" placeholder="Malta, Espagne, Grèce..." />
+    </div>
+    <div class="input-group">
+      <label class="input-label">Ville / Région</label>
+      <input type="text" id="dest-city" placeholder="Malte, Majorque, Rhodes..." />
+    </div>
+    <div class="input-group">
+      <label class="input-label">Code destination (optionnel)</label>
+      <input type="text" id="dest-code" placeholder="MLA, PMI, RHO..." oninput="this.value=this.value.toUpperCase()" />
+    </div>
+    <div class="input-group">
+      <label class="input-label">Point de départ principal (ville/quartier)</label>
+      <input type="text" id="dest-base" placeholder="Bugibba, Palma, Rodos..." />
+    </div>
+    <button class="btn btn-gold" onclick="saveDestination()">Confirmer</button>
+  </div>
+</div>
+
+<div class="scroll-area">
+
+<!-- ══════ SCREEN: SEMAINE ══════ -->
+<div class="screen active" id="screen-week">
+  <div id="dest-banner-wrap"></div>
+
+  <div class="section-label">Représentant</div>
+  <div class="card">
+    <div class="row2">
+      <div class="input-group"><label class="input-label">Nom</label><input type="text" id="repName" value="Paul Robert"/></div>
+      <div class="input-group"><label class="input-label">Matricule</label><input type="text" id="matricule" value="20772"/></div>
+    </div>
+    <div class="input-group"><label class="input-label">Date de début (Lundi)</label><input type="date" id="startDate"/></div>
+  </div>
+
+  <div class="section-label">Jours d'arrivée — Aéroport</div>
+  <div id="airport-wrap"></div>
+  <button class="btn btn-outline btn-sm" onclick="addAirport()" style="margin-bottom:14px">+ Ajouter</button>
+
+  <div class="section-label">Points de départ personnalisés</div>
+  <div id="depart-wrap"></div>
+  <button class="btn btn-outline btn-sm" onclick="addDepart()" style="margin-bottom:14px">+ Ajouter</button>
+
+  <div class="section-label">Type de journée (touche pour changer)</div>
+  <div class="card"><div id="day-type-grid" style="display:flex;flex-wrap:wrap;gap:8px"></div></div>
+
+  <button class="btn btn-gold" onclick="nav('hotels')" style="margin-top:8px">Suivant → Hôtels</button>
+</div>
+
+<!-- ══════ SCREEN: HÔTELS ══════ -->
+<div class="screen" id="screen-hotels">
+  <div id="api-banner-wrap"></div>
+
+  <div class="section-label">Importer depuis rapport de réservation</div>
+  <div class="card">
+    <p style="font-size:12px;color:var(--text-dim);margin-bottom:10px;line-height:1.6">
+      Colle le texte brut de ton rapport (RV3 LuxairTours ou autre format). L'IA détecte les hôtels, les langues clients et les dates.
+    </p>
+    <div class="input-group">
+      <textarea id="rv3Input" placeholder="Colle ici ton rapport de réservation...&#10;&#10;HOTEL NAME : CAVALIERI ART HOTEL MLACAV&#10;F MR LEROY, Marc 73&#10;E MS MYCK, Sophie 37&#10;..."></textarea>
+    </div>
+    <button class="btn btn-gold" id="parse-btn" onclick="parseReport()">
+      <div class="spinner" id="parse-spinner" style="display:none;width:16px;height:16px;border:2px solid rgba(10,10,15,0.3);border-top-color:var(--bg);border-radius:50%;animation:spin 0.7s linear infinite;"></div>
+      Analyser avec IA
+    </button>
+  </div>
+
+  <div class="section-label">Ajouter manuellement</div>
+  <div class="add-form">
+    <div class="row2">
+      <div class="input-group"><label class="input-label">Code hôtel</label><input type="text" id="manCode" placeholder="MLACAV" oninput="this.value=this.value.toUpperCase()"/></div>
+      <div class="input-group"><label class="input-label">Nom</label><input type="text" id="manName" placeholder="Cavalieri"/></div>
+    </div>
+    <div class="input-group">
+      <label class="input-label">Zone / Quartier</label>
+      <input type="text" id="manZone" placeholder="St Julian's, Sliema, Spinola..."/>
+    </div>
+    <div class="input-group">
+      <label class="input-label">Langues clients</label>
+      <div class="lang-checkboxes" id="lang-checks"></div>
+    </div>
+    <div class="input-group">
+      <label class="input-label">Jour d'arrivée</label>
+      <select id="manDay">
+        <option value="mon">Lundi</option><option value="tue">Mardi</option>
+        <option value="wed">Mercredi</option><option value="thu">Jeudi</option>
+        <option value="fri">Vendredi</option><option value="sat" selected>Samedi</option>
+        <option value="sun">Dimanche</option>
+      </select>
+    </div>
+    <button class="btn btn-outline" onclick="addManual()">+ Ajouter</button>
+  </div>
+
+  <div id="hotel-list" style="margin-top:16px"></div>
+
+  <button class="btn btn-gold" id="gen-btn" onclick="generateSchedule()" style="margin-top:10px">
+    <div class="spinner" id="gen-spinner" style="display:none;width:16px;height:16px;border:2px solid rgba(10,10,15,0.3);border-top-color:var(--bg);border-radius:50%;animation:spin 0.7s linear infinite;"></div>
+    ✦ Générer le planning
+  </button>
+</div>
+
+<!-- ══════ SCREEN: PLANNING ══════ -->
+<div class="screen" id="screen-schedule">
+  <div class="week-chip"><span id="chip-name">—</span> · <span id="chip-dates">—</span> · <span id="chip-dest">—</span></div>
+  <div class="day-tabs" id="day-tabs"></div>
+  <div id="day-content"></div>
+</div>
+
+<!-- ══════ SCREEN: EXPORT ══════ -->
+<div class="screen" id="screen-export">
+  <div class="export-hero">
+    <div class="export-icon">📋</div>
+    <div class="export-title">Planning prêt</div>
+    <div class="export-sub">Weekly Schedule — LuxairTours Format</div>
+  </div>
+  <div class="card" id="export-summary"></div>
+  <button class="btn btn-gold" onclick="downloadCSV()" style="margin-top:4px">↓ Télécharger CSV</button>
+  <button class="btn btn-outline" onclick="copyText()" style="margin-top:8px">Copier résumé texte</button>
+  <button class="btn btn-outline" onclick="resetAll()" style="margin-top:8px;color:var(--red);border-color:rgba(224,85,85,0.3)">🗑 Nouvelle semaine</button>
+</div>
+
+</div><!-- scroll-area -->
+
+<nav class="bottomnav">
+  <div class="nav-item active" id="nav-week" onclick="nav('week')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    Semaine
+  </div>
+  <div class="nav-item" id="nav-hotels" onclick="nav('hotels')" style="position:relative">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 22V8l9-5 9 5v14"/><path d="M9 22V12h6v10"/></svg>
+    Hôtels
+    <div class="nav-badge" id="badge">0</div>
+  </div>
+  <div class="nav-item" id="nav-schedule" onclick="nav('schedule')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    Planning
+  </div>
+  <div class="nav-item" id="nav-export" onclick="nav('export')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Export
+  </div>
+</nav>
+
+<script>
+// ══════════════════ CONSTANTS ══════════════════
+const DAYS = ['mon','tue','wed','thu','fri','sat','sun'];
+const DAY_FR = {mon:'Lundi',tue:'Mardi',wed:'Mercredi',thu:'Jeudi',fri:'Vendredi',sat:'Samedi',sun:'Dimanche'};
+const DAY_S = {mon:'Lun',tue:'Mar',wed:'Mer',thu:'Jeu',fri:'Ven',sat:'Sam',sun:'Dim'};
+const ALL_LANGS = ['FR','EN','DE','LU','IT','ES','PT','NL'];
+
+// ══════════════════ STATE ══════════════════
+const S = {
+  repName:'Paul Robert', matricule:'20772',
+  startDate:null,
+  dest:{ country:'Malta', city:'Malte', code:'MLA', base:'Bugibba' },
+  airports:[{day:'tue',from:'08:30',to:'11:00'},{day:'sat',from:'07:25',to:'10:00'}],
+  departs:[{day:'wed',location:'Bugibba'},{day:'sun',location:'Bugibba'}],
+  dayTypes:{mon:'OFFICE',fri:'OFFICE'}, // day→'OFFICE'|'DAYOFF'|null
+  hotels:[], schedule:{}, selDay:'tue',
+  apiKey:'',
+};
+let mLangs = new Set();
+
+// ══════════════════ INIT ══════════════════
+function init(){
+  try{
+    const p = JSON.parse(localStorage.getItem('lux2_state')||'{}');
+    if(p.repName) S.repName=p.repName;
+    if(p.matricule) S.matricule=p.matricule;
+    if(p.dest) S.dest=p.dest;
+    if(p.airports) S.airports=p.airports;
+    if(p.departs) S.departs=p.departs;
+    if(p.dayTypes) S.dayTypes=p.dayTypes;
+    if(p.hotels) S.hotels=p.hotels.map(h=>({...h,langs:new Set(h.langs||[])}));
+    if(p.schedule) S.schedule=p.schedule;
+    if(p.selDay) S.selDay=p.selDay;
+    if(p.startDate) S.startDate=new Date(p.startDate);
+    S.apiKey=localStorage.getItem('lux2_key')||'';
+  }catch(e){}
+
+  if(!S.startDate){
+    const t=new Date(); const diff=(8-t.getDay())%7||7;
+    S.startDate=new Date(t); S.startDate.setDate(t.getDate()+diff);
+  }
+
+  document.getElementById('startDate').value=S.startDate.toISOString().slice(0,10);
+  document.getElementById('repName').value=S.repName;
+  document.getElementById('matricule').value=S.matricule;
+
+  renderLangChecks();
+  renderAirports(); renderDeparts(); renderDayTypeGrid();
+  renderDestBanner(); renderApiBanner(); renderHotelList(); updateBadge();
+  updateAIStatus(); updateTopDest();
+}
+
+function save(){
+  try{
+    const o={...S, startDate:S.startDate?.toISOString(),
+      hotels:S.hotels.map(h=>({...h,langs:[...h.langs]})),
+    }; delete o.apiKey;
+    localStorage.setItem('lux2_state',JSON.stringify(o));
+  }catch(e){}
+}
+
+// ══════════════════ NAV ══════════════════
+function nav(s){
+  syncForm();
+  document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+  document.getElementById('screen-'+s).classList.add('active');
+  document.getElementById('nav-'+s).classList.add('active');
+  document.querySelector('.scroll-area').scrollTop=0;
+  if(s==='schedule') renderScheduleView();
+  if(s==='export') renderExport();
+}
+
+function syncForm(){
+  S.repName=document.getElementById('repName').value;
+  S.matricule=document.getElementById('matricule').value;
+  S.startDate=new Date(document.getElementById('startDate').value);
+  save();
+}
+
+// ══════════════════ DESTINATION ══════════════════
+function updateTopDest(){ document.getElementById('top-dest').textContent=S.dest.code||S.dest.city||'—'; }
+
+function renderDestBanner(){
+  const w=document.getElementById('dest-banner-wrap');
+  w.innerHTML=`<div class="dest-banner" onclick="openDestModal()">
+    <div class="dest-banner-title">📍 ${S.dest.city}, ${S.dest.country}</div>
+    <div class="dest-banner-sub">Code: ${S.dest.code||'—'} · Base: ${S.dest.base||'—'} <span style="color:var(--gold);font-size:11px">· modifier</span></div>
+  </div>`;
+}
+
+function openDestModal(){
+  document.getElementById('dest-country').value=S.dest.country||'';
+  document.getElementById('dest-city').value=S.dest.city||'';
+  document.getElementById('dest-code').value=S.dest.code||'';
+  document.getElementById('dest-base').value=S.dest.base||'';
+  openModal('dest-modal');
+}
+function saveDestination(){
+  S.dest.country=document.getElementById('dest-country').value.trim()||S.dest.country;
+  S.dest.city=document.getElementById('dest-city').value.trim()||S.dest.city;
+  S.dest.code=document.getElementById('dest-code').value.trim()||S.dest.code;
+  S.dest.base=document.getElementById('dest-base').value.trim()||S.dest.base;
+  updateTopDest(); renderDestBanner(); save();
+  closeModal('dest-modal');
+  showToast(`Destination: ${S.dest.city} ✓`,'ok');
+}
+
+// ══════════════════ API KEY ══════════════════
+function updateAIStatus(){
+  const ok=!!S.apiKey;
+  document.getElementById('ai-dot').style.background=ok?'var(--green)':'var(--gold)';
+  document.getElementById('ai-label').textContent=ok?'AI ✓':'AI';
+}
+function renderApiBanner(){
+  const w=document.getElementById('api-banner-wrap');
+  if(!S.apiKey){
+    w.innerHTML=`<div class="setup-banner warn" style="margin-bottom:12px">
+      <div class="setup-banner-icon">⚡</div>
+      <div class="setup-banner-text">
+        <strong>IA non connectée.</strong> Gratuit via Google AI Studio.<br>
+        <a onclick="openApiModal()">Ajouter ma clé Gemini → aistudio.google.com</a>
+      </div>
+    </div>`;
+  } else {
+    w.innerHTML=`<div class="setup-banner" style="margin-bottom:12px">
+      <div class="setup-banner-icon">✅</div>
+      <div class="setup-banner-text"><strong>IA connectée</strong> — Gemini (gratuit)<br>
+      <a onclick="openApiModal()">Changer la clé</a></div>
+    </div>`;
+  }
+}
+function openApiModal(){ document.getElementById('api-input').value=''; openModal('api-modal'); }
+function saveApiKey(){
+  const v=document.getElementById('api-input').value.trim();
+  if(v){ S.apiKey=v; localStorage.setItem('lux2_key',v); updateAIStatus(); renderApiBanner(); showToast('Clé sauvegardée ✓','ok'); }
+  closeModal('api-modal');
+}
+
+// ══════════════════ WEEK SCREEN ══════════════════
+function renderDayTypeGrid(){
+  const g=document.getElementById('day-type-grid');
+  g.innerHTML=DAYS.map(d=>{
+    const t=S.dayTypes[d];
+    const cls=t==='OFFICE'?'sel-FR':t==='DAYOFF'?'sel-DE':'';
+    return `<div class="lang-check ${cls}" onclick="cycleDayType('${d}')" style="flex-direction:column;gap:2px;padding:8px 12px;min-width:54px;text-align:center">
+      <span style="font-size:12px">${DAY_S[d]}</span>
+      <span style="font-size:9px;opacity:0.7">${t||'normal'}</span>
+    </div>`;
+  }).join('');
+}
+function cycleDayType(d){
+  const cur=S.dayTypes[d];
+  if(!cur) S.dayTypes[d]='OFFICE';
+  else if(cur==='OFFICE') S.dayTypes[d]='DAYOFF';
+  else delete S.dayTypes[d];
+  renderDayTypeGrid(); save();
+}
+
+function addAirport(){ S.airports.push({day:'tue',from:'08:30',to:'11:00'}); renderAirports(); }
+function removeAirport(i){ S.airports.splice(i,1); renderAirports(); }
+function renderAirports(){
+  document.getElementById('airport-wrap').innerHTML=S.airports.map((a,i)=>`
+    <div class="card" style="margin-bottom:8px">
+      <div class="row3">
+        <div class="input-group" style="margin-bottom:0"><label class="input-label">Jour</label>
+          <select onchange="S.airports[${i}].day=this.value">${DAYS.map(d=>`<option value="${d}" ${a.day===d?'selected':''}>${DAY_S[d]}</option>`).join('')}</select></div>
+        <div class="input-group" style="margin-bottom:0"><label class="input-label">Début</label>
+          <input type="time" value="${a.from}" onchange="S.airports[${i}].from=this.value"/></div>
+        <div class="input-group" style="margin-bottom:0"><label class="input-label">Fin</label>
+          <input type="time" value="${a.to}" onchange="S.airports[${i}].to=this.value"/></div>
+      </div>
+      <button class="btn btn-danger btn-sm" onclick="removeAirport(${i})" style="margin-top:8px">Supprimer</button>
+    </div>`).join('');
+}
+
+function addDepart(){ S.departs.push({day:'wed',location:S.dest.base||''}); renderDeparts(); }
+function removeDepart(i){ S.departs.splice(i,1); renderDeparts(); }
+function renderDeparts(){
+  document.getElementById('depart-wrap').innerHTML=S.departs.map((d,i)=>`
+    <div class="card" style="margin-bottom:8px">
+      <div class="row2">
+        <div class="input-group" style="margin-bottom:0"><label class="input-label">Jour</label>
+          <select onchange="S.departs[${i}].day=this.value">${DAYS.map(day=>`<option value="${day}" ${d.day===day?'selected':''}>${DAY_S[day]}</option>`).join('')}</select></div>
+        <div class="input-group" style="margin-bottom:0"><label class="input-label">Départ depuis</label>
+          <input type="text" value="${d.location}" placeholder="${S.dest.base||'ville...'}" onchange="S.departs[${i}].location=this.value"/></div>
+      </div>
+      <button class="btn btn-danger btn-sm" onclick="removeDepart(${i})" style="margin-top:8px">Supprimer</button>
+    </div>`).join('');
+}
+
+// ══════════════════ LANG CHECKBOXES ══════════════════
+function renderLangChecks(){
+  const c=document.getElementById('lang-checks');
+  c.innerHTML=ALL_LANGS.map(l=>`<div class="lang-check ${mLangs.has(l)?'sel-'+l:''}" id="lc-${l}" onclick="toggleLang('${l}')">${l}</div>`).join('');
+}
+function toggleLang(l){
+  mLangs.has(l)?mLangs.delete(l):mLangs.add(l);
+  renderLangChecks();
+}
+
+// ══════════════════ HOTELS ══════════════════
+function addManual(){
+  const code=document.getElementById('manCode').value.trim().toUpperCase();
+  const name=document.getElementById('manName').value.trim();
+  const zone=document.getElementById('manZone').value.trim();
+  const day=document.getElementById('manDay').value;
+  if(!code||!name){showToast('Code et nom requis','err');return;}
+  if(!mLangs.size){showToast('Sélectionne au moins une langue','err');return;}
+  S.hotels.push({code,name,zone:zone||'—',langs:new Set(mLangs),arrivalDay:day});
+  document.getElementById('manCode').value='';
+  document.getElementById('manName').value='';
+  document.getElementById('manZone').value='';
+  mLangs.clear(); renderLangChecks();
+  renderHotelList(); updateBadge(); save();
+  showToast(`${code} ajouté ✓`,'ok');
+}
+
+function removeHotel(i){ S.hotels.splice(i,1); renderHotelList(); updateBadge(); save(); }
+
+function updateBadge(){
+  const b=document.getElementById('badge');
+  b.style.display=S.hotels.length?'block':'none';
+  b.textContent=S.hotels.length;
+}
+
+function dur(langs){ const n=(langs instanceof Set)?langs.size:(langs||[]).length; return n<=1?45:n<=2?60:75; }
+
+function getDayDate(d){
+  const sd=new Date(document.getElementById('startDate').value||S.startDate);
+  const x=new Date(sd); x.setDate(sd.getDate()+DAYS.indexOf(d));
+  return x.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
+}
+
+function renderHotelList(){
+  const w=document.getElementById('hotel-list');
+  if(!S.hotels.length){w.innerHTML='';return;}
+  const byDay={};
+  S.hotels.forEach((h,i)=>{if(!byDay[h.arrivalDay])byDay[h.arrivalDay]=[];byDay[h.arrivalDay].push({...h,idx:i});});
+  w.innerHTML=DAYS.filter(d=>byDay[d]).map(d=>`
+    <div class="section-label">${DAY_FR[d]} ${getDayDate(d)}</div>
+    ${byDay[d].map(h=>`<div class="hotel-card">
+      <div class="hotel-code">${h.code}</div>
+      <div class="hotel-info">
+        <div class="hotel-name">${h.name}</div>
+        <div class="hotel-meta">${h.zone||'—'}</div>
+        <div class="lang-tags">
+          ${[...(h.langs||[])].map(l=>`<span class="lang-tag lang-${l}">${l}</span>`).join('')}
+          <span class="dur-tag">${dur(h.langs)}min</span>
+        </div>
+      </div>
+      <button onclick="removeHotel(${h.idx})" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:22px;padding:4px;line-height:1">×</button>
+    </div>`).join('')}
+  `).join('');
+}
+
+// ══════════════════ GEMINI API ══════════════════
+async function callGemini(prompt){
+  if(!S.apiKey) throw new Error('no_key');
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${S.apiKey}`;
+  const body={contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.2,maxOutputTokens:3000}};
+  const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Gemini error');}
+  const d=await r.json();
+  let text=d.candidates?.[0]?.content?.parts?.[0]?.text||'';
+  text=text.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
+  return text;
+}
+
+// ══════════════════ PARSE REPORT ══════════════════
+async function parseReport(){
+  if(!S.apiKey){openApiModal();return;}
+  const text=document.getElementById('rv3Input').value.trim();
+  if(!text){showToast('Colle un rapport d\'abord','err');return;}
+  showLoading('Lecture du rapport...','Détection des hôtels et langues');
+  document.getElementById('parse-btn').disabled=true;
+
+  const sd=new Date(document.getElementById('startDate').value||S.startDate);
+
+  const prompt=`Analyse ce rapport de réservation hôtelière et extrais les informations.
+
+Codes langue dans le rapport: F ou FR = Français, E ou EN = Anglais, D ou DE = Allemand, L ou LU = Luxembourgeois, I ou IT = Italien, S ou ES = Espagnol, P ou PT = Portugais, N ou NL = Néerlandais.
+Une ligne comme "F MR DUPONT" = client français. "E MS SMITH" = client anglais.
+
+Pour chaque hôtel trouvé, retourne:
+- code: code de l'hôtel (ex: MLACAV)
+- name: nom complet
+- zone: quartier/zone si mentionné
+- langs: tableau des langues UNIQUES trouvées pour cet hôtel (ex: ["FR","EN"])
+- arrivalDate: date d'arrivée au format JJ.MM.AA si trouvée
+- clientCount: nombre total de clients
+
+Réponds UNIQUEMENT en JSON valide, sans backticks:
+{"hotels":[{"code":"MLACAV","name":"Cavalieri Art Hotel","zone":"St Julian's","langs":["FR","EN"],"arrivalDate":"31.03.26","clientCount":3}]}
+
+Rapport à analyser:
+${text}`;
+
+  try{
+    const raw=await callGemini(prompt);
+    const parsed=JSON.parse(raw);
+    let added=0;
+    parsed.hotels.forEach(h=>{
+      const langs=new Set(h.langs||[]);
+      let arrivalDay='tue';
+      if(h.arrivalDate){
+        const p=h.arrivalDate.split('.');
+        if(p.length>=3){
+          const d=new Date(2000+parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0]));
+          const diff=Math.round((d-sd)/86400000);
+          if(diff>=0&&diff<7) arrivalDay=DAYS[diff];
+        }
+      }
+      if(!S.hotels.find(e=>e.code===h.code&&e.arrivalDay===arrivalDay)){
+        S.hotels.push({code:h.code,name:h.name,zone:h.zone||'—',langs,arrivalDay,clientCount:h.clientCount||0});
+        added++;
+      }
+    });
+    document.getElementById('rv3Input').value='';
+    renderHotelList(); updateBadge(); save();
+    showToast(`${added} hôtels importés ✓`,'ok');
+  }catch(e){
+    if(e.message==='no_key') openApiModal();
+    else showToast('Erreur — réessaie','err');
+    console.error(e);
+  }
+  hideLoading();
+  document.getElementById('parse-btn').disabled=false;
+}
+
+// ══════════════════ GENERATE SCHEDULE ══════════════════
+async function generateSchedule(){
+  if(!S.apiKey){openApiModal();return;}
+  if(!S.hotels.length){showToast('Ajoute des hôtels d\'abord','err');return;}
+  showLoading('Calcul du planning...','L\'IA optimise les routes et les créneaux');
+  document.getElementById('gen-btn').disabled=true;
+
+  const byDay={};
+  S.hotels.forEach(h=>{
+    if(!byDay[h.arrivalDay])byDay[h.arrivalDay]=[];
+    byDay[h.arrivalDay].push({code:h.code,name:h.name,zone:h.zone,langs:[...(h.langs||[])]});
+  });
+
+  const airStr=S.airports.map(a=>`${DAY_FR[a.day]}: AIRPORT ${a.from}→${a.to}`).join(', ');
+  const depStr=S.departs.map(d=>`${DAY_FR[d.day]}: départ depuis "${d.location}"`).join(', ');
+  const officeStr=Object.entries(S.dayTypes).filter(([,v])=>v==='OFFICE').map(([d])=>DAY_FR[d]).join(', ')||'aucun';
+  const offStr=Object.entries(S.dayTypes).filter(([,v])=>v==='DAYOFF').map(([d])=>DAY_FR[d]).join(', ')||'aucun';
+
+  const prompt=`Tu es expert en logistique pour des représentants de voyagistes (LuxairTours).
+Génère un planning hebdomadaire OPTIMAL de visites d'hôtels.
+
+DESTINATION: ${S.dest.city}, ${S.dest.country} (code: ${S.dest.code})
+Base principale du représentant: ${S.dest.base}
+
+RÈGLES DURÉE DE MEETING:
+- 1 langue = 45 minutes
+- 2 langues = 1 heure (60 min)
+- 3+ langues = 1h15 (75 min)
+
+RÈGLES TRAJET (MINIMUM 15min, arrondir PAR 5min au-dessus):
+- Hôtels walking distance (même complexe, même rue) = COMBO (1 seul slot, code="A+B", durée=60min)
+- Zones très proches (<10min) = 15min
+- Zones adjacentes (10-20min) = 15 ou 20min selon réalité
+- Zones moyennes (20-35min) = 30 ou 35min
+- Zones lointaines (35-50min) = 45min
+- Trafic PM (après 14h): +5 à +10min sur trajets >15min
+
+LOGIQUE DE ROUTE:
+- Depuis aéroport: planifier dans l'ordre géographique EN S'ÉLOIGNANT de l'aéroport — ne jamais rebrousser chemin
+- Depuis ${S.dest.base}: même principe, s'éloigner du point de départ
+- Regrouper les hôtels proches le même jour
+- Identifier les COMBOS WALKING (hôtels vraiment côte à côte) et les fusionner en 1 slot avec code "CODEA+CODEB"
+
+CONFIGURATION SEMAINE:
+Jours OFFICE (pas de meetings): ${officeStr}
+Jours DAYOFF: ${offStr}
+Aéroport: ${airStr||'aucun'}
+Points de départ: ${depStr||'aucun'}
+
+HÔTELS À PLANIFIER:
+${JSON.stringify(byDay,null,2)}
+
+Pour chaque jour de la semaine (lun→dim), génère les créneaux.
+Chaque créneau contient: from, to, task (AIRPORT/OFFICE/DAYOFF/MEETING/PERMANENCE), hotel (code ou null), hotelName, langs (tableau), duration (minutes ou null), combo (bool), travel (minutes de trajet APRÈS ce créneau, 0 si dernier ou non-meeting).
+
+IMPORTANT: Pour les jours avec beaucoup d'hôtels, étale sur 2 jours en regroupant géographiquement.
+
+Réponds UNIQUEMENT en JSON valide sans backticks ni texte:
+{"schedule":{"mon":[{"from":"09:30","to":"17:00","task":"OFFICE","hotel":null,"hotelName":null,"langs":[],"duration":null,"combo":false,"travel":0}],"tue":[{"from":"08:30","to":"11:00","task":"AIRPORT","hotel":null,"hotelName":null,"langs":[],"duration":null,"combo":false,"travel":0},{"from":"11:00","to":"11:45","task":"MEETING","hotel":"MLAVER","hotelName":"Verdi Gzira","langs":["FR"],"duration":45,"combo":false,"travel":15}],"wed":[],"thu":[],"fri":[],"sat":[],"sun":[]}}`;
+
+  try{
+    const raw=await callGemini(prompt);
+    const parsed=JSON.parse(raw);
+    S.schedule=parsed.schedule;
+    save();
+    showToast('Planning généré ✓','ok');
+    nav('schedule');
+  }catch(e){
+    if(e.message==='no_key') openApiModal();
+    else{ showToast('Erreur génération — réessaie','err'); console.error(e); }
+  }
+  hideLoading();
+  document.getElementById('gen-btn').disabled=false;
+}
+
+// ══════════════════ SCHEDULE VIEW ══════════════════
+function renderScheduleView(){
+  const sd=S.startDate||new Date();
+  document.getElementById('chip-name').textContent=S.repName||'Rep';
+  const end=new Date(sd); end.setDate(sd.getDate()+6);
+  document.getElementById('chip-dates').textContent=
+    sd.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})+'→'+
+    end.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
+  document.getElementById('chip-dest').textContent=S.dest.code||S.dest.city||'—';
+
+  document.getElementById('day-tabs').innerHTML=DAYS.map((d,i)=>{
+    const date=new Date(sd); date.setDate(sd.getDate()+i);
+    return `<div class="day-tab ${d===S.selDay?'active':''}" onclick="selDay('${d}')">
+      ${DAY_S[d]}<span class="tab-date">${date.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})}</span>
+    </div>`;
+  }).join('');
+  renderSlots();
+}
+
+function selDay(d){ S.selDay=d; save(); renderScheduleView(); }
+
+function renderSlots(){
+  const el=document.getElementById('day-content');
+  const slots=S.schedule[S.selDay]||[];
+  if(!slots.length){
+    el.innerHTML=`<div class="empty-day"><div style="font-size:32px;margin-bottom:10px">🗓</div>Aucun créneau<br><span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text-dim)">Génère le planning depuis Hôtels</span></div>`;
+    return;
+  }
+  el.innerHTML=slots.map(s=>{
+    const tl=(s.task||'').toLowerCase();
+    const isC=s.combo;
+    const lHTML=(s.langs||[]).map(l=>`<span class="lang-tag lang-${l}">${l}</span>`).join('');
+    return `<div class="slot">
+      <div class="slot-time">${s.from}<br><span style="opacity:0.55">${s.to}</span></div>
+      <div class="slot-bar ${isC?'combo':tl}"></div>
+      <div class="slot-content ${isC?'combo':tl}">
+        <div class="slot-task">${s.task||''}${isC?' · COMBO':''}</div>
+        <div class="slot-hotel">${s.hotel||(s.task==='OFFICE'?'Bureau':s.task==='AIRPORT'?'Aéroport':s.task==='DAYOFF'?'Jour off':'—')}</div>
+        ${s.hotelName&&s.hotel&&s.hotelName!==s.hotel?`<div class="slot-detail">${s.hotelName}</div>`:''}
+        ${lHTML?`<div class="lang-tags" style="margin-top:5px">${lHTML}${s.duration?`<span class="dur-tag">${s.duration}min</span>`:''}</div>`:''}
+      </div>
+    </div>
+    ${s.travel&&s.travel>0&&s.task==='MEETING'?`
+    <div style="display:flex;gap:10px;margin-bottom:2px;opacity:0.35;align-items:center">
+      <div style="min-width:40px"></div><div style="width:2px;background:var(--border)"></div>
+      <div style="flex:1;font-size:10px;color:var(--text-dim);font-family:'DM Mono',monospace;padding:3px 10px">🚗 ${s.travel}min</div>
+    </div>`:''}`;
+  }).join('');
+}
+
+// ══════════════════ EXPORT ══════════════════
+function renderExport(){
+  let m=0,h=new Set(),c=0;
+  DAYS.forEach(d=>(S.schedule[d]||[]).forEach(s=>{
+    if(s.task==='MEETING'){m++;if(s.combo)c++;(s.hotel||'').split('+').forEach(x=>h.add(x.trim()));}
+  }));
+  document.getElementById('export-summary').innerHTML=[
+    ['Représentant',S.repName],['Matricule',S.matricule],
+    ['Destination',`${S.dest.city} (${S.dest.code})`],
+    ['Semaine du',S.startDate?.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'})||'—'],
+    ['Hôtels couverts',h.size],['Créneaux meetings',m],['Combos walking',c],
+  ].map(([k,v])=>`<div class="summary-row"><span style="color:var(--text-mid)">${k}</span><span class="summary-val">${v}</span></div>`).join('');
+}
+
+function downloadCSV(){
+  const sd=S.startDate||new Date();
+  let csv='\ufeffJour,Date,Début,Fin,Tâche,Code Hôtel,Nom Hôtel,Langues,Durée (min),Combo,Trajet suivant (min)\n';
+  DAYS.forEach((d,i)=>{
+    const date=new Date(sd); date.setDate(sd.getDate()+i);
+    const ds=date.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'});
+    (S.schedule[d]||[]).forEach(s=>{
+      csv+=`${DAY_FR[d]},${ds},${s.from},${s.to},${s.task||''},${s.hotel||''},${s.hotelName||''},${(s.langs||[]).join('/')},${s.duration||''},${s.combo?'OUI':''},${s.travel||''}\n`;
+    });
+  });
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+  a.download=`WS_${S.dest.code||'XXX'}_${S.repName.replace(/\s/g,'_')}_${(S.startDate||new Date()).toISOString().slice(0,10)}.csv`;
+  a.click();
+  showToast('CSV téléchargé ✓','ok');
+}
+
+function copyText(){
+  const sd=S.startDate||new Date();
+  const end=new Date(sd); end.setDate(sd.getDate()+6);
+  let t=`WEEKLY SCHEDULE — ${S.repName} (${S.matricule})\n`;
+  t+=`${S.dest.city} · ${sd.toLocaleDateString('fr-FR')} → ${end.toLocaleDateString('fr-FR')}\n`;
+  t+='─'.repeat(44)+'\n\n';
+  DAYS.forEach((d,i)=>{
+    const slots=S.schedule[d]||[];
+    if(!slots.length)return;
+    const date=new Date(sd); date.setDate(sd.getDate()+i);
+    t+=`${DAY_FR[d].toUpperCase()} ${date.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})}\n`;
+    slots.forEach(s=>{t+=`  ${s.from}–${s.to}  ${(s.task||'').padEnd(11)} ${s.hotel||''}\n`;});
+    t+='\n';
+  });
+  navigator.clipboard.writeText(t).then(()=>showToast('Copié ✓','ok')).catch(()=>showToast('Erreur','err'));
+}
+
+function resetAll(){
+  if(!confirm('Effacer le planning et les hôtels de cette semaine ?')) return;
+  S.hotels=[]; S.schedule={}; S.selDay='tue';
+  renderHotelList(); updateBadge(); save();
+  nav('week');
+  showToast('Réinitialisé ✓','ok');
+}
+
+// ══════════════════ UI HELPERS ══════════════════
+function showLoading(t,s){ document.getElementById('loading-text').textContent=t; document.getElementById('loading-sub').textContent=s||''; document.getElementById('loading').classList.add('active'); }
+function hideLoading(){ document.getElementById('loading').classList.remove('active'); }
+function openModal(id){ document.getElementById(id).classList.add('active'); }
+function closeModal(id){ document.getElementById(id).classList.remove('active'); }
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('active');}));
+
+let toastT;
+function showToast(msg,type=''){
+  clearTimeout(toastT);
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast show'+(type?' '+type:'');
+  toastT=setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(()=>{});
+init();
+</script>
+</body>
+</html>
