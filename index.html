@@ -1,1008 +1,537 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#0a0a0f">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="LuxairTours Planner">
-<link rel="manifest" href="/manifest.json">
-<link rel="apple-touch-icon" href="/icons/icon-192.png">
-<title>LuxairTours Planner</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="LuxairTours"/>
+<meta name="theme-color" content="#FFB90F"/>
+<title>LuxairTours Rep</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
-:root {
-  --bg:#0a0a0f; --surface:#12121a; --surface2:#1a1a26; --border:#2a2a3a;
-  --gold:#d4a853; --gold-dim:#8a6a2a; --gold-glow:rgba(212,168,83,0.15);
-  --text:#e8e8f0; --text-dim:#6e6e8a; --text-mid:#a0a0b8;
-  --red:#e05555; --green:#4ecf8a; --blue:#5599e0; --purple:#9966dd;
-  --r:12px;
-}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;overflow:hidden;}
-body{
-  font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text);
-  max-width:430px; margin:0 auto; display:flex; flex-direction:column;
-  height:100vh; height:100dvh;
+:root{
+  --gold:#FFB90F;--gold-d:#d4960a;--blue:#1A91C3;
+  --text:#1a1a1a;--text2:#555;--text3:#888;--border:#e0e0e0;
+  --bg:#f5f5f5;--red:#e53e3e;--green:#38a169;
+  --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);
 }
-.topbar{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:14px 20px 10px; background:var(--bg);
-  border-bottom:1px solid var(--border); flex-shrink:0;
-}
-.topbar-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;letter-spacing:0.08em;color:var(--gold);}
-.topbar-sub{font-size:10px;color:var(--text-dim);letter-spacing:0.12em;text-transform:uppercase;}
-.topbar-right{display:flex;gap:8px;align-items:center;}
-.ai-badge{
-  display:flex;align-items:center;gap:5px;
-  background:var(--gold-glow);border:1px solid var(--gold-dim);
-  border-radius:20px;padding:4px 10px;
-  font-size:11px;color:var(--gold);font-family:'DM Mono',monospace;cursor:pointer;
-}
-.ai-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
-.dest-chip{
-  display:flex;align-items:center;gap:4px;
-  background:var(--surface2);border:1px solid var(--border);
-  border-radius:20px;padding:4px 10px;font-size:11px;color:var(--text-mid);
-  font-family:'DM Mono',monospace;cursor:pointer;
-}
-.dest-chip span{color:var(--gold);}
-.scroll-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
-.screen{display:none;padding:16px 20px 24px;animation:fadeIn 0.25s ease;}
-.screen.active{display:block;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.bottomnav{
-  display:flex;background:var(--surface);border-top:1px solid var(--border);
-  flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0);
-}
-.nav-item{
-  flex:1;display:flex;flex-direction:column;align-items:center;
-  padding:10px 4px 12px;gap:3px;cursor:pointer;transition:all 0.2s;
-  font-size:10px;color:var(--text-dim);letter-spacing:0.06em;
-  text-transform:uppercase;font-family:'DM Mono',monospace;position:relative;
-}
-.nav-item.active{color:var(--gold);}
-.nav-item svg{width:20px;height:20px;}
-.nav-badge{
-  position:absolute;top:5px;right:calc(50% - 20px);
-  background:var(--gold);color:var(--bg);border-radius:10px;
-  font-size:9px;font-weight:700;padding:1px 5px;min-width:16px;text-align:center;display:none;
-}
-.section-label{
-  font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.14em;
-  text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;margin-top:20px;
-}
-.section-label:first-child{margin-top:0;}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;}
-.input-group{margin-bottom:12px;}
-.input-group:last-child{margin-bottom:0;}
-.input-label{font-size:11px;color:var(--text-dim);margin-bottom:5px;display:block;font-family:'DM Mono',monospace;letter-spacing:0.06em;}
-input,select,textarea{
-  width:100%;background:var(--surface2);border:1px solid var(--border);
-  border-radius:8px;padding:10px 12px;color:var(--text);
-  font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color 0.2s;
-  -webkit-appearance:none;appearance:none;
-}
-input:focus,select:focus,textarea:focus{border-color:var(--gold-dim);}
-textarea{resize:vertical;min-height:100px;line-height:1.5;}
-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236e6e8a' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
-.btn{
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  width:100%;padding:13px;border-radius:10px;border:none;
-  font-family:'Syne',sans-serif;font-weight:700;font-size:14px;
-  cursor:pointer;transition:all 0.2s;letter-spacing:0.04em;
-}
-.btn-gold{background:var(--gold);color:var(--bg);}
-.btn-gold:hover{filter:brightness(1.08);}
-.btn-gold:active{transform:scale(0.98);}
-.btn-gold:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
-.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text-mid);}
-.btn-outline:hover{border-color:var(--gold-dim);color:var(--gold);}
-.btn-danger{background:rgba(224,85,85,0.12);border:1px solid rgba(224,85,85,0.25);color:var(--red);}
-.btn-sm{padding:7px 12px;font-size:12px;border-radius:7px;width:auto;display:inline-flex;}
-.btn-green{background:rgba(78,207,138,0.15);border:1px solid rgba(78,207,138,0.3);color:var(--green);}
-
-/* DESTINATION BANNER */
-.dest-banner{
-  background:linear-gradient(135deg,rgba(212,168,83,0.1),rgba(85,153,224,0.05));
-  border:1px solid var(--gold-dim);border-radius:var(--r);
-  padding:14px;margin-bottom:14px;
-}
-.dest-banner-title{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--gold);margin-bottom:2px;}
-.dest-banner-sub{font-size:12px;color:var(--text-mid);}
-
-/* API SETUP */
-.setup-banner{
-  background:rgba(78,207,138,0.06);border:1px solid rgba(78,207,138,0.2);
-  border-radius:var(--r);padding:12px 14px;margin-bottom:12px;
-  display:flex;align-items:flex-start;gap:10px;
-}
-.setup-banner.warn{background:rgba(212,168,83,0.08);border-color:var(--gold-dim);}
-.setup-banner-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
-.setup-banner-text{font-size:12px;color:var(--text-mid);line-height:1.6;}
-.setup-banner-text strong{color:var(--gold);font-family:'DM Mono',monospace;}
-.setup-banner-text a{color:var(--gold);text-decoration:underline;cursor:pointer;}
-
-/* HOTEL CARDS */
-.hotel-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:10px;padding:12px 14px;margin-bottom:8px;
-  display:flex;align-items:center;gap:12px;
-}
-.hotel-code{
-  font-family:'DM Mono',monospace;font-weight:500;font-size:11px;
-  background:var(--surface2);border-radius:6px;padding:4px 7px;
-  color:var(--gold);min-width:68px;text-align:center;
-  border:1px solid var(--gold-dim);line-height:1.4;word-break:break-all;
-}
-.hotel-info{flex:1;min-width:0;}
-.hotel-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.hotel-meta{font-size:11px;color:var(--text-dim);margin-top:2px;}
-.lang-tags{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap;align-items:center;}
-.lang-tag{font-size:10px;font-family:'DM Mono',monospace;padding:2px 6px;border-radius:4px;font-weight:500;flex-shrink:0;}
-.lang-FR{background:rgba(85,153,224,0.2);color:#5599e0;border:1px solid rgba(85,153,224,0.3);}
-.lang-EN{background:rgba(78,207,138,0.2);color:#4ecf8a;border:1px solid rgba(78,207,138,0.3);}
-.lang-DE{background:rgba(224,119,85,0.2);color:#e07755;border:1px solid rgba(224,119,85,0.3);}
-.lang-LU{background:rgba(153,102,221,0.2);color:#9966dd;border:1px solid rgba(153,102,221,0.3);}
-.lang-IT{background:rgba(212,168,83,0.2);color:#d4a853;border:1px solid rgba(212,168,83,0.3);}
-.lang-ES{background:rgba(224,85,85,0.2);color:#e05555;border:1px solid rgba(224,85,85,0.3);}
-.lang-PT{background:rgba(85,200,170,0.2);color:#55c8aa;border:1px solid rgba(85,200,170,0.3);}
-.lang-NL{background:rgba(180,140,80,0.2);color:#b48c50;border:1px solid rgba(180,140,80,0.3);}
-.dur-tag{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim);}
-.lang-checkboxes{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px;}
-.lang-check{
-  display:flex;align-items:center;cursor:pointer;
-  font-family:'DM Mono',monospace;font-size:11px;
-  padding:5px 10px;border-radius:7px;border:1px solid var(--border);
-  background:var(--surface);transition:all 0.15s;color:var(--text-dim);user-select:none;
-}
-.lang-check.sel-FR{background:rgba(85,153,224,0.15);border-color:rgba(85,153,224,0.4);color:#5599e0;}
-.lang-check.sel-EN{background:rgba(78,207,138,0.15);border-color:rgba(78,207,138,0.4);color:#4ecf8a;}
-.lang-check.sel-DE{background:rgba(224,119,85,0.15);border-color:rgba(224,119,85,0.3);color:#e07755;}
-.lang-check.sel-LU{background:rgba(153,102,221,0.15);border-color:rgba(153,102,221,0.3);color:#9966dd;}
-.lang-check.sel-IT{background:rgba(212,168,83,0.15);border-color:rgba(212,168,83,0.3);color:#d4a853;}
-.lang-check.sel-ES{background:rgba(224,85,85,0.15);border-color:rgba(224,85,85,0.3);color:#e05555;}
-.lang-check.sel-PT{background:rgba(85,200,170,0.15);border-color:rgba(85,200,170,0.3);color:#55c8aa;}
-.lang-check.sel-NL{background:rgba(180,140,80,0.15);border-color:rgba(180,140,80,0.3);color:#b48c50;}
-
-/* SCHEDULE */
-.week-chip{
-  display:inline-flex;align-items:center;gap:6px;
-  background:var(--surface2);border:1px solid var(--border);
-  border-radius:8px;padding:6px 10px;font-size:12px;
-  font-family:'DM Mono',monospace;color:var(--text-mid);margin-bottom:12px;
-}
-.week-chip span{color:var(--gold);}
-.day-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;scrollbar-width:none;}
-.day-tabs::-webkit-scrollbar{display:none;}
-.day-tab{
-  flex-shrink:0;padding:7px 14px;border-radius:20px;
-  font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;
-  background:var(--surface);border:1px solid var(--border);
-  color:var(--text-dim);transition:all 0.2s;text-align:center;
-}
-.day-tab.active{background:var(--gold);color:var(--bg);border-color:var(--gold);font-weight:600;}
-.day-tab .tab-date{font-size:9px;display:block;margin-top:1px;opacity:0.75;}
-.slot{display:flex;gap:10px;margin-bottom:4px;align-items:stretch;}
-.slot-time{
-  font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim);
-  min-width:40px;text-align:right;padding-top:11px;line-height:1.4;flex-shrink:0;
-}
-.slot-bar{width:2px;background:var(--border);border-radius:2px;flex-shrink:0;position:relative;}
-.slot-bar::before{
-  content:'';position:absolute;top:11px;left:-3px;
-  width:8px;height:8px;border-radius:50%;
-  background:var(--surface2);border:2px solid var(--border);
-}
-.slot-bar.meeting::before,.slot-bar.combo::before{border-color:var(--gold);background:rgba(212,168,83,0.2);}
-.slot-bar.airport::before{border-color:var(--blue);background:rgba(85,153,224,0.2);}
-.slot-bar.office::before{border-color:var(--text-dim);}
-.slot-bar.permanence::before{border-color:var(--purple);background:rgba(153,102,221,0.2);}
-.slot-content{
-  flex:1;background:var(--surface);border:1px solid var(--border);
-  border-radius:10px;padding:10px 12px;min-width:0;
-}
-.slot-content.meeting{border-left:3px solid var(--gold);}
-.slot-content.combo{border-left:3px solid var(--gold);background:rgba(212,168,83,0.04);}
-.slot-content.airport{border-left:3px solid var(--blue);}
-.slot-content.office{border-left:3px solid var(--text-dim);}
-.slot-content.permanence{border-left:3px solid var(--purple);}
-.slot-task{font-size:10px;font-family:'DM Mono',monospace;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em;}
-.slot-hotel{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin:2px 0;word-break:break-word;}
-.slot-detail{font-size:11px;color:var(--text-dim);}
-.empty-day{text-align:center;padding:40px 20px;color:var(--text-dim);font-size:13px;}
-
-/* EXPORT */
-.export-hero{
-  background:linear-gradient(135deg,rgba(212,168,83,0.12),rgba(212,168,83,0.03));
-  border:1px solid var(--gold-dim);border-radius:var(--r);padding:24px 20px;
-  text-align:center;margin-bottom:14px;
-}
-.export-icon{font-size:40px;margin-bottom:10px;}
-.export-title{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--gold);}
-.export-sub{font-size:12px;color:var(--text-dim);margin-top:4px;}
-.summary-row{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;
-}
-.summary-row:last-child{border-bottom:none;}
-.summary-val{font-family:'DM Mono',monospace;color:var(--gold);}
-
-/* LOADING */
-.loading-overlay{
-  position:fixed;inset:0;background:rgba(10,10,15,0.9);
-  display:none;flex-direction:column;align-items:center;justify-content:center;
-  z-index:500;gap:16px;
-}
-.loading-overlay.active{display:flex;}
-.loading-spinner{width:40px;height:40px;border:3px solid var(--gold-dim);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+#app{display:flex;flex-direction:column;height:100dvh;}
+#hdr{background:var(--gold);padding:10px 16px;padding-top:calc(10px + var(--st));display:flex;align-items:center;justify-content:space-between;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.15);}
+.logo-w{display:flex;align-items:center;gap:10px;}
+.logo-img{width:38px;height:38px;border-radius:8px;object-fit:cover;background:#fff;padding:2px;}
+.logo-t{font-size:15px;font-weight:700;color:#fff;letter-spacing:.3px;line-height:1.1;}
+.logo-s{font-size:9px;color:rgba(255,255,255,.85);letter-spacing:1.5px;text-transform:uppercase;}
+.hdr-r{display:flex;align-items:center;gap:10px;}
+.stats{display:flex;gap:14px;}
+.stat-n{font-size:17px;font-weight:700;color:#fff;text-align:center;}
+.stat-l{font-size:8px;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.5px;text-align:center;}
+.aib{background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.5);border-radius:20px;padding:5px 11px;font-size:10px;font-weight:600;color:#fff;cursor:pointer;display:flex;align-items:center;gap:5px;}
+.aidot{width:6px;height:6px;border-radius:50%;background:#fff;animation:pu 2s infinite;}
+.aidot.ok{background:#4ade80;animation:none;}
+@keyframes pu{0%,100%{opacity:1}50%{opacity:.4}}
+#cnt{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+#cnt::-webkit-scrollbar{display:none;}
+#nav{display:flex;background:#fff;border-top:1px solid var(--border);padding-bottom:var(--sb);flex-shrink:0;}
+.nb{flex:1;padding:10px 4px 11px;border:none;background:none;color:var(--text3);font-family:inherit;font-size:9px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;text-transform:uppercase;letter-spacing:.3px;transition:color .15s;position:relative;}
+.nb.on{color:var(--gold-d);}
+.nb .ni{font-size:22px;}
+.nbadge{position:absolute;top:5px;right:calc(50% - 18px);background:var(--red);color:#fff;border-radius:10px;font-size:8px;font-weight:700;padding:1px 5px;min-width:16px;text-align:center;display:none;}
+.sc{display:none;padding:14px;animation:fi .2s ease;}
+.sc.on{display:block;}
+@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.slbl{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;margin-top:14px;}
+.slbl:first-child{margin-top:0;}
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px;}
+label{font-size:11px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px;}
+input,select,textarea{width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid var(--border);background:#fff;color:var(--text);font-family:inherit;font-size:13px;outline:none;transition:border-color .2s;-webkit-appearance:none;appearance:none;}
+input:focus,select:focus,textarea:focus{border-color:var(--gold);}
+textarea{resize:vertical;min-height:90px;line-height:1.5;}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
+.ig{margin-bottom:10px;}.ig:last-child{margin-bottom:0;}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.r3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.btn{border:none;border-radius:8px;padding:9px 14px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;}
+.btn:active{transform:scale(.97);}
+.bg{background:var(--gold);color:#fff;}.bg:hover{background:var(--gold-d);}
+.bl{background:var(--blue);color:#fff;}
+.bo{background:#fff;border:1.5px solid var(--border);color:var(--text);}
+.bo:hover{border-color:var(--gold);color:var(--gold-d);}
+.br{background:var(--red);color:#fff;}
+.bgr{background:#25D366;color:#fff;}
+.bf{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;font-size:13px;}
+.iz{background:#fff;border:2px dashed var(--border);border-radius:12px;padding:16px;margin-bottom:12px;}
+.ig2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+.ib{background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:18px 10px;cursor:pointer;color:var(--text);font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:7px;transition:all .15s;}
+.ib:hover,.ib:active{border-color:var(--gold);background:#fffbf0;}
+.ib .ii{font-size:30px;}.ib .it{font-size:12px;font-weight:600;}.ib .is{font-size:10px;color:var(--text3);}
+.sp{display:inline-block;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
+.sp2{display:inline-block;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
-.loading-text{font-family:'DM Mono',monospace;font-size:13px;color:var(--gold);}
-.loading-sub{font-size:11px;color:var(--text-dim);font-family:'DM Mono',monospace;text-align:center;padding:0 20px;}
-
-/* MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);display:none;align-items:flex-end;z-index:400;}
-.modal-overlay.active{display:flex;}
-.modal{
-  background:var(--surface);border-radius:var(--r) var(--r) 0 0;
-  border:1px solid var(--border);border-bottom:none;
-  width:100%;max-width:430px;margin:0 auto;
-  padding:20px 20px calc(20px + env(safe-area-inset-bottom,0));
-  animation:slideUp 0.3s ease;max-height:90dvh;overflow-y:auto;
-}
-@keyframes slideUp{from{transform:translateY(100%)}to{transform:none}}
-.modal-title{font-family:'Syne',sans-serif;font-weight:700;font-size:17px;margin-bottom:14px;}
-.modal-close{float:right;background:none;border:none;color:var(--text-dim);font-size:22px;cursor:pointer;margin-top:-4px;}
-
-/* TOAST */
-.toast{
-  position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-10px);
-  background:var(--surface2);border:1px solid var(--border);
-  border-radius:20px;padding:8px 18px;
-  font-size:12px;color:var(--text);font-family:'DM Mono',monospace;
-  opacity:0;transition:all 0.25s;z-index:600;white-space:nowrap;pointer-events:none;
-}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-.toast.ok{border-color:var(--gold-dim);color:var(--gold);}
-.toast.err{border-color:rgba(224,85,85,0.4);color:var(--red);}
-
-.add-form{background:var(--surface2);border:1px dashed var(--border);border-radius:var(--r);padding:14px;margin-top:10px;}
-hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
+.eb{background:#fff5f5;border:1px solid #fed7d7;border-radius:8px;padding:9px 12px;color:var(--red);font-size:11px;margin-bottom:10px;display:none;}
+.ob{background:#f0fff4;border:1px solid #c6f6d5;border-radius:8px;padding:9px 12px;color:var(--green);font-size:11px;margin-bottom:10px;display:none;}
+.lo{position:fixed;inset:0;background:rgba(255,255,255,.92);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:500;gap:14px;}
+.lo.on{display:flex;}
+.lsp{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;}
+.tst{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-8px);background:var(--text);color:#fff;border-radius:20px;padding:8px 18px;font-size:12px;opacity:0;transition:all .25s;z-index:600;white-space:nowrap;pointer-events:none;}
+.tst.on{opacity:1;transform:translateX(-50%) translateY(0);}
+.tst.ok{background:var(--green);}.tst.er{background:var(--red);}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;z-index:400;}
+.mo.on{display:flex;}
+.md{background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:430px;margin:0 auto;padding:20px 16px calc(20px + var(--sb));animation:su .3s ease;max-height:88dvh;overflow-y:auto;}
+@keyframes su{from{transform:translateY(100%)}to{transform:none}}
+.md-t{font-size:16px;font-weight:700;margin-bottom:14px;}
+.md-x{float:right;background:none;border:none;color:var(--text3);font-size:24px;cursor:pointer;margin-top:-4px;line-height:1;}
+.pax{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px;}
+.pax-name{font-size:14px;font-weight:700;}
+.pax-sub{font-size:11px;color:var(--text3);margin-top:2px;}
+.bgs{display:flex;gap:5px;flex-wrap:wrap;margin:6px 0;}
+.bg2{padding:3px 8px;border-radius:5px;font-size:10px;font-weight:600;}
+.ba{background:#ebf8ff;color:#2b6cb0;border:1px solid #bee3f8;}
+.bd{background:#fff7ed;color:#c05621;border:1px solid #fbd38d;}
+.bp{background:#f0fff4;color:#276749;border:1px solid #9ae6b4;}
+.bfr{background:#ebf8ff;color:#2b6cb0;border:1px solid #bee3f8;}
+.bde{background:#fff5f5;color:#c53030;border:1px solid #fed7d7;}
+.blu{background:#fffbf0;color:#b7791f;border:1px solid #faf089;}
+.ben{background:#f0fff4;color:#276749;border:1px solid #9ae6b4;}
+.pa{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:8px;}
+.pa select{flex:1;min-width:110px;font-size:11px;padding:6px 8px;}
+.bc{display:inline-flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:11px;margin:3px;}
+.bc strong{color:var(--blue);}
+.db{background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;padding:0;line-height:1;}
+.br2{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.br2 input{flex:1;min-width:80px;font-size:11px;}
+.sb-row{display:flex;gap:8px;margin-bottom:10px;align-items:center;}
+.tb-row{display:flex;gap:6px;margin-bottom:10px;}
+.tb{flex:1;padding:8px 6px;border:1.5px solid var(--border);border-radius:8px;background:#fff;font-family:inherit;font-size:10px;font-weight:600;color:var(--text3);cursor:pointer;transition:all .15s;}
+.tb.on{background:var(--gold);border-color:var(--gold);color:#fff;}
+.ec{background:#fffbf0;border:1.5px solid var(--gold);border-radius:10px;padding:12px;margin-bottom:8px;}
+.eg{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;}
+.eg label{font-size:10px;}.eg input{font-size:12px;padding:7px 10px;}
+.dts{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none;}
+.dts::-webkit-scrollbar{display:none;}
+.dt{flex-shrink:0;padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:#fff;color:var(--text3);font-size:10px;font-weight:600;cursor:pointer;text-align:center;transition:all .15s;}
+.dt.on{background:var(--gold);border-color:var(--gold);color:#fff;}
+.dt .dd{font-size:8px;display:block;margin-top:1px;opacity:.75;}
+.sl{display:flex;gap:10px;margin-bottom:4px;align-items:stretch;}
+.sl-t{font-size:10px;color:var(--text3);min-width:42px;text-align:right;padding-top:10px;line-height:1.4;flex-shrink:0;font-weight:500;}
+.sl-b{width:3px;background:var(--border);border-radius:3px;flex-shrink:0;position:relative;}
+.sl-b::before{content:'';position:absolute;top:10px;left:-4px;width:9px;height:9px;border-radius:50%;background:#fff;border:2px solid var(--border);}
+.sl-b.meeting::before,.sl-b.combo::before{border-color:var(--gold);background:var(--gold);}
+.sl-b.airport::before{border-color:var(--blue);background:var(--blue);}
+.sl-b.office::before{border-color:var(--text3);background:var(--text3);}
+.sl-c{flex:1;background:#fff;border:1px solid var(--border);border-radius:10px;padding:9px 12px;min-width:0;}
+.sl-c.meeting{border-left:3px solid var(--gold);}
+.sl-c.combo{border-left:3px solid var(--gold);background:#fffbf0;}
+.sl-c.airport{border-left:3px solid var(--blue);background:#ebf8ff;}
+.sl-c.office{border-left:3px solid #aaa;background:#fafafa;}
+.sl-c.permanence{border-left:3px solid #805ad5;}
+.sl-task{font-size:9px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;}
+.sl-h{font-size:13px;font-weight:700;color:var(--text);margin:2px 0;word-break:break-word;}
+.sl-d{font-size:10px;color:var(--text3);}
+.sl-l{display:flex;gap:4px;margin-top:4px;align-items:center;flex-wrap:wrap;}
+.lt{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;}
+.wc{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:11px;color:var(--text3);margin-bottom:12px;}
+.wc span{color:var(--blue);font-weight:600;}
+.pt{display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid var(--border);border-radius:10px;padding:11px 14px;cursor:pointer;margin-bottom:8px;font-size:12px;font-weight:600;}
+.pt .ch{transition:transform .2s;color:var(--text3);}
+.pt.op .ch{transform:rotate(180deg);}
+.pb{display:none;background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px;}
+.pb.op{display:block;}
+.dgrid{display:flex;flex-wrap:wrap;gap:6px;}
+.dc{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:10px;font-weight:600;cursor:pointer;user-select:none;transition:all .15s;}
+.dc.ofc{border-color:var(--blue);color:var(--blue);background:#ebf8ff;}
+.dc.dof{border-color:var(--red);color:var(--red);background:#fff5f5;}
+.hc{background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:7px;display:flex;align-items:center;gap:10px;}
+.hcode{font-size:10px;font-weight:700;color:var(--blue);background:#ebf8ff;border:1px solid #bee3f8;border-radius:5px;padding:3px 7px;min-width:60px;text-align:center;word-break:break-all;}
+.hi{flex:1;min-width:0;}
+.hn{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hm{font-size:10px;color:var(--text3);margin-top:1px;}
+.lcs{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px;}
+.lc{padding:5px 10px;border-radius:6px;border:1.5px solid var(--border);background:#fff;font-size:11px;font-weight:600;cursor:pointer;color:var(--text3);user-select:none;transition:all .15s;}
+.lc.sFR{background:#ebf8ff;border-color:#4a9eff;color:#2b6cb0;}
+.lc.sEN{background:#f0fff4;border-color:#40d080;color:#276749;}
+.lc.sDE{background:#fff5f5;border-color:#e77755;color:#c53030;}
+.lc.sLU{background:#fffbf0;border-color:#d69e2e;color:#b7791f;}
+.lc.sIT{background:#fffbf0;border-color:#d69e2e;color:#b7791f;}
+.emp{text-align:center;padding:40px 20px;color:var(--text3);}
+.emp-i{font-size:40px;margin-bottom:10px;}
+.exh{background:linear-gradient(135deg,#fffbf0,#fff8e1);border:1px solid #fbd38d;border-radius:14px;padding:22px;text-align:center;margin-bottom:14px;}
+.sr{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.sr:last-child{border-bottom:none;}
+.sv{font-weight:700;color:var(--blue);}
 </style>
 </head>
 <body>
+<div class="lo" id="lo"><div class="lsp"></div><div id="lt2" style="font-size:13px;font-weight:600;color:var(--text)">Traitement...</div><div id="ls2" style="font-size:11px;color:var(--text3);text-align:center;padding:0 24px"></div></div>
+<div class="tst" id="tst"></div>
 
-<!-- LOADING -->
-<div class="loading-overlay" id="loading">
-  <div class="loading-spinner"></div>
-  <div class="loading-text" id="loading-text">Traitement...</div>
-  <div class="loading-sub" id="loading-sub"></div>
+<!-- API Modal -->
+<div class="mo" id="api-m">
+<div class="md">
+  <button class="md-x" onclick="cm('api-m')">×</button>
+  <div class="md-t">🔑 Clé API Gemini</div>
+  <div style="background:#f0fff4;border:1px solid #9ae6b4;border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:11px;color:#276749;line-height:1.8">
+    ✅ <strong>100% gratuit</strong> — Google AI Studio<br>
+    1. Va sur <strong>aistudio.google.com</strong><br>
+    2. Connecte-toi avec Google → <strong>Get API Key → Create</strong><br>
+    3. Copie la clé <code style="background:#e2e8f0;padding:1px 5px;border-radius:3px;font-size:11px">AIza...</code>
+  </div>
+  <div class="ig"><label>Ta clé Gemini</label><input type="password" id="aki" placeholder="AIzaSy..." autocomplete="off"/></div>
+  <button class="btn bg bf" onclick="saveKey()">✓ Sauvegarder</button>
+  <button class="btn bo bf" onclick="cm('api-m')" style="margin-top:8px">Annuler</button>
+</div>
 </div>
 
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
-
-<!-- TOP BAR -->
-<div class="topbar">
-  <div>
-    <div class="topbar-logo">LUXAIRTOURS</div>
-    <div class="topbar-sub">Schedule Planner</div>
+<div id="app">
+<div id="hdr">
+  <div class="logo-w">
+    <img class="logo-img" src="data:image/png;base64,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PH3xQ1DOi2stwsjEPcMPkB9zX3b8N/2K9D0tftfjyf7bKwGYE/1YP14NfcWmaTpek2q2umQJBGowAigVpVr4hfSy4pztyw2SWwWG2ShZ1Lec7af9upW7k8CfRf4byhRxOc3xmI3fNpTT8o9f+3mzivDPw78GeEbOOy0DTordIxgALk/mc12YXaNq8L6CnUV/L+OzDFY2rLEYyrKpUerlKTk2/Nu7P6PwWX4XB0o0MLSjCC0SilFL0S0DGKKKK5DsCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//0f3IpCOcjr/Slor/ACbP7IOfHhjQ11l/ES2sZvZAFMpGW2rwOfpXQUUVvXxVatyutNy5UkrtuyWyV9kui2OehhaNHm9jBR5m27JK7e7dur6sKKKKwOgKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//9L9yKKKK/ybP7ICiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//2Q==" alt="Logo"/>
+    <div><div class="logo-t">LUXAIRTOURS</div><div class="logo-s" id="hdest">Rep Manager · MLA</div></div>
   </div>
-  <div class="topbar-right">
-    <div class="dest-chip" onclick="nav('week')">
-      📍 <span id="top-dest">—</span>
+  <div class="hdr-r">
+    <div class="stats">
+      <div><div class="stat-n" id="stot">0</div><div class="stat-l">Pax</div></div>
+      <div><div class="stat-n" id="sdep">0</div><div class="stat-l">Dép.</div></div>
     </div>
-    <div class="ai-badge" onclick="openApiModal()">
-      <div class="ai-dot" id="ai-dot"></div>
-      <span id="ai-label">AI</span>
-    </div>
+    <div class="aib" onclick="om('api-m')"><div class="aidot" id="aidot"></div><span id="ailbl">AI</span></div>
   </div>
 </div>
 
-<!-- API KEY MODAL -->
-<div class="modal-overlay" id="api-modal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('api-modal')">×</button>
-    <div class="modal-title">🔑 Clé API Gemini</div>
-    <div class="setup-banner warn" style="margin-bottom:14px">
-      <div class="setup-banner-icon">💡</div>
-      <div class="setup-banner-text">
-        <strong>100% gratuit.</strong> Va sur <strong>aistudio.google.com</strong> → connecte-toi avec Google → <strong>Get API Key</strong> → Create → Copie la clé.<br>
-        Aucune carte bancaire requise.
+<div id="cnt">
+
+<!-- TRANSFER -->
+<div class="sc on" id="sc-tf">
+  <div class="iz">
+    <input type="file" id="fi" multiple accept=".pdf,.txt,.png,.jpg,.jpeg,.heic,.doc,.docx" style="display:none"/>
+    <input type="file" id="ci" accept="image/*" capture="environment" style="display:none"/>
+    <div id="i-idle">
+      <div style="font-size:11px;font-weight:600;color:var(--text3);text-align:center;margin-bottom:10px">IMPORTER UN DOCUMENT</div>
+      <div class="ig2">
+        <button class="ib" onclick="document.getElementById('fi').click()"><span class="ii">📂</span><span class="it">Ouvrir fichier</span><span class="is">PDF · DOC · JPG · PNG</span></button>
+        <button class="ib" onclick="document.getElementById('ci').click()"><span class="ii">📷</span><span class="it">Prendre photo</span><span class="is">Appareil photo</span></button>
       </div>
     </div>
-    <div class="input-group">
-      <label class="input-label">Colle ta clé Gemini</label>
-      <input type="password" id="api-input" placeholder="AIza..." autocomplete="off"/>
+    <div id="i-load" style="display:none;text-align:center;padding:14px 0">
+      <div class="sp2" style="width:22px;height:22px"></div>
+      <div style="margin-top:10px;font-size:12px;font-weight:600">ANALYSE EN COURS...</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:3px">L'IA extrait les données</div>
     </div>
-    <button class="btn btn-gold" onclick="saveApiKey()">Sauvegarder</button>
-    <button class="btn btn-outline" onclick="closeModal('api-modal')" style="margin-top:8px">Annuler</button>
   </div>
+  <div class="eb" id="eb"></div>
+  <div class="ob" id="ob"></div>
+  <div class="pt" id="bt"><span>🚌 Horaires navettes</span><span class="ch">▼</span></div>
+  <div class="pb" id="bp"><div id="bch"></div>
+    <div class="br2"><input id="nbl" placeholder="Nom navette"/><input id="nbt" placeholder="06:30"/><input id="nbn" placeholder="Note"/><button class="btn bg" onclick="addBus()">+</button></div>
+  </div>
+  <div class="sb-row"><input type="search" id="sb" placeholder="🔍  Nom, hôtel..." oninput="rPax()" style="flex:1"/><button class="btn bo" onclick="clearAll()" style="font-size:11px;white-space:nowrap">🗑 Tout</button></div>
+  <div class="tb-row">
+    <button class="tb on" id="tab-dep" onclick="swT('dep')">🛫 Départs</button>
+    <button class="tb" id="tab-arr" onclick="swT('arr')">🛬 Arrivées</button>
+    <button class="tb" id="tab-all" onclick="swT('all')">👥 Tous</button>
+  </div>
+  <div id="plist"></div>
 </div>
 
-<!-- DESTINATION MODAL -->
-<div class="modal-overlay" id="dest-modal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('dest-modal')">×</button>
-    <div class="modal-title">📍 Destination</div>
-    <p style="font-size:13px;color:var(--text-mid);margin-bottom:14px;line-height:1.6">
-      Entre le pays et la ville de ta destination. L'IA adaptera automatiquement les zones géographiques, les trajets et les clusters hôteliers pour cette ville.
-    </p>
-    <div class="input-group">
-      <label class="input-label">Pays</label>
-      <input type="text" id="dest-country" placeholder="Malta, Espagne, Grèce..." />
-    </div>
-    <div class="input-group">
-      <label class="input-label">Ville / Région</label>
-      <input type="text" id="dest-city" placeholder="Malte, Majorque, Rhodes..." />
-    </div>
-    <div class="input-group">
-      <label class="input-label">Code destination (optionnel)</label>
-      <input type="text" id="dest-code" placeholder="MLA, PMI, RHO..." oninput="this.value=this.value.toUpperCase()" />
-    </div>
-    <div class="input-group">
-      <label class="input-label">Point de départ principal (ville/quartier)</label>
-      <input type="text" id="dest-base" placeholder="Bugibba, Palma, Rodos..." />
-    </div>
-    <button class="btn btn-gold" onclick="saveDestination()">Confirmer</button>
-  </div>
-</div>
-
-<div class="scroll-area">
-
-<!-- ══════ SCREEN: SEMAINE ══════ -->
-<div class="screen active" id="screen-week">
-  <div id="dest-banner-wrap"></div>
-
-  <div class="section-label">Représentant</div>
+<!-- SEMAINE -->
+<div class="sc" id="sc-wk">
+  <div class="slbl">Représentant</div>
   <div class="card">
-    <div class="row2">
-      <div class="input-group"><label class="input-label">Nom</label><input type="text" id="repName" value="Paul Robert"/></div>
-      <div class="input-group"><label class="input-label">Matricule</label><input type="text" id="matricule" value="20772"/></div>
-    </div>
-    <div class="input-group"><label class="input-label">Date de début (Lundi)</label><input type="date" id="startDate"/></div>
+    <div class="r2"><div class="ig"><label>Nom</label><input id="rn" value="Paul Robert"/></div><div class="ig"><label>Matricule</label><input id="rm" value="20772"/></div></div>
+    <div class="ig"><label>Destination</label><input id="rd" placeholder="Malta, Majorque..."/></div>
+    <div class="ig"><label>Code</label><input id="rc" placeholder="MLA, PMI..." oninput="this.value=this.value.toUpperCase()"/></div>
+    <div class="ig"><label>Base de départ</label><input id="rb" placeholder="Bugibba, Palma..."/></div>
+    <div class="ig"><label>Lundi de la semaine</label><input type="date" id="ws"/></div>
   </div>
-
-  <div class="section-label">Jours d'arrivée — Aéroport</div>
-  <div id="airport-wrap"></div>
-  <button class="btn btn-outline btn-sm" onclick="addAirport()" style="margin-bottom:14px">+ Ajouter</button>
-
-  <div class="section-label">Points de départ personnalisés</div>
-  <div id="depart-wrap"></div>
-  <button class="btn btn-outline btn-sm" onclick="addDepart()" style="margin-bottom:14px">+ Ajouter</button>
-
-  <div class="section-label">Type de journée (touche pour changer)</div>
-  <div class="card"><div id="day-type-grid" style="display:flex;flex-wrap:wrap;gap:8px"></div></div>
-
-  <button class="btn btn-gold" onclick="nav('hotels')" style="margin-top:8px">Suivant → Hôtels</button>
+  <div class="slbl">Jours aéroport</div>
+  <div id="aw"></div>
+  <button class="btn bo" onclick="addAir()" style="margin-bottom:12px;font-size:11px">+ Ajouter</button>
+  <div class="slbl">Points de départ</div>
+  <div id="dw"></div>
+  <button class="btn bo" onclick="addDep()" style="margin-bottom:12px;font-size:11px">+ Ajouter</button>
+  <div class="slbl">Type de journée</div>
+  <div class="card"><div class="dgrid" id="dg"></div></div>
+  <button class="btn bg bf" onclick="nv('ht')" style="margin-top:10px">Suivant → Hôtels</button>
 </div>
 
-<!-- ══════ SCREEN: HÔTELS ══════ -->
-<div class="screen" id="screen-hotels">
-  <div id="api-banner-wrap"></div>
-
-  <div class="section-label">Importer depuis rapport de réservation</div>
+<!-- HOTELS -->
+<div class="sc" id="sc-ht">
+  <div id="apib"></div>
+  <div class="slbl">Importer rapport RV2 / RV3 / PDF téléphones</div>
   <div class="card">
-    <p style="font-size:12px;color:var(--text-dim);margin-bottom:10px;line-height:1.6">
-      Colle le texte brut de ton rapport (RV3 LuxairTours ou autre format). L'IA détecte les hôtels, les langues clients et les dates.
-    </p>
-    <div class="input-group">
-      <textarea id="rv3Input" placeholder="Colle ici ton rapport de réservation...&#10;&#10;HOTEL NAME : CAVALIERI ART HOTEL MLACAV&#10;F MR LEROY, Marc 73&#10;E MS MYCK, Sophie 37&#10;..."></textarea>
-    </div>
-    <button class="btn btn-gold" id="parse-btn" onclick="parseReport()">
-      <div class="spinner" id="parse-spinner" style="display:none;width:16px;height:16px;border:2px solid rgba(10,10,15,0.3);border-top-color:var(--bg);border-radius:50%;animation:spin 0.7s linear infinite;"></div>
-      Analyser avec IA
-    </button>
+    <p style="font-size:11px;color:var(--text3);margin-bottom:10px;line-height:1.6">Colle le texte du rapport (RV2, RV3, PDF). L'IA reconnaît automatiquement le format.</p>
+    <div class="ig"><textarea id="rv3" placeholder="Colle ici le texte du document...&#10;&#10;HOTEL NAME : CAVALIERI ART HOTEL MLACAV&#10;F MR LEROY, Marc 73&#10;E MS MYCK, Sophie 37"></textarea></div>
+    <button class="btn bg bf" id="pb" onclick="parseRV3()"><div class="sp" id="ps" style="display:none;width:14px;height:14px"></div>Analyser avec IA</button>
   </div>
-
-  <div class="section-label">Ajouter manuellement</div>
-  <div class="add-form">
-    <div class="row2">
-      <div class="input-group"><label class="input-label">Code hôtel</label><input type="text" id="manCode" placeholder="MLACAV" oninput="this.value=this.value.toUpperCase()"/></div>
-      <div class="input-group"><label class="input-label">Nom</label><input type="text" id="manName" placeholder="Cavalieri"/></div>
-    </div>
-    <div class="input-group">
-      <label class="input-label">Zone / Quartier</label>
-      <input type="text" id="manZone" placeholder="St Julian's, Sliema, Spinola..."/>
-    </div>
-    <div class="input-group">
-      <label class="input-label">Langues clients</label>
-      <div class="lang-checkboxes" id="lang-checks"></div>
-    </div>
-    <div class="input-group">
-      <label class="input-label">Jour d'arrivée</label>
-      <select id="manDay">
-        <option value="mon">Lundi</option><option value="tue">Mardi</option>
-        <option value="wed">Mercredi</option><option value="thu">Jeudi</option>
-        <option value="fri">Vendredi</option><option value="sat" selected>Samedi</option>
-        <option value="sun">Dimanche</option>
-      </select>
-    </div>
-    <button class="btn btn-outline" onclick="addManual()">+ Ajouter</button>
+  <div class="slbl">Ajouter manuellement</div>
+  <div style="background:var(--bg);border:1.5px dashed var(--border);border-radius:10px;padding:12px;margin-bottom:10px">
+    <div class="r2"><div class="ig"><label>Code</label><input id="mc" placeholder="MLACAV" oninput="this.value=this.value.toUpperCase()"/></div><div class="ig"><label>Nom</label><input id="mn" placeholder="Cavalieri"/></div></div>
+    <div class="ig"><label>Zone</label><input id="mz" placeholder="St Julian's, Sliema..."/></div>
+    <div class="ig"><label>Langues</label><div class="lcs" id="lcs"></div></div>
+    <div class="ig"><label>Jour d'arrivée</label><select id="md"><option value="mon">Lundi</option><option value="tue">Mardi</option><option value="wed">Mercredi</option><option value="thu">Jeudi</option><option value="fri">Vendredi</option><option value="sat" selected>Samedi</option><option value="sun">Dimanche</option></select></div>
+    <button class="btn bo bf" onclick="addMH()">+ Ajouter</button>
   </div>
-
-  <div id="hotel-list" style="margin-top:16px"></div>
-
-  <button class="btn btn-gold" id="gen-btn" onclick="generateSchedule()" style="margin-top:10px">
-    <div class="spinner" id="gen-spinner" style="display:none;width:16px;height:16px;border:2px solid rgba(10,10,15,0.3);border-top-color:var(--bg);border-radius:50%;animation:spin 0.7s linear infinite;"></div>
-    ✦ Générer le planning
-  </button>
+  <div id="hl"></div>
+  <button class="btn bl bf" id="gb" onclick="genSched()"><div class="sp" id="gs" style="display:none;width:14px;height:14px"></div>✦ Générer le planning</button>
 </div>
 
-<!-- ══════ SCREEN: PLANNING ══════ -->
-<div class="screen" id="screen-schedule">
-  <div class="week-chip"><span id="chip-name">—</span> · <span id="chip-dates">—</span> · <span id="chip-dest">—</span></div>
-  <div class="day-tabs" id="day-tabs"></div>
-  <div id="day-content"></div>
+<!-- PLANNING -->
+<div class="sc" id="sc-pl">
+  <div class="wc"><span id="cnm">—</span> · <span id="cdt">—</span> · <span id="cde">—</span></div>
+  <div class="dts" id="dtabs"></div>
+  <div id="dslots"></div>
 </div>
 
-<!-- ══════ SCREEN: EXPORT ══════ -->
-<div class="screen" id="screen-export">
-  <div class="export-hero">
-    <div class="export-icon">📋</div>
-    <div class="export-title">Planning prêt</div>
-    <div class="export-sub">Weekly Schedule — LuxairTours Format</div>
-  </div>
-  <div class="card" id="export-summary"></div>
-  <button class="btn btn-gold" onclick="downloadCSV()" style="margin-top:4px">↓ Télécharger CSV</button>
-  <button class="btn btn-outline" onclick="copyText()" style="margin-top:8px">Copier résumé texte</button>
-  <button class="btn btn-outline" onclick="resetAll()" style="margin-top:8px;color:var(--red);border-color:rgba(224,85,85,0.3)">🗑 Nouvelle semaine</button>
+<!-- EXPORT -->
+<div class="sc" id="sc-ex">
+  <div class="exh"><div style="font-size:40px">📋</div><div style="font-size:20px;font-weight:700;margin-top:8px">Planning prêt</div><div style="font-size:11px;color:var(--text3);margin-top:4px">LuxairTours Weekly Schedule</div></div>
+  <div class="card" id="exs"></div>
+  <button class="btn bg bf" onclick="dlCSV()" style="margin-top:4px">↓ Télécharger CSV</button>
+  <button class="btn bo bf" onclick="cpTxt()" style="margin-top:8px">📋 Copier texte</button>
+  <button class="btn bo bf" onclick="rstPlan()" style="margin-top:8px;color:var(--red);border-color:#fed7d7">🗑 Nouvelle semaine</button>
 </div>
 
-</div><!-- scroll-area -->
-
-<nav class="bottomnav">
-  <div class="nav-item active" id="nav-week" onclick="nav('week')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-    Semaine
-  </div>
-  <div class="nav-item" id="nav-hotels" onclick="nav('hotels')" style="position:relative">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 22V8l9-5 9 5v14"/><path d="M9 22V12h6v10"/></svg>
-    Hôtels
-    <div class="nav-badge" id="badge">0</div>
-  </div>
-  <div class="nav-item" id="nav-schedule" onclick="nav('schedule')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-    Planning
-  </div>
-  <div class="nav-item" id="nav-export" onclick="nav('export')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-    Export
-  </div>
-</nav>
+</div><!-- /cnt -->
+<div id="nav">
+  <button class="nb on" id="nb-tf" onclick="nv('tf')"><span class="ni">✈️</span>Transfers<div class="nbadge" id="bdg-tf"></div></button>
+  <button class="nb" id="nb-wk" onclick="nv('wk')"><span class="ni">📅</span>Semaine</button>
+  <button class="nb" id="nb-ht" onclick="nv('ht')" style="position:relative"><span class="ni">🏨</span>Hôtels<div class="nbadge" id="bdg-ht"></div></button>
+  <button class="nb" id="nb-pl" onclick="nv('pl')"><span class="ni">🕐</span>Planning</button>
+  <button class="nb" id="nb-ex" onclick="nv('ex')"><span class="ni">↓</span>Export</button>
+</div>
+</div>
 
 <script>
-// ══════════════════ CONSTANTS ══════════════════
-const DAYS = ['mon','tue','wed','thu','fri','sat','sun'];
-const DAY_FR = {mon:'Lundi',tue:'Mardi',wed:'Mercredi',thu:'Jeudi',fri:'Vendredi',sat:'Samedi',sun:'Dimanche'};
-const DAY_S = {mon:'Lun',tue:'Mar',wed:'Mer',thu:'Jeu',fri:'Ven',sat:'Sam',sun:'Dim'};
-const ALL_LANGS = ['FR','EN','DE','LU','IT','ES','PT','NL'];
+const DAYS=['mon','tue','wed','thu','fri','sat','sun'];
+const DFR={mon:'Lundi',tue:'Mardi',wed:'Mercredi',thu:'Jeudi',fri:'Vendredi',sat:'Samedi',sun:'Dimanche'};
+const DS={mon:'Lun',tue:'Mar',wed:'Mer',thu:'Jeu',fri:'Ven',sat:'Sam',sun:'Dim'};
+const LANGS=['FR','EN','DE','LU','IT'];
+const MZ={MLAFOR:'Sliema',MLAVIC:'Sliema',MLAPAL:'Sliema',MLAVER:'Gzira',MLAINT:"St Julian's",MLACAV:"St Julian's",MLARIO:"St Julian's",MLACOR:"St Julian's",MLAHIL:"St Julian's",MLAWES:"St Julian's",MLASOCHS:"St Julian's",MLABWP:'Valletta',MLAEXC:'Valletta',MLAODY:'Qawra',MLADBT:"St Paul's Bay",MLASAN:'Qawra',MLAVIE:"St Paul's Bay",MLAUVAHS:'Naxxar',MLARGS:'Golden Bay',MLARIV:'Mellieha Bay',MLASEA:'Mellieha',MLAPARHS:'Paradise Bay'};
 
-// ══════════════════ STATE ══════════════════
-const S = {
-  repName:'Paul Robert', matricule:'20772',
-  startDate:null,
-  dest:{ country:'Malta', city:'Malte', code:'MLA', base:'Bugibba' },
-  airports:[{day:'tue',from:'08:30',to:'11:00'},{day:'sat',from:'07:25',to:'10:00'}],
-  departs:[{day:'wed',location:'Bugibba'},{day:'sun',location:'Bugibba'}],
-  dayTypes:{mon:'OFFICE',fri:'OFFICE'}, // day→'OFFICE'|'DAYOFF'|null
-  hotels:[], schedule:{}, selDay:'tue',
-  apiKey:'',
-};
-let mLangs = new Set();
+let GK=localStorage.getItem('lux_gk')||'';
+let PAX=JSON.parse(localStorage.getItem('lux_pax')||'[]');
+let BUSES=JSON.parse(localStorage.getItem('lux_bus')||JSON.stringify([{id:1,label:"Navette Matin",time:"06:30",note:""},{id:2,label:"Navette Midi",time:"11:00",note:""},{id:3,label:"Navette Soir",time:"14:45",note:""}]));
+let TAB='dep',EDITID=null;
+const SC={repName:'Paul Robert',matricule:'20772',dest:'Malta, Malte',code:'MLA',base:'Bugibba',startDate:null,airports:[{day:'tue',from:'08:30',to:'11:00'},{day:'sat',from:'07:25',to:'10:00'}],departs:[{day:'wed',location:'Bugibba'},{day:'sun',location:'Bugibba'}],dayTypes:{mon:'OFFICE',fri:'OFFICE'},hotels:[],schedule:{},selDay:'tue'};
+let ML=new Set();
+try{const sv=JSON.parse(localStorage.getItem('lux_sc')||'{}');if(sv.repName){Object.assign(SC,{...sv,hotels:(sv.hotels||[]).map(h=>({...h,langs:new Set(h.langs||[])}))});if(SC.startDate)SC.startDate=new Date(SC.startDate);}}catch(e){}
 
-// ══════════════════ INIT ══════════════════
+function spx(){localStorage.setItem('lux_pax',JSON.stringify(PAX));localStorage.setItem('lux_bus',JSON.stringify(BUSES));}
+function ssc(){try{localStorage.setItem('lux_sc',JSON.stringify({...SC,startDate:SC.startDate?.toISOString(),hotels:SC.hotels.map(h=>({...h,langs:[...h.langs]}))}))}catch(e){}}
+
 function init(){
-  try{
-    const p = JSON.parse(localStorage.getItem('lux2_state')||'{}');
-    if(p.repName) S.repName=p.repName;
-    if(p.matricule) S.matricule=p.matricule;
-    if(p.dest) S.dest=p.dest;
-    if(p.airports) S.airports=p.airports;
-    if(p.departs) S.departs=p.departs;
-    if(p.dayTypes) S.dayTypes=p.dayTypes;
-    if(p.hotels) S.hotels=p.hotels.map(h=>({...h,langs:new Set(h.langs||[])}));
-    if(p.schedule) S.schedule=p.schedule;
-    if(p.selDay) S.selDay=p.selDay;
-    if(p.startDate) S.startDate=new Date(p.startDate);
-    S.apiKey=localStorage.getItem('lux2_key')||'';
-  }catch(e){}
-
-  if(!S.startDate){
-    const t=new Date(); const diff=(8-t.getDay())%7||7;
-    S.startDate=new Date(t); S.startDate.setDate(t.getDate()+diff);
-  }
-
-  document.getElementById('startDate').value=S.startDate.toISOString().slice(0,10);
-  document.getElementById('repName').value=S.repName;
-  document.getElementById('matricule').value=S.matricule;
-
-  renderLangChecks();
-  renderAirports(); renderDeparts(); renderDayTypeGrid();
-  renderDestBanner(); renderApiBanner(); renderHotelList(); updateBadge();
-  updateAIStatus(); updateTopDest();
+  if(!SC.startDate){const t=new Date();const d=(8-t.getDay())%7||7;SC.startDate=new Date(t);SC.startDate.setDate(t.getDate()+d);}
+  bwf();rBus();rPax();rLC();rAir();rDep();rDG();rHL();ubh();ubdg();rAB();uAI();
+  document.getElementById('hdest').textContent='Rep Manager · '+(SC.code||'MLA');
+  if('serviceWorker' in navigator){const sw="const C='lux-v4';self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['./'])));self.skipWaiting();});self.addEventListener('fetch',e=>{if(e.request.url.includes('googleapis'))return;e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).catch(()=>caches.match('./'))));});";navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});}
 }
 
-function save(){
-  try{
-    const o={...S, startDate:S.startDate?.toISOString(),
-      hotels:S.hotels.map(h=>({...h,langs:[...h.langs]})),
-    }; delete o.apiKey;
-    localStorage.setItem('lux2_state',JSON.stringify(o));
-  }catch(e){}
-}
+function nv(s){swf();document.querySelectorAll('.sc').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.nb').forEach(x=>x.classList.remove('on'));document.getElementById('sc-'+s)?.classList.add('on');document.getElementById('nb-'+s)?.classList.add('on');document.getElementById('cnt').scrollTop=0;if(s==='pl')rSV();if(s==='ex')rEx();if(s==='wk')bwf();}
+function swf(){SC.repName=document.getElementById('rn')?.value||SC.repName;SC.matricule=document.getElementById('rm')?.value||SC.matricule;SC.dest=document.getElementById('rd')?.value||SC.dest;SC.code=document.getElementById('rc')?.value||SC.code;SC.base=document.getElementById('rb')?.value||SC.base;const ds=document.getElementById('ws')?.value;if(ds)SC.startDate=new Date(ds);ssc();document.getElementById('hdest').textContent='Rep Manager · '+(SC.code||'MLA');}
+function bwf(){const g=id=>document.getElementById(id);if(g('rn'))g('rn').value=SC.repName;if(g('rm'))g('rm').value=SC.matricule;if(g('rd'))g('rd').value=SC.dest;if(g('rc'))g('rc').value=SC.code;if(g('rb'))g('rb').value=SC.base;if(g('ws')&&SC.startDate)g('ws').value=SC.startDate.toISOString().slice(0,10);}
 
-// ══════════════════ NAV ══════════════════
-function nav(s){
-  syncForm();
-  document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
-  document.getElementById('screen-'+s).classList.add('active');
-  document.getElementById('nav-'+s).classList.add('active');
-  document.querySelector('.scroll-area').scrollTop=0;
-  if(s==='schedule') renderScheduleView();
-  if(s==='export') renderExport();
-}
+function uAI(){const ok=!!GK;document.getElementById('aidot').className='aidot'+(ok?' ok':'');document.getElementById('ailbl').textContent=ok?'AI ✓':'AI';}
+function rAB(){const w=document.getElementById('apib');if(!w)return;w.innerHTML=!GK?'<div style="background:#fff7ed;border:1px solid #fbd38d;border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:11px;color:#c05621;line-height:1.7">⚡ <strong>IA non connectée</strong> — Gratuit via Google.<br><span style="color:var(--blue);cursor:pointer;text-decoration:underline" onclick="om(\'api-m\')">Ajouter ma clé Gemini →</span></div>':'<div style="background:#f0fff4;border:1px solid #9ae6b4;border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:11px;color:var(--green)">✅ Gemini connectée (gratuit) · <span style="cursor:pointer;text-decoration:underline" onclick="om(\'api-m\')">Changer</span></div>';}
+function saveKey(){const v=document.getElementById('aki').value.trim();if(v){GK=v;localStorage.setItem('lux_gk',v);uAI();rAB();toast('Clé sauvegardée ✓','ok');}cm('api-m');}
 
-function syncForm(){
-  S.repName=document.getElementById('repName').value;
-  S.matricule=document.getElementById('matricule').value;
-  S.startDate=new Date(document.getElementById('startDate').value);
-  save();
-}
-
-// ══════════════════ DESTINATION ══════════════════
-function updateTopDest(){ document.getElementById('top-dest').textContent=S.dest.code||S.dest.city||'—'; }
-
-function renderDestBanner(){
-  const w=document.getElementById('dest-banner-wrap');
-  w.innerHTML=`<div class="dest-banner" onclick="openDestModal()">
-    <div class="dest-banner-title">📍 ${S.dest.city}, ${S.dest.country}</div>
-    <div class="dest-banner-sub">Code: ${S.dest.code||'—'} · Base: ${S.dest.base||'—'} <span style="color:var(--gold);font-size:11px">· modifier</span></div>
-  </div>`;
-}
-
-function openDestModal(){
-  document.getElementById('dest-country').value=S.dest.country||'';
-  document.getElementById('dest-city').value=S.dest.city||'';
-  document.getElementById('dest-code').value=S.dest.code||'';
-  document.getElementById('dest-base').value=S.dest.base||'';
-  openModal('dest-modal');
-}
-function saveDestination(){
-  S.dest.country=document.getElementById('dest-country').value.trim()||S.dest.country;
-  S.dest.city=document.getElementById('dest-city').value.trim()||S.dest.city;
-  S.dest.code=document.getElementById('dest-code').value.trim()||S.dest.code;
-  S.dest.base=document.getElementById('dest-base').value.trim()||S.dest.base;
-  updateTopDest(); renderDestBanner(); save();
-  closeModal('dest-modal');
-  showToast(`Destination: ${S.dest.city} ✓`,'ok');
-}
-
-// ══════════════════ API KEY ══════════════════
-function updateAIStatus(){
-  const ok=!!S.apiKey;
-  document.getElementById('ai-dot').style.background=ok?'var(--green)':'var(--gold)';
-  document.getElementById('ai-label').textContent=ok?'AI ✓':'AI';
-}
-function renderApiBanner(){
-  const w=document.getElementById('api-banner-wrap');
-  if(!S.apiKey){
-    w.innerHTML=`<div class="setup-banner warn" style="margin-bottom:12px">
-      <div class="setup-banner-icon">⚡</div>
-      <div class="setup-banner-text">
-        <strong>IA non connectée.</strong> Gratuit via Google AI Studio.<br>
-        <a onclick="openApiModal()">Ajouter ma clé Gemini → aistudio.google.com</a>
-      </div>
-    </div>`;
-  } else {
-    w.innerHTML=`<div class="setup-banner" style="margin-bottom:12px">
-      <div class="setup-banner-icon">✅</div>
-      <div class="setup-banner-text"><strong>IA connectée</strong> — Gemini (gratuit)<br>
-      <a onclick="openApiModal()">Changer la clé</a></div>
-    </div>`;
-  }
-}
-function openApiModal(){ document.getElementById('api-input').value=''; openModal('api-modal'); }
-function saveApiKey(){
-  const v=document.getElementById('api-input').value.trim();
-  if(v){ S.apiKey=v; localStorage.setItem('lux2_key',v); updateAIStatus(); renderApiBanner(); showToast('Clé sauvegardée ✓','ok'); }
-  closeModal('api-modal');
-}
-
-// ══════════════════ WEEK SCREEN ══════════════════
-function renderDayTypeGrid(){
-  const g=document.getElementById('day-type-grid');
-  g.innerHTML=DAYS.map(d=>{
-    const t=S.dayTypes[d];
-    const cls=t==='OFFICE'?'sel-FR':t==='DAYOFF'?'sel-DE':'';
-    return `<div class="lang-check ${cls}" onclick="cycleDayType('${d}')" style="flex-direction:column;gap:2px;padding:8px 12px;min-width:54px;text-align:center">
-      <span style="font-size:12px">${DAY_S[d]}</span>
-      <span style="font-size:9px;opacity:0.7">${t||'normal'}</span>
-    </div>`;
-  }).join('');
-}
-function cycleDayType(d){
-  const cur=S.dayTypes[d];
-  if(!cur) S.dayTypes[d]='OFFICE';
-  else if(cur==='OFFICE') S.dayTypes[d]='DAYOFF';
-  else delete S.dayTypes[d];
-  renderDayTypeGrid(); save();
-}
-
-function addAirport(){ S.airports.push({day:'tue',from:'08:30',to:'11:00'}); renderAirports(); }
-function removeAirport(i){ S.airports.splice(i,1); renderAirports(); }
-function renderAirports(){
-  document.getElementById('airport-wrap').innerHTML=S.airports.map((a,i)=>`
-    <div class="card" style="margin-bottom:8px">
-      <div class="row3">
-        <div class="input-group" style="margin-bottom:0"><label class="input-label">Jour</label>
-          <select onchange="S.airports[${i}].day=this.value">${DAYS.map(d=>`<option value="${d}" ${a.day===d?'selected':''}>${DAY_S[d]}</option>`).join('')}</select></div>
-        <div class="input-group" style="margin-bottom:0"><label class="input-label">Début</label>
-          <input type="time" value="${a.from}" onchange="S.airports[${i}].from=this.value"/></div>
-        <div class="input-group" style="margin-bottom:0"><label class="input-label">Fin</label>
-          <input type="time" value="${a.to}" onchange="S.airports[${i}].to=this.value"/></div>
-      </div>
-      <button class="btn btn-danger btn-sm" onclick="removeAirport(${i})" style="margin-top:8px">Supprimer</button>
-    </div>`).join('');
-}
-
-function addDepart(){ S.departs.push({day:'wed',location:S.dest.base||''}); renderDeparts(); }
-function removeDepart(i){ S.departs.splice(i,1); renderDeparts(); }
-function renderDeparts(){
-  document.getElementById('depart-wrap').innerHTML=S.departs.map((d,i)=>`
-    <div class="card" style="margin-bottom:8px">
-      <div class="row2">
-        <div class="input-group" style="margin-bottom:0"><label class="input-label">Jour</label>
-          <select onchange="S.departs[${i}].day=this.value">${DAYS.map(day=>`<option value="${day}" ${d.day===day?'selected':''}>${DAY_S[day]}</option>`).join('')}</select></div>
-        <div class="input-group" style="margin-bottom:0"><label class="input-label">Départ depuis</label>
-          <input type="text" value="${d.location}" placeholder="${S.dest.base||'ville...'}" onchange="S.departs[${i}].location=this.value"/></div>
-      </div>
-      <button class="btn btn-danger btn-sm" onclick="removeDepart(${i})" style="margin-top:8px">Supprimer</button>
-    </div>`).join('');
-}
-
-// ══════════════════ LANG CHECKBOXES ══════════════════
-function renderLangChecks(){
-  const c=document.getElementById('lang-checks');
-  c.innerHTML=ALL_LANGS.map(l=>`<div class="lang-check ${mLangs.has(l)?'sel-'+l:''}" id="lc-${l}" onclick="toggleLang('${l}')">${l}</div>`).join('');
-}
-function toggleLang(l){
-  mLangs.has(l)?mLangs.delete(l):mLangs.add(l);
-  renderLangChecks();
-}
-
-// ══════════════════ HOTELS ══════════════════
-function addManual(){
-  const code=document.getElementById('manCode').value.trim().toUpperCase();
-  const name=document.getElementById('manName').value.trim();
-  const zone=document.getElementById('manZone').value.trim();
-  const day=document.getElementById('manDay').value;
-  if(!code||!name){showToast('Code et nom requis','err');return;}
-  if(!mLangs.size){showToast('Sélectionne au moins une langue','err');return;}
-  S.hotels.push({code,name,zone:zone||'—',langs:new Set(mLangs),arrivalDay:day});
-  document.getElementById('manCode').value='';
-  document.getElementById('manName').value='';
-  document.getElementById('manZone').value='';
-  mLangs.clear(); renderLangChecks();
-  renderHotelList(); updateBadge(); save();
-  showToast(`${code} ajouté ✓`,'ok');
-}
-
-function removeHotel(i){ S.hotels.splice(i,1); renderHotelList(); updateBadge(); save(); }
-
-function updateBadge(){
-  const b=document.getElementById('badge');
-  b.style.display=S.hotels.length?'block':'none';
-  b.textContent=S.hotels.length;
-}
-
-function dur(langs){ const n=(langs instanceof Set)?langs.size:(langs||[]).length; return n<=1?45:n<=2?60:75; }
-
-function getDayDate(d){
-  const sd=new Date(document.getElementById('startDate').value||S.startDate);
-  const x=new Date(sd); x.setDate(sd.getDate()+DAYS.indexOf(d));
-  return x.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
-}
-
-function renderHotelList(){
-  const w=document.getElementById('hotel-list');
-  if(!S.hotels.length){w.innerHTML='';return;}
-  const byDay={};
-  S.hotels.forEach((h,i)=>{if(!byDay[h.arrivalDay])byDay[h.arrivalDay]=[];byDay[h.arrivalDay].push({...h,idx:i});});
-  w.innerHTML=DAYS.filter(d=>byDay[d]).map(d=>`
-    <div class="section-label">${DAY_FR[d]} ${getDayDate(d)}</div>
-    ${byDay[d].map(h=>`<div class="hotel-card">
-      <div class="hotel-code">${h.code}</div>
-      <div class="hotel-info">
-        <div class="hotel-name">${h.name}</div>
-        <div class="hotel-meta">${h.zone||'—'}</div>
-        <div class="lang-tags">
-          ${[...(h.langs||[])].map(l=>`<span class="lang-tag lang-${l}">${l}</span>`).join('')}
-          <span class="dur-tag">${dur(h.langs)}min</span>
-        </div>
-      </div>
-      <button onclick="removeHotel(${h.idx})" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:22px;padding:4px;line-height:1">×</button>
-    </div>`).join('')}
-  `).join('');
-}
-
-// ══════════════════ GEMINI API ══════════════════
-async function callGemini(prompt){
-  if(!S.apiKey) throw new Error('no_key');
-  const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${S.apiKey}`;
-  const body={contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.2,maxOutputTokens:3000}};
-  const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Gemini error');}
+async function gCall(parts){
+  if(!GK)throw new Error('NK');
+  const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+GK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts}],generationConfig:{temperature:.1,maxOutputTokens:4000}})});
+  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'err');}
   const d=await r.json();
-  let text=d.candidates?.[0]?.content?.parts?.[0]?.text||'';
-  text=text.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
-  return text;
+  return(d.candidates?.[0]?.content?.parts?.[0]?.text||'').replace(/\n?/g,'').trim();
 }
 
-// ══════════════════ PARSE REPORT ══════════════════
-async function parseReport(){
-  if(!S.apiKey){openApiModal();return;}
-  const text=document.getElementById('rv3Input').value.trim();
-  if(!text){showToast('Colle un rapport d\'abord','err');return;}
-  showLoading('Lecture du rapport...','Détection des hôtels et langues');
-  document.getElementById('parse-btn').disabled=true;
+document.getElementById('fi').onchange=e=>pFiles([...e.target.files]);
+document.getElementById('ci').onchange=e=>pFiles([...e.target.files]);
+function sIL(on){document.getElementById('i-idle').style.display=on?'none':'block';document.getElementById('i-load').style.display=on?'block':'none';}
+function sEb(m){const e=document.getElementById('eb');if(m){e.textContent='⚠️ '+m;e.style.display='block';}else e.style.display='none';}
+function sOb(m){const e=document.getElementById('ob');if(m){e.textContent='✓ '+m;e.style.display='block';setTimeout(()=>e.style.display='none',3000);}else e.style.display='none';}
 
-  const sd=new Date(document.getElementById('startDate').value||S.startDate);
+async function pFiles(files){if(!GK){om('api-m');return;}sIL(true);sEb('');let tot=0;for(const f of files){try{const n=await pFile(f);tot+=n;}catch(e){sEb(e.message);}}sIL(false);spx();rPax();if(tot>0)sOb(tot+' passager(s) importé(s)');}
 
-  const prompt=`Analyse ce rapport de réservation hôtelière et extrais les informations.
+async function pFile(file){
+  const nm=file.name.toLowerCase(),tp=file.type;
+  const isPdf=tp==='application/pdf'||nm.endsWith('.pdf');
+  const isImg=tp.startsWith('image/')||nm.endsWith('.heic')||nm.endsWith('.heif');
+  const isTxt=tp.startsWith('text/')||nm.endsWith('.txt');
+  const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file);});
+  const PROMPT='You are a LuxairTours document expert. Extract ALL passengers. Detect format automatically: RV3/RV2 booking report (lines starting F/E/D/L = FR/EN/DE/LU), or phone list PDF (hotel sections with PNR, name, arrival, departure, phone). Return ONLY valid JSON array, no markdown: [{"lastName":"DUPONT","firstName":"Marc","hotel":"MLACAV","hotelName":"Cavalieri Art Hotel","arrival":"07-APR-26","departure":"14-APR-26","phone":"+33612345678","lang":"FR","notes":""}]. Empty string for missing. Return [] if nothing.';
+  let parts;
+  if(isPdf)parts=[{text:PROMPT+' PDF document.'},{inline_data:{mime_type:'application/pdf',data:b64}}];
+  else if(isImg){let mt=tp;if(!mt||nm.endsWith('.heic'))mt='image/jpeg';if(!['image/jpeg','image/png','image/gif','image/webp'].includes(mt))mt='image/jpeg';parts=[{text:PROMPT+' Photo of document.'},{inline_data:{mime_type:mt,data:b64}}];}
+  else if(isTxt){const t=await file.text();const x=exTxt(t);mPax(x);return x.length;}
+  else throw new Error('Format non supporté: '+file.name);
+  const raw=await gCall(parts);const list=JSON.parse(raw);mPax(list);return list.length;
+}
 
-Codes langue dans le rapport: F ou FR = Français, E ou EN = Anglais, D ou DE = Allemand, L ou LU = Luxembourgeois, I ou IT = Italien, S ou ES = Espagnol, P ou PT = Portugais, N ou NL = Néerlandais.
-Une ligne comme "F MR DUPONT" = client français. "E MS SMITH" = client anglais.
+function exTxt(text){const out=[];const lines=text.split('\n');let hotel='',hcode='';for(const line of lines){const hm=line.match(/HOTEL NAME\s*:\s*(.+?)\s+(MLA\w+)/);if(hm){hcode=hm[2];hotel=hm[1].trim();continue;}const pm=line.match(/^([FEDL])\s+(MR|MS|CHD)\s+([A-Z][A-Za-z\-]+),\s*([A-Za-z][A-Za-z\- ]+)/);if(pm){const lg=pm[1]==='F'?'FR':pm[1]==='E'?'EN':pm[1]==='D'?'DE':'LU';out.push({lastName:pm[3],firstName:pm[4].trim(),hotel:hcode,hotelName:hotel,lang:lg,arrival:'',departure:'',phone:'',notes:'',});}}return out;}
+function uid(){return'p_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);}
+function mPax(list){const ex=new Set(PAX.map(p=>(p.lastName+p.firstName+p.arrival).toLowerCase()));const fr=list.map(p=>({id:uid(),lastName:p.lastName||'',firstName:p.firstName||'',fullName:((p.firstName||'')+' '+(p.lastName||'')).trim(),hotel:p.hotel||'',hotelName:p.hotelName||'',arrival:p.arrival||'',departure:p.departure||'',phone:p.phone||'',lang:p.lang||dLang(p.phone||''),pickupTime:'',notes:p.notes||''})).filter(p=>!ex.has((p.lastName+p.firstName+p.arrival).toLowerCase()));PAX=[...PAX,...fr];}
 
-Pour chaque hôtel trouvé, retourne:
-- code: code de l'hôtel (ex: MLACAV)
-- name: nom complet
-- zone: quartier/zone si mentionné
-- langs: tableau des langues UNIQUES trouvées pour cet hôtel (ex: ["FR","EN"])
-- arrivalDate: date d'arrivée au format JJ.MM.AA si trouvée
-- clientCount: nombre total de clients
+function dLang(phone){const c=phone.replace(/\s/g,'');if(c.startsWith('+49')||c.startsWith('+43'))return'DE';if(c.startsWith('+44'))return'EN';if(c.startsWith('+352'))return'LU';return'FR';}
+function lBadge(lang){const m={FR:'bfr',DE:'bde',LU:'blu',EN:'ben'};return '<span class="bg2 '+(m[lang]||'bfr')+'">'+lang+'</span>';}
 
-Réponds UNIQUEMENT en JSON valide, sans backticks:
-{"hotels":[{"code":"MLACAV","name":"Cavalieri Art Hotel","zone":"St Julian's","langs":["FR","EN"],"arrivalDate":"31.03.26","clientCount":3}]}
+function bMsg(p,busId){
+  const lg=p.lang||dLang(p.phone||'');
+  const sc=busId?BUSES.filter(b=>b.id===parseInt(busId)):BUSES;
+  const t=sc.length?sc.map(b=>b.time).join(' / '):'[heure à préciser]';
+  const nm=p.firstName||p.lastName;
+  if(lg==='DE')return'Guten Tag '+nm+',\n\nIhr LuxairTours Reiseleiter hier.\nDer Bus wird Sie um '+t+' Uhr abholen.\n\nBitte bestätigen Sie den Empfang.\n\nMit freundlichen Grüßen,\n'+SC.repName+'\nLuxairTours';
+  if(lg==='LU')return'Moien '+nm+',\n\nIer LuxairTours Reiseleeder hei.\nDen Bus kënnt Iech um '+t+' Auer ofhuelen.\n\nBitte confirméiert den Empfang.\n\nMat frëndleche Gréiss,\n'+SC.repName+'\nLuxairTours';
+  if(lg==='EN')return'Hello '+nm+',\n\nYour LuxairTours guide here.\nThe bus will pick you up at '+t+'.\n\nPlease confirm receipt.\n\nKind regards,\n'+SC.repName+'\nLuxairTours';
+  return'Bonjour '+nm+',\n\nVotre guide LuxairTours.\nLe bus vous récupère à '+t+'.\n\nMerci de confirmer réception.\n\nCordialement,\n'+SC.repName+'\nLuxairTours';
+}
+function waUrl(p,busId){if(!p.phone)return null;return'https://wa.me/'+p.phone.replace(/\D/g,'')+'?text='+encodeURIComponent(bMsg(p,busId));}
 
-Rapport à analyser:
-${text}`;
+function tdl(){const d=new Date();const M=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];return String(d.getDate()).padStart(2,'0')+'-'+M[d.getMonth()]+'-'+String(d.getFullYear()).slice(-2);}
+function swT(t){TAB=t;['dep','arr','all'].forEach(x=>{const b=document.getElementById('tab-'+x);b.className='tb'+(t===x?' on':'');});rPax();}
+function ubdg(){const b=document.getElementById('bdg-tf');b.style.display=PAX.length?'block':'none';b.textContent=PAX.length;}
 
+function rPax(){
+  const td=tdl(),q=document.getElementById('sb')?.value.toLowerCase()||'';
+  const deps=PAX.filter(p=>p.departure),arrs=PAX.filter(p=>p.arrival);
+  document.getElementById('stot').textContent=PAX.length;
+  document.getElementById('sdep').textContent=deps.filter(p=>p.departure===td).length;
+  ubdg();
+  let list=TAB==='dep'?deps:TAB==='arr'?arrs:PAX;
+  if(q)list=list.filter(p=>[p.fullName,p.lastName,p.firstName,p.hotel,p.hotelName,p.phone].some(v=>v&&v.toLowerCase().includes(q)));
+  list=list.slice().sort((a,b)=>(TAB==='arr'?a.arrival:a.departure||'').localeCompare(TAB==='arr'?b.arrival:b.departure||''));
+  const c=document.getElementById('plist');
+  if(!list.length){c.innerHTML='<div class="emp"><div class="emp-i">'+(PAX.length===0?'📂':'🔍')+'</div>'+(PAX.length===0?'Importez un document pour commencer':'Aucun résultat')+'</div>';return;}
+  c.innerHTML=list.map(p=>EDITID===p.id?rEF(p):rCard(p)).join('');
+}
+
+function rCard(p){
+  const bo=BUSES.map(b=>'<option value="'+b.id+'">'+b.label+' — '+b.time+'</option>').join('');
+  return '<div class="pax" id="card-'+p.id+'"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px"><div class="pax-name">'+(p.firstName?'<span style="font-weight:400;color:var(--text2)">'+p.firstName+'</span> ':'')+(p.lastName||p.fullName)+'</div>'+lBadge(p.lang||dLang(p.phone||''))+'</div><div class="pax-sub">'+(p.hotelName||p.hotel||'')+'</div><div class="bgs">'+(p.arrival?'<span class="bg2 ba">✈ '+p.arrival+'</span>':'')+(p.departure?'<span class="bg2 bd">🛫 '+p.departure+'</span>':'')+(p.pickupTime?'<span class="bg2 bp">🕐 '+p.pickupTime+'</span>':'')+'</div><div class="pa">'+(p.phone?'<select id="bs-'+p.id+'" style="flex:1;min-width:110px;padding:6px 8px;border-radius:7px;border:1.5px solid var(--border);background:#fff;font-family:inherit;font-size:10px;outline:none"><option value="">Tous les bus</option>'+bo+'</select><a href="#" onclick="oWA(\''+p.id+'\');return false;" class="btn bgr" style="text-decoration:none;font-size:11px">📱 WA</a>':'<span style="font-size:10px;color:var(--text3)">Pas de tél.</span>')+'<button class="btn bo" onclick="sEdit(\''+p.id+'\')">✏️</button><button class="btn br" onclick="dPax(\''+p.id+'\')">🗑</button></div></div>';
+}
+
+function rEF(p){
+  return '<div class="ec" id="card-'+p.id+'"><div style="font-size:11px;font-weight:700;color:var(--gold-d);margin-bottom:8px">✏️ MODIFIER</div><div class="eg">'+[['firstName','Prénom'],['lastName','Nom'],['arrival','Arrivée'],['departure','Départ'],['phone','Téléphone'],['hotel','Code hôtel'],['hotelName','Nom hôtel'],['pickupTime','Pickup'],['notes','Notes']].map(([k,l])=>'<div class="ig"><label>'+l+'</label><input id="ef-'+k+'" value="'+(p[k]||'').replace(/"/g,'&quot;')+'"/></div>').join('')+'<div class="ig"><label>Langue</label><select id="ef-lang" style="font-size:12px;padding:7px 8px">'+'FR,EN,DE,LU'.split(',').map(l=>'<option value="'+l+'"'+(p.lang===l?' selected':'')+'>'+l+'</option>').join('')+'</select></div></div><div style="display:flex;gap:6px"><button class="btn bg" onclick="svEdit(\''+p.id+'\')">✓ Enregistrer</button><button class="btn bo" onclick="cEdit()">✕ Annuler</button></div></div>';
+}
+
+function oWA(id){const p=PAX.find(x=>x.id===id);if(!p||!p.phone)return;const u=waUrl(p,document.getElementById('bs-'+id)?.value||'');if(u)window.open(u,'_blank');}
+function sEdit(id){EDITID=id;rPax();document.getElementById('ef-firstName')?.focus();}
+function cEdit(){EDITID=null;rPax();}
+function svEdit(id){const fs=['firstName','lastName','arrival','departure','phone','hotel','hotelName','pickupTime','notes','lang'];const u={};fs.forEach(k=>{const e=document.getElementById('ef-'+k);if(e)u[k]=e.value;});PAX=PAX.map(p=>{if(p.id!==id)return p;const x={...p,...u};x.fullName=((x.firstName||'')+' '+(x.lastName||'')).trim();return x;});EDITID=null;spx();rPax();}
+function dPax(id){if(!confirm('Supprimer ?'))return;PAX=PAX.filter(p=>p.id!==id);spx();rPax();}
+function clearAll(){if(!confirm('Effacer tous les passagers ?'))return;PAX=[];spx();rPax();toast('Liste effacée','ok');}
+
+document.getElementById('bt').onclick=function(){this.classList.toggle('op');document.getElementById('bp').classList.toggle('op');};
+function rBus(){document.getElementById('bch').innerHTML=BUSES.map(b=>'<span class="bc"><strong>'+b.time+'</strong> '+b.label+(b.note?' <span style="color:var(--text3);font-size:9px">('+b.note+')</span>':'')+'  <button class="db" onclick="rmBus('+b.id+')">✕</button></span>').join('');}
+function addBus(){const l=document.getElementById('nbl').value.trim(),t=document.getElementById('nbt').value.trim(),n=document.getElementById('nbn').value.trim();if(!l||!t)return;BUSES.push({id:Date.now(),label:l,time:t,note:n});spx();['nbl','nbt','nbn'].forEach(i=>document.getElementById(i).value='');rBus();}
+function rmBus(id){BUSES=BUSES.filter(b=>b.id!==id);spx();rBus();}
+
+function rDG(){document.getElementById('dg').innerHTML=DAYS.map(d=>{const t=SC.dayTypes[d];return'<div class="dc '+(t==='OFFICE'?'ofc':t==='DAYOFF'?'dof':'')+'" onclick="cDT(\''+d+'\')" style="min-width:58px;text-align:center"><div style="font-size:12px;font-weight:700">'+DS[d]+'</div><div style="font-size:8px;margin-top:2px">'+(t||'normal')+'</div></div>';}).join('');}
+function cDT(d){const c=SC.dayTypes[d];if(!c)SC.dayTypes[d]='OFFICE';else if(c==='OFFICE')SC.dayTypes[d]='DAYOFF';else delete SC.dayTypes[d];rDG();ssc();}
+
+function addAir(){SC.airports.push({day:'tue',from:'08:30',to:'11:00'});rAir();}
+function rmAir(i){SC.airports.splice(i,1);rAir();}
+function rAir(){document.getElementById('aw').innerHTML=SC.airports.map((a,i)=>'<div class="card" style="margin-bottom:8px"><div class="r3"><div class="ig"><label>Jour</label><select onchange="SC.airports['+i+'].day=this.value">'+DAYS.map(d=>'<option value="'+d+'"'+(a.day===d?' selected':'')+'>'+DS[d]+'</option>').join('')+'</select></div><div class="ig"><label>Début</label><input type="time" value="'+a.from+'" onchange="SC.airports['+i+'].from=this.value"/></div><div class="ig"><label>Fin</label><input type="time" value="'+a.to+'" onchange="SC.airports['+i+'].to=this.value"/></div></div><button class="btn br" onclick="rmAir('+i+')" style="margin-top:6px;font-size:11px">Supprimer</button></div>').join('');}
+
+function addDep(){SC.departs.push({day:'wed',location:SC.base||''});rDep();}
+function rmDep(i){SC.departs.splice(i,1);rDep();}
+function rDep(){document.getElementById('dw').innerHTML=SC.departs.map((d,i)=>'<div class="card" style="margin-bottom:8px"><div class="r2"><div class="ig"><label>Jour</label><select onchange="SC.departs['+i+'].day=this.value">'+DAYS.map(day=>'<option value="'+day+'"'+(d.day===day?' selected':'')+'>'+DS[day]+'</option>').join('')+'</select></div><div class="ig"><label>Depuis</label><input type="text" value="'+d.location+'" placeholder="'+(SC.base||'ville...')+'" onchange="SC.departs['+i+'].location=this.value"/></div></div><button class="btn br" onclick="rmDep('+i+')" style="margin-top:6px;font-size:11px">Supprimer</button></div>').join('');}
+
+function rLC(){document.getElementById('lcs').innerHTML=LANGS.map(l=>'<div class="lc '+(ML.has(l)?'s'+l:'')+'" id="lc-'+l+'" onclick="tgL(\''+l+'\')">'+l+'</div>').join('');}
+function tgL(l){ML.has(l)?ML.delete(l):ML.add(l);rLC();}
+function addMH(){const c=document.getElementById('mc').value.trim().toUpperCase(),n=document.getElementById('mn').value.trim(),z=document.getElementById('mz').value.trim(),d=document.getElementById('md').value;if(!c||!n){toast('Code et nom requis','er');return;}if(!ML.size){toast('Sélectionne une langue','er');return;}SC.hotels.push({code:c,name:n,zone:z||MZ[c]||'—',langs:new Set(ML),arrivalDay:d});['mc','mn','mz'].forEach(i=>document.getElementById(i).value='');ML.clear();rLC();rHL();ubh();ssc();toast(c+' ajouté ✓','ok');}
+function rmH(i){SC.hotels.splice(i,1);rHL();ubh();ssc();}
+function ubh(){const b=document.getElementById('bdg-ht');b.style.display=SC.hotels.length?'block':'none';b.textContent=SC.hotels.length;}
+function dur(l){const n=(l instanceof Set)?l.size:(l||[]).length;return n<=1?45:n<=2?60:75;}
+function wkD(dk){const sd=new Date(document.getElementById('ws')?.value||SC.startDate||new Date());const d=new Date(sd);d.setDate(sd.getDate()+DAYS.indexOf(dk));return d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});}
+
+function rHL(){const w=document.getElementById('hl');if(!SC.hotels.length){w.innerHTML='';return;}const bd={};SC.hotels.forEach((h,i)=>{if(!bd[h.arrivalDay])bd[h.arrivalDay]=[];bd[h.arrivalDay].push({...h,idx:i});});w.innerHTML=DAYS.filter(d=>bd[d]).map(d=>'<div class="slbl">'+DFR[d]+' '+wkD(d)+'</div>'+bd[d].map(h=>'<div class="hc"><div class="hcode">'+h.code+'</div><div class="hi"><div class="hn">'+h.name+'</div><div class="hm">'+(h.zone||'—')+' · '+[...(h.langs||[])].join('/')+' · '+dur(h.langs)+'min</div></div><button onclick="rmH('+h.idx+')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:20px;padding:4px;line-height:1">×</button></div>').join('')).join('');}
+
+async function parseRV3(){
+  if(!GK){om('api-m');return;}
+  const text=document.getElementById('rv3').value.trim();if(!text){toast('Colle du texte d\'abord','er');return;}
+  document.getElementById('pb').disabled=true;document.getElementById('ps').style.display='inline-block';
+  const sd=new Date(document.getElementById('ws')?.value||SC.startDate||new Date());
+  const pr='Tu analyses des rapports LuxairTours (RV2, RV3, PDF téléphones). Formats:\n- RV3/RV2: "HOTEL NAME : NOM CODE", lignes clients "F/E/D/L MR/MS NOM"\n- PDF téléphones: sections hôtels avec PNR, noms, dates, téléphones\nPour chaque hôtel: code, name, zone, langs(tableau unique), arrivalDate(JJ.MM.AA ou DD-MMM-YY), clientCount.\nJSON uniquement: {"hotels":[{"code":"MLACAV","name":"Cavalieri","zone":"St Julian\'s","langs":["FR","EN"],"arrivalDate":"14.04.26","clientCount":3}]}\nTexte:\n'+text;
   try{
-    const raw=await callGemini(prompt);
-    const parsed=JSON.parse(raw);
-    let added=0;
-    parsed.hotels.forEach(h=>{
-      const langs=new Set(h.langs||[]);
-      let arrivalDay='tue';
+    const raw=await gCall([{text:pr}]);const p=JSON.parse(raw);let added=0;
+    p.hotels.forEach(h=>{
+      const l=new Set(h.langs||[]);let ad='tue';
       if(h.arrivalDate){
-        const p=h.arrivalDate.split('.');
-        if(p.length>=3){
-          const d=new Date(2000+parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0]));
-          const diff=Math.round((d-sd)/86400000);
-          if(diff>=0&&diff<7) arrivalDay=DAYS[diff];
-        }
+        const m1=h.arrivalDate.match(/(\d{2})\.(\d{2})\.(\d{2,4})/);
+        const m2=h.arrivalDate.match(/(\d{2})-([A-Z]{3})-(\d{2,4})/i);
+        let dt=null;
+        if(m1)dt=new Date(2000+parseInt(m1[3]),parseInt(m1[2])-1,parseInt(m1[1]));
+        else if(m2){const MN={JAN:0,FEB:1,MAR:2,APR:3,MAY:4,JUN:5,JUL:6,AUG:7,SEP:8,OCT:9,NOV:10,DEC:11};dt=new Date(2000+parseInt(m2[3]),MN[m2[2].toUpperCase()]||0,parseInt(m2[1]));}
+        if(dt){const diff=Math.round((dt-sd)/86400000);if(diff>=0&&diff<7)ad=DAYS[diff];}
       }
-      if(!S.hotels.find(e=>e.code===h.code&&e.arrivalDay===arrivalDay)){
-        S.hotels.push({code:h.code,name:h.name,zone:h.zone||'—',langs,arrivalDay,clientCount:h.clientCount||0});
-        added++;
-      }
+      if(!SC.hotels.find(e=>e.code===h.code&&e.arrivalDay===ad)){SC.hotels.push({code:h.code,name:h.name,zone:h.zone||MZ[h.code]||'—',langs:l,arrivalDay:ad,clientCount:h.clientCount||0});added++;}
     });
-    document.getElementById('rv3Input').value='';
-    renderHotelList(); updateBadge(); save();
-    showToast(`${added} hôtels importés ✓`,'ok');
-  }catch(e){
-    if(e.message==='no_key') openApiModal();
-    else showToast('Erreur — réessaie','err');
-    console.error(e);
-  }
-  hideLoading();
-  document.getElementById('parse-btn').disabled=false;
+    document.getElementById('rv3').value='';rHL();ubh();ssc();toast(added+' hôtels importés ✓','ok');
+  }catch(e){if(e.message==='NK')om('api-m');else toast('Erreur — réessaie','er');console.error(e);}
+  document.getElementById('pb').disabled=false;document.getElementById('ps').style.display='none';
 }
 
-// ══════════════════ GENERATE SCHEDULE ══════════════════
-async function generateSchedule(){
-  if(!S.apiKey){openApiModal();return;}
-  if(!S.hotels.length){showToast('Ajoute des hôtels d\'abord','err');return;}
-  showLoading('Calcul du planning...','L\'IA optimise les routes et les créneaux');
-  document.getElementById('gen-btn').disabled=true;
-
-  const byDay={};
-  S.hotels.forEach(h=>{
-    if(!byDay[h.arrivalDay])byDay[h.arrivalDay]=[];
-    byDay[h.arrivalDay].push({code:h.code,name:h.name,zone:h.zone,langs:[...(h.langs||[])]});
-  });
-
-  const airStr=S.airports.map(a=>`${DAY_FR[a.day]}: AIRPORT ${a.from}→${a.to}`).join(', ');
-  const depStr=S.departs.map(d=>`${DAY_FR[d.day]}: départ depuis "${d.location}"`).join(', ');
-  const officeStr=Object.entries(S.dayTypes).filter(([,v])=>v==='OFFICE').map(([d])=>DAY_FR[d]).join(', ')||'aucun';
-  const offStr=Object.entries(S.dayTypes).filter(([,v])=>v==='DAYOFF').map(([d])=>DAY_FR[d]).join(', ')||'aucun';
-
-  const prompt=`Tu es expert en logistique pour des représentants de voyagistes (LuxairTours).
-Génère un planning hebdomadaire OPTIMAL de visites d'hôtels.
-
-DESTINATION: ${S.dest.city}, ${S.dest.country} (code: ${S.dest.code})
-Base principale du représentant: ${S.dest.base}
-
-RÈGLES DURÉE DE MEETING:
-- 1 langue = 45 minutes
-- 2 langues = 1 heure (60 min)
-- 3+ langues = 1h15 (75 min)
-
-RÈGLES TRAJET (MINIMUM 15min, arrondir PAR 5min au-dessus):
-- Hôtels walking distance (même complexe, même rue) = COMBO (1 seul slot, code="A+B", durée=60min)
-- Zones très proches (<10min) = 15min
-- Zones adjacentes (10-20min) = 15 ou 20min selon réalité
-- Zones moyennes (20-35min) = 30 ou 35min
-- Zones lointaines (35-50min) = 45min
-- Trafic PM (après 14h): +5 à +10min sur trajets >15min
-
-LOGIQUE DE ROUTE:
-- Depuis aéroport: planifier dans l'ordre géographique EN S'ÉLOIGNANT de l'aéroport — ne jamais rebrousser chemin
-- Depuis ${S.dest.base}: même principe, s'éloigner du point de départ
-- Regrouper les hôtels proches le même jour
-- Identifier les COMBOS WALKING (hôtels vraiment côte à côte) et les fusionner en 1 slot avec code "CODEA+CODEB"
-
-CONFIGURATION SEMAINE:
-Jours OFFICE (pas de meetings): ${officeStr}
-Jours DAYOFF: ${offStr}
-Aéroport: ${airStr||'aucun'}
-Points de départ: ${depStr||'aucun'}
-
-HÔTELS À PLANIFIER:
-${JSON.stringify(byDay,null,2)}
-
-Pour chaque jour de la semaine (lun→dim), génère les créneaux.
-Chaque créneau contient: from, to, task (AIRPORT/OFFICE/DAYOFF/MEETING/PERMANENCE), hotel (code ou null), hotelName, langs (tableau), duration (minutes ou null), combo (bool), travel (minutes de trajet APRÈS ce créneau, 0 si dernier ou non-meeting).
-
-IMPORTANT: Pour les jours avec beaucoup d'hôtels, étale sur 2 jours en regroupant géographiquement.
-
-Réponds UNIQUEMENT en JSON valide sans backticks ni texte:
-{"schedule":{"mon":[{"from":"09:30","to":"17:00","task":"OFFICE","hotel":null,"hotelName":null,"langs":[],"duration":null,"combo":false,"travel":0}],"tue":[{"from":"08:30","to":"11:00","task":"AIRPORT","hotel":null,"hotelName":null,"langs":[],"duration":null,"combo":false,"travel":0},{"from":"11:00","to":"11:45","task":"MEETING","hotel":"MLAVER","hotelName":"Verdi Gzira","langs":["FR"],"duration":45,"combo":false,"travel":15}],"wed":[],"thu":[],"fri":[],"sat":[],"sun":[]}}`;
-
-  try{
-    const raw=await callGemini(prompt);
-    const parsed=JSON.parse(raw);
-    S.schedule=parsed.schedule;
-    save();
-    showToast('Planning généré ✓','ok');
-    nav('schedule');
-  }catch(e){
-    if(e.message==='no_key') openApiModal();
-    else{ showToast('Erreur génération — réessaie','err'); console.error(e); }
-  }
-  hideLoading();
-  document.getElementById('gen-btn').disabled=false;
+async function genSched(){
+  if(!GK){om('api-m');return;}if(!SC.hotels.length){toast('Ajoute des hôtels d\'abord','er');return;}
+  showLdr('Calcul du planning...','L\'IA optimise routes et créneaux');
+  document.getElementById('gb').disabled=true;swf();
+  const bd={};SC.hotels.forEach(h=>{if(!bd[h.arrivalDay])bd[h.arrivalDay]=[];bd[h.arrivalDay].push({code:h.code,name:h.name,zone:h.zone,langs:[...(h.langs||[])]});});
+  const aS=SC.airports.map(a=>DFR[a.day]+': AIRPORT '+a.from+'→'+a.to).join(' | ');
+  const dS=SC.departs.map(d=>DFR[d.day]+': départ depuis "'+d.location+'"').join(' | ');
+  const ofc=Object.entries(SC.dayTypes).filter(([,v])=>v==='OFFICE').map(([d])=>DFR[d]).join(', ')||'aucun';
+  const off=Object.entries(SC.dayTypes).filter(([,v])=>v==='DAYOFF').map(([d])=>DFR[d]).join(', ')||'aucun';
+  const pr='Expert logistique LuxairTours. Planning hebdomadaire OPTIMAL.\nDESTINATION: '+SC.dest+' ('+SC.code+') · Base: '+SC.base+'\nDURÉE: 1 langue=45min | 2 langues=60min | 3+ langues=75min\nTRAJET (min 15min, arrondir par 5min): walking=COMBO(code"A+B",60min) | proches=15min | moyens=30min | lointains=45min | après 14h +5-10min\nROUTE: depuis aéroport=s\'éloigner sans rebrousser | regrouper proches\nOFFICE: '+ofc+' | DAYOFF: '+off+'\nAÉROPORT: '+aS+' | DÉPARTS: '+dS+'\nHÔTELS: '+JSON.stringify(bd)+'\nJSON: {"schedule":{"mon":[{"from":"09:30","to":"17:00","task":"OFFICE","hotel":null,"hotelName":null,"langs":[],"duration":null,"combo":false,"travel":0}],"tue":[{"from":"08:30","to":"11:00","task":"AIRPORT","hotel":null,"hotelName":null,"langs":[],"duration":null,"combo":false,"travel":0},{"from":"11:00","to":"11:45","task":"MEETING","hotel":"MLAVER","hotelName":"Verdi Gzira","langs":["FR"],"duration":45,"combo":false,"travel":15}],"wed":[],"thu":[],"fri":[],"sat":[],"sun":[]}}';
+  try{const raw=await gCall([{text:pr}]);const p=JSON.parse(raw);SC.schedule=p.schedule;ssc();toast('Planning généré ✓','ok');nv('pl');}
+  catch(e){if(e.message==='NK')om('api-m');else{toast('Erreur — réessaie','er');console.error(e);}}
+  hideLdr();document.getElementById('gb').disabled=false;
 }
 
-// ══════════════════ SCHEDULE VIEW ══════════════════
-function renderScheduleView(){
-  const sd=S.startDate||new Date();
-  document.getElementById('chip-name').textContent=S.repName||'Rep';
-  const end=new Date(sd); end.setDate(sd.getDate()+6);
-  document.getElementById('chip-dates').textContent=
-    sd.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})+'→'+
-    end.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
-  document.getElementById('chip-dest').textContent=S.dest.code||S.dest.city||'—';
-
-  document.getElementById('day-tabs').innerHTML=DAYS.map((d,i)=>{
-    const date=new Date(sd); date.setDate(sd.getDate()+i);
-    return `<div class="day-tab ${d===S.selDay?'active':''}" onclick="selDay('${d}')">
-      ${DAY_S[d]}<span class="tab-date">${date.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})}</span>
-    </div>`;
-  }).join('');
-  renderSlots();
+function rSV(){
+  const sd=SC.startDate||new Date();
+  document.getElementById('cnm').textContent=SC.repName||'Rep';
+  const en=new Date(sd);en.setDate(sd.getDate()+6);
+  document.getElementById('cdt').textContent=sd.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})+'→'+en.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
+  document.getElementById('cde').textContent=SC.code||'—';
+  document.getElementById('dtabs').innerHTML=DAYS.map((d,i)=>{const dt=new Date(sd);dt.setDate(sd.getDate()+i);return'<div class="dt '+(d===SC.selDay?'on':'')+'" onclick="selD(\''+d+'\')">'+DS[d]+'<span class="dd">'+dt.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})+'</span></div>';}).join('');
+  rDS();
 }
-
-function selDay(d){ S.selDay=d; save(); renderScheduleView(); }
-
-function renderSlots(){
-  const el=document.getElementById('day-content');
-  const slots=S.schedule[S.selDay]||[];
-  if(!slots.length){
-    el.innerHTML=`<div class="empty-day"><div style="font-size:32px;margin-bottom:10px">🗓</div>Aucun créneau<br><span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text-dim)">Génère le planning depuis Hôtels</span></div>`;
-    return;
-  }
-  el.innerHTML=slots.map(s=>{
-    const tl=(s.task||'').toLowerCase();
-    const isC=s.combo;
-    const lHTML=(s.langs||[]).map(l=>`<span class="lang-tag lang-${l}">${l}</span>`).join('');
-    return `<div class="slot">
-      <div class="slot-time">${s.from}<br><span style="opacity:0.55">${s.to}</span></div>
-      <div class="slot-bar ${isC?'combo':tl}"></div>
-      <div class="slot-content ${isC?'combo':tl}">
-        <div class="slot-task">${s.task||''}${isC?' · COMBO':''}</div>
-        <div class="slot-hotel">${s.hotel||(s.task==='OFFICE'?'Bureau':s.task==='AIRPORT'?'Aéroport':s.task==='DAYOFF'?'Jour off':'—')}</div>
-        ${s.hotelName&&s.hotel&&s.hotelName!==s.hotel?`<div class="slot-detail">${s.hotelName}</div>`:''}
-        ${lHTML?`<div class="lang-tags" style="margin-top:5px">${lHTML}${s.duration?`<span class="dur-tag">${s.duration}min</span>`:''}</div>`:''}
-      </div>
-    </div>
-    ${s.travel&&s.travel>0&&s.task==='MEETING'?`
-    <div style="display:flex;gap:10px;margin-bottom:2px;opacity:0.35;align-items:center">
-      <div style="min-width:40px"></div><div style="width:2px;background:var(--border)"></div>
-      <div style="flex:1;font-size:10px;color:var(--text-dim);font-family:'DM Mono',monospace;padding:3px 10px">🚗 ${s.travel}min</div>
-    </div>`:''}`;
+function selD(d){SC.selDay=d;ssc();rSV();}
+function rDS(){
+  const el=document.getElementById('dslots');const sl=SC.schedule[SC.selDay]||[];
+  if(!sl.length){el.innerHTML='<div class="emp"><div class="emp-i">🗓</div>Aucun créneau<br><span style="font-size:11px">Génère le planning depuis Hôtels</span></div>';return;}
+  const LC={FR:'bfr',EN:'ben',DE:'bde',LU:'blu'};
+  el.innerHTML=sl.map(s=>{
+    const tl=(s.task||'').toLowerCase();const iC=s.combo;
+    const lH=(s.langs||[]).map(l=>'<span class="lt '+(LC[l]||'bfr')+'">'+l+'</span>').join('');
+    return '<div class="sl"><div class="sl-t">'+s.from+'<br><span style="opacity:.6">'+s.to+'</span></div><div class="sl-b '+(iC?'combo':tl)+'"></div><div class="sl-c '+(iC?'combo':tl)+'"><div class="sl-task">'+s.task+(iC?' · COMBO':'')+'</div><div class="sl-h">'+(s.hotel||(s.task==='OFFICE'?'Bureau':s.task==='AIRPORT'?'Aéroport':s.task==='DAYOFF'?'Jour off':'—'))+'</div>'+(s.hotelName&&s.hotel&&s.hotelName!==s.hotel?'<div class="sl-d">'+s.hotelName+'</div>':'')+(lH?'<div class="sl-l">'+lH+(s.duration?'<span style="font-size:10px;color:var(--text3)">'+s.duration+'min</span>':'')+'</div>':'')+'</div></div>'+(s.travel&&s.travel>0&&s.task==='MEETING'?'<div style="display:flex;gap:10px;margin-bottom:2px;opacity:.4;align-items:center"><div style="min-width:42px"></div><div style="width:3px;background:var(--border)"></div><div style="flex:1;font-size:9px;color:var(--text3);padding:2px 10px">🚗 '+s.travel+'min trajet</div></div>':'');
   }).join('');
 }
 
-// ══════════════════ EXPORT ══════════════════
-function renderExport(){
+function rEx(){
   let m=0,h=new Set(),c=0;
-  DAYS.forEach(d=>(S.schedule[d]||[]).forEach(s=>{
-    if(s.task==='MEETING'){m++;if(s.combo)c++;(s.hotel||'').split('+').forEach(x=>h.add(x.trim()));}
-  }));
-  document.getElementById('export-summary').innerHTML=[
-    ['Représentant',S.repName],['Matricule',S.matricule],
-    ['Destination',`${S.dest.city} (${S.dest.code})`],
-    ['Semaine du',S.startDate?.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'})||'—'],
-    ['Hôtels couverts',h.size],['Créneaux meetings',m],['Combos walking',c],
-  ].map(([k,v])=>`<div class="summary-row"><span style="color:var(--text-mid)">${k}</span><span class="summary-val">${v}</span></div>`).join('');
+  DAYS.forEach(d=>(SC.schedule[d]||[]).forEach(s=>{if(s.task==='MEETING'){m++;if(s.combo)c++;(s.hotel||'').split('+').forEach(x=>h.add(x.trim()));}}));
+  document.getElementById('exs').innerHTML=[['Représentant',SC.repName],['Matricule',SC.matricule],['Destination',SC.dest+' ('+SC.code+')'],['Semaine du',(SC.startDate?.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'}))||'—'],['Hôtels',h.size],['Meetings',m],['Combos walking',c]].map(([k,v])=>'<div class="sr"><span style="color:var(--text2)">'+k+'</span><span class="sv">'+v+'</span></div>').join('');
 }
-
-function downloadCSV(){
-  const sd=S.startDate||new Date();
-  let csv='\ufeffJour,Date,Début,Fin,Tâche,Code Hôtel,Nom Hôtel,Langues,Durée (min),Combo,Trajet suivant (min)\n';
-  DAYS.forEach((d,i)=>{
-    const date=new Date(sd); date.setDate(sd.getDate()+i);
-    const ds=date.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'});
-    (S.schedule[d]||[]).forEach(s=>{
-      csv+=`${DAY_FR[d]},${ds},${s.from},${s.to},${s.task||''},${s.hotel||''},${s.hotelName||''},${(s.langs||[]).join('/')},${s.duration||''},${s.combo?'OUI':''},${s.travel||''}\n`;
-    });
-  });
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
-  a.download=`WS_${S.dest.code||'XXX'}_${S.repName.replace(/\s/g,'_')}_${(S.startDate||new Date()).toISOString().slice(0,10)}.csv`;
-  a.click();
-  showToast('CSV téléchargé ✓','ok');
+function dlCSV(){
+  const sd=SC.startDate||new Date();let csv='\ufeffJour,Date,Début,Fin,Tâche,Code,Hôtel,Langues,Durée,Combo,Trajet\n';
+  DAYS.forEach((d,i)=>{const dt=new Date(sd);dt.setDate(sd.getDate()+i);const ds=dt.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'});(SC.schedule[d]||[]).forEach(s=>{csv+=DFR[d]+','+ds+','+s.from+','+s.to+','+(s.task||'')+','+(s.hotel||'')+','+(s.hotelName||'')+','+(s.langs||[]).join('/')+(s.duration?','+s.duration:',')+','+(s.combo?'OUI':'')+','+(s.travel||'')+'\n';});});
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));a.download='WS_'+SC.code+'_'+SC.repName.replace(/\s/g,'_')+'_'+(SC.startDate||new Date()).toISOString().slice(0,10)+'.csv';a.click();toast('CSV téléchargé ✓','ok');
 }
-
-function copyText(){
-  const sd=S.startDate||new Date();
-  const end=new Date(sd); end.setDate(sd.getDate()+6);
-  let t=`WEEKLY SCHEDULE — ${S.repName} (${S.matricule})\n`;
-  t+=`${S.dest.city} · ${sd.toLocaleDateString('fr-FR')} → ${end.toLocaleDateString('fr-FR')}\n`;
-  t+='─'.repeat(44)+'\n\n';
-  DAYS.forEach((d,i)=>{
-    const slots=S.schedule[d]||[];
-    if(!slots.length)return;
-    const date=new Date(sd); date.setDate(sd.getDate()+i);
-    t+=`${DAY_FR[d].toUpperCase()} ${date.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})}\n`;
-    slots.forEach(s=>{t+=`  ${s.from}–${s.to}  ${(s.task||'').padEnd(11)} ${s.hotel||''}\n`;});
-    t+='\n';
-  });
-  navigator.clipboard.writeText(t).then(()=>showToast('Copié ✓','ok')).catch(()=>showToast('Erreur','err'));
+function cpTxt(){
+  const sd=SC.startDate||new Date();const en=new Date(sd);en.setDate(sd.getDate()+6);
+  let t='WEEKLY SCHEDULE — '+SC.repName+' ('+SC.matricule+')\n'+SC.dest+' · '+sd.toLocaleDateString('fr-FR')+' → '+en.toLocaleDateString('fr-FR')+'\n'+'-'.repeat(44)+'\n\n';
+  DAYS.forEach((d,i)=>{const sl=SC.schedule[d]||[];if(!sl.length)return;const dt=new Date(sd);dt.setDate(sd.getDate()+i);t+=DFR[d].toUpperCase()+' '+dt.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})+'\n';sl.forEach(s=>{t+='  '+s.from+'–'+s.to+'  '+(s.task||'').padEnd(10)+' '+(s.hotel||'')+'\n';});t+='\n';});
+  navigator.clipboard.writeText(t).then(()=>toast('Copié ✓','ok')).catch(()=>toast('Erreur','er'));
 }
+function rstPlan(){if(!confirm('Effacer planning et hôtels ?'))return;SC.hotels=[];SC.schedule={};SC.selDay='tue';rHL();ubh();ssc();nv('wk');toast('Réinitialisé ✓','ok');}
 
-function resetAll(){
-  if(!confirm('Effacer le planning et les hôtels de cette semaine ?')) return;
-  S.hotels=[]; S.schedule={}; S.selDay='tue';
-  renderHotelList(); updateBadge(); save();
-  nav('week');
-  showToast('Réinitialisé ✓','ok');
-}
+function showLdr(t,s){document.getElementById('lt2').textContent=t||'';document.getElementById('ls2').textContent=s||'';document.getElementById('lo').classList.add('on');}
+function hideLdr(){document.getElementById('lo').classList.remove('on');}
+function om(id){document.getElementById(id).classList.add('on');}
+function cm(id){document.getElementById(id).classList.remove('on');}
+document.querySelectorAll('.mo').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');}));
+let tT;function toast(m,t=''){clearTimeout(tT);const el=document.getElementById('tst');el.textContent=m;el.className='tst on'+(t?' '+t:'');tT=setTimeout(()=>el.classList.remove('on'),2400);}
 
-// ══════════════════ UI HELPERS ══════════════════
-function showLoading(t,s){ document.getElementById('loading-text').textContent=t; document.getElementById('loading-sub').textContent=s||''; document.getElementById('loading').classList.add('active'); }
-function hideLoading(){ document.getElementById('loading').classList.remove('active'); }
-function openModal(id){ document.getElementById(id).classList.add('active'); }
-function closeModal(id){ document.getElementById(id).classList.remove('active'); }
-document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('active');}));
-
-let toastT;
-function showToast(msg,type=''){
-  clearTimeout(toastT);
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.className='toast show'+(type?' '+type:'');
-  toastT=setTimeout(()=>t.classList.remove('show'),2400);
-}
-
-if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(()=>{});
 init();
 </script>
 </body>
