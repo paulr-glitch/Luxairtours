@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LuxairTours">
+<meta name="theme-color" content="#F59E0B">
+<title>LuxairTours Rep</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --amber:#F59E0B;--amber-d:#D97706;--sky:#0EA5E9;--sky-d:#0284C7;
+  --green:#16a34a;--red:#dc2626;--wa:#25D366;
+  --bg:#F8FAFC;--white:#fff;--border:#E2E8F0;--border2:#CBD5E1;
+  --t1:#0F172A;--t2:#334155;--t3:#64748B;--t4:#94A3B8;
+  --safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px)
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-family:'DM Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+#app{display:flex;flex-direction:column;height:100dvh;max-width:430px;margin:0 auto;background:var(--white);box-shadow:0 0 40px rgba(0,0,0,.08)}
+
+/* TOPBAR */
+#bar{background:var(--white);border-bottom:1px solid var(--border);padding:12px 16px;padding-top:calc(var(--safe-t) + 12px);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.bar-l{display:flex;align-items:center;gap:10px}
+#logo{width:38px;height:38px;border-radius:9px;object-fit:cover}
+.bar-title{font-size:15px;font-weight:700;line-height:1.1}
+.bar-sub{font-size:10px;color:var(--t4);letter-spacing:.4px;margin-top:1px}
+.ai-chip{display:flex;align-items:center;gap:5px;padding:5px 11px;border:1.5px solid var(--border);border-radius:20px;font-size:11px;font-weight:600;color:var(--t3);cursor:pointer;background:var(--white);transition:all .15s}
+.ai-chip:hover{border-color:var(--amber);color:var(--amber-d)}
+.ai-dot{width:7px;height:7px;border-radius:50%;background:var(--red);transition:background .3s}
+.ai-dot.ok{background:var(--green)}
+
+/* TABS */
+#nav{display:flex;background:var(--white);border-top:1px solid var(--border);padding-bottom:var(--safe-b);flex-shrink:0}
+.navbtn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 4px 10px;border:none;background:none;cursor:pointer;font-family:inherit;font-size:10px;font-weight:600;color:var(--t4);transition:color .15s;position:relative}
+.navbtn.on{color:var(--amber-d)}
+.navbtn-icon{font-size:22px;line-height:1}
+.nbadge{position:absolute;top:6px;right:calc(50% - 21px);background:var(--red);color:#fff;border-radius:10px;font-size:9px;font-weight:700;min-width:16px;height:16px;padding:0 4px;display:none;align-items:center;justify-content:center}
+
+/* SCREENS */
+#scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+#scroll::-webkit-scrollbar{display:none}
+.screen{display:none;padding:16px;animation:fadeIn .18s ease}
+.screen.on{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+/* TYPOGRAPHY */
+.stitle{font-size:10px;font-weight:700;color:var(--t4);text-transform:uppercase;letter-spacing:.9px;margin-bottom:8px;margin-top:18px}
+.stitle:first-child{margin-top:0}
+
+/* CARD */
+.card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px}
+
+/* INPUTS */
+.f{margin-bottom:12px}
+.f:last-child{margin-bottom:0}
+.f label{display:block;font-size:11px;font-weight:600;color:var(--t2);margin-bottom:4px}
+.f input,.f select,.f textarea{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:10px;background:var(--white);color:var(--t1);font-family:inherit;font-size:14px;outline:none;transition:border-color .2s;-webkit-appearance:none;appearance:none}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--amber)}
+.f textarea{resize:none;min-height:90px;line-height:1.5;font-size:13px}
+.f select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394A3B8' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+
+/* BUTTONS */
+.btn{border:none;border-radius:10px;padding:11px 16px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn[disabled]{opacity:.5;cursor:not-allowed;transform:none!important}
+.btn-full{width:100%}
+.btn-amber{background:var(--amber);color:#fff}.btn-amber:hover{background:var(--amber-d)}
+.btn-sky{background:var(--sky);color:#fff}.btn-sky:hover{background:var(--sky-d)}
+.btn-ghost{background:var(--bg);border:1.5px solid var(--border);color:var(--t2)}.btn-ghost:hover{border-color:var(--amber);color:var(--amber-d)}
+.btn-red{background:var(--red);color:#fff}
+.btn-wa{background:var(--wa);color:#fff}
+.btn-sm{padding:7px 12px;font-size:12px;border-radius:8px}
+
+/* SPINNER */
+.spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* UPLOAD AREA */
+.upload-area{border:2px dashed var(--border);border-radius:14px;padding:14px;margin-bottom:12px;background:var(--white)}
+.upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.upload-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:11px;padding:18px 10px;cursor:pointer;font-family:inherit;color:var(--t1);display:flex;flex-direction:column;align-items:center;gap:7px;transition:all .15s;width:100%}
+.upload-btn:hover,.upload-btn:active{border-color:var(--amber);background:#FFFBEB}
+.upload-icon{font-size:28px}
+.upload-label{font-size:12px;font-weight:600}
+.upload-sub{font-size:10px;color:var(--t4)}
+
+/* ALERT BARS */
+.alert{border-radius:10px;padding:10px 13px;font-size:12px;margin-bottom:10px;display:none;line-height:1.4}
+.alert-red{background:#FEF2F2;border:1px solid #FECACA;color:var(--red)}
+.alert-green{background:#F0FDF4;border:1px solid #BBF7D0;color:var(--green)}
+.alert-amber{background:#FFFBEB;border:1px solid #FDE68A;color:var(--amber-d)}
+
+/* LOADING OVERLAY */
+#loader{position:fixed;inset:0;background:rgba(255,255,255,.9);backdrop-filter:blur(4px);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:100;gap:14px}
+#loader.on{display:flex}
+.loader-ring{width:44px;height:44px;border:3px solid var(--border);border-top-color:var(--amber);border-radius:50%;animation:spin .8s linear infinite}
+.loader-text{font-size:14px;font-weight:600;color:var(--t1)}
+.loader-sub{font-size:12px;color:var(--t3)}
+
+/* TOAST */
+#toast{position:fixed;bottom:calc(var(--safe-b) + 72px);left:50%;transform:translateX(-50%) translateY(12px);background:var(--t1);color:#fff;padding:9px 18px;border-radius:20px;font-size:13px;font-weight:500;opacity:0;transition:all .25s;z-index:200;pointer-events:none;white-space:nowrap}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.ok{background:var(--green)}
+#toast.err{background:var(--red)}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:flex-end;z-index:50}
+.modal-bg.on{display:flex}
+.modal{background:var(--white);border-radius:18px 18px 0 0;width:100%;max-width:430px;padding:20px 16px calc(20px + var(--safe-b));animation:slideUp .3s ease;max-height:85dvh;overflow-y:auto}
+.modal-close{float:right;background:none;border:none;font-size:24px;color:var(--t4);cursor:pointer;line-height:1;margin-top:-2px}
+.modal-title{font-size:17px;font-weight:700;margin-bottom:14px}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:none}}
+
+/* PAX CARDS */
+.pax-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:13px 14px;margin-bottom:8px}
+.pax-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px}
+.pax-name{font-size:15px;font-weight:700;line-height:1.2}
+.pax-name-first{font-weight:400;color:var(--t3)}
+.lang-chip{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px}
+.lang-FR{background:#DBEAFE;color:#1D4ED8}
+.lang-DE{background:#FEE2E2;color:#B91C1C}
+.lang-LU{background:#FEF3C7;color:#92400E}
+.lang-EN{background:#D1FAE5;color:#065F46}
+.pax-hotel{font-size:12px;color:var(--t3);margin-bottom:7px}
+.pax-badges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+.badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:6px}
+.badge-arr{background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE}
+.badge-dep{background:#FFF7ED;color:#C2410C;border:1px solid #FED7AA}
+.badge-pick{background:#F0FDF4;color:#15803D;border:1px solid #BBF7D0}
+.pax-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.bus-select{flex:1;min-width:100px;padding:6px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--white);font-family:inherit;font-size:11px;color:var(--t1);outline:none}
+
+/* EDIT FORM */
+.edit-card{background:#FFFBEB;border:1.5px solid var(--amber);border-radius:12px;padding:13px 14px;margin-bottom:8px}
+.edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.edit-grid .f{margin-bottom:0}
+.edit-grid .f input,.edit-grid .f select{font-size:12px;padding:7px 10px}
+.edit-grid .f label{font-size:10px}
+
+/* BUS CHIPS */
+.bus-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.bus-chip{display:inline-flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:5px 10px;font-size:11px}
+.bus-chip strong{color:var(--sky-d)}
+.chip-del{background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;line-height:1;padding:0}
+
+/* SEARCH */
+.search-row{display:flex;gap:8px;margin-bottom:10px}
+.search-row input{flex:1;padding:9px 13px;border:1.5px solid var(--border);border-radius:10px;font-family:inherit;font-size:13px;outline:none;background:var(--white);color:var(--t1)}
+.search-row input:focus{border-color:var(--amber)}
+.tabrow{display:flex;gap:6px;margin-bottom:10px}
+.tabt{flex:1;padding:8px 6px;border:1.5px solid var(--border);border-radius:9px;background:var(--white);font-family:inherit;font-size:11px;font-weight:600;color:var(--t3);cursor:pointer;transition:all .15s}
+.tabt.on{background:var(--amber);border-color:var(--amber);color:#fff}
+
+/* SCHEDULE */
+.week-info{display:inline-flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:11px;color:var(--t3);margin-bottom:12px}
+.week-info b{color:var(--sky-d)}
+.day-tabs{display:flex;gap:5px;overflow-x:auto;padding-bottom:2px;margin-bottom:12px;scrollbar-width:none}
+.day-tabs::-webkit-scrollbar{display:none}
+.day-tab{flex-shrink:0;padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);color:var(--t3);font-size:11px;font-weight:600;cursor:pointer;text-align:center;transition:all .15s}
+.day-tab.on{background:var(--amber);border-color:var(--amber);color:#fff}
+.day-tab-date{font-size:9px;display:block;margin-top:1px;opacity:.75}
+.slot-row{display:flex;gap:10px;margin-bottom:5px}
+.slot-time{font-size:10px;color:var(--t4);min-width:44px;text-align:right;padding-top:11px;line-height:1.4;flex-shrink:0;font-variant-numeric:tabular-nums}
+.slot-line{width:3px;border-radius:3px;flex-shrink:0;position:relative;background:var(--border)}
+.slot-line::before{content:'';position:absolute;top:11px;left:-4px;width:10px;height:10px;border-radius:50%;background:var(--white);border:2px solid var(--border)}
+.slot-line.meeting::before{border-color:var(--amber);background:var(--amber)}
+.slot-line.combo::before{border-color:var(--amber);background:var(--amber)}
+.slot-line.airport::before{border-color:var(--sky);background:var(--sky)}
+.slot-line.office::before{border-color:var(--t4);background:var(--t4)}
+.slot-line.permanence::before{border-color:#8B5CF6;background:#8B5CF6}
+.slot-body{flex:1;background:var(--white);border:1px solid var(--border);border-radius:11px;padding:10px 13px;min-width:0}
+.slot-body.meeting{border-left:3px solid var(--amber)}
+.slot-body.combo{border-left:3px solid var(--amber);background:#FFFBEB}
+.slot-body.airport{border-left:3px solid var(--sky);background:#F0F9FF}
+.slot-body.office{border-left:3px solid var(--t4);background:var(--bg)}
+.slot-body.permanence{border-left:3px solid #8B5CF6}
+.slot-task{font-size:9px;font-weight:700;color:var(--t4);text-transform:uppercase;letter-spacing:.8px}
+.slot-hotel{font-size:14px;font-weight:700;color:var(--t1);margin:2px 0;word-break:break-word}
+.slot-detail{font-size:11px;color:var(--t3)}
+.slot-langs{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap;align-items:center}
+.travel-row{display:flex;gap:10px;margin-bottom:3px;opacity:.4}
+.travel-label{flex:1;font-size:10px;color:var(--t3);padding:2px 10px}
+.empty-state{text-align:center;padding:48px 20px;color:var(--t4)}
+.empty-icon{font-size:44px;margin-bottom:12px}
+.empty-text{font-size:14px;font-weight:500;color:var(--t2);margin-bottom:5px}
+.empty-sub{font-size:12px;color:var(--t4)}
+
+/* LANG CHECKS */
+.lang-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px}
+.lc{padding:5px 11px;border-radius:7px;border:1.5px solid var(--border);background:var(--white);font-size:12px;font-weight:600;cursor:pointer;color:var(--t3);user-select:none;transition:all .15s}
+.lc.s-FR{background:#DBEAFE;border-color:#93C5FD;color:#1D4ED8}
+.lc.s-EN{background:#D1FAE5;border-color:#6EE7B7;color:#065F46}
+.lc.s-DE{background:#FEE2E2;border-color:#FCA5A5;color:#B91C1C}
+.lc.s-LU{background:#FEF3C7;border-color:#FCD34D;color:#92400E}
+.lc.s-IT{background:#FEF3C7;border-color:#FCD34D;color:#92400E}
+
+/* DAY TYPE GRID */
+.dtype-grid{display:flex;flex-wrap:wrap;gap:6px}
+.dtype-btn{padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);font-size:11px;font-weight:600;cursor:pointer;user-select:none;transition:all .15s;text-align:center}
+.dtype-btn.office{border-color:var(--sky);color:var(--sky-d);background:#F0F9FF}
+.dtype-btn.dayoff{border-color:var(--red);color:var(--red);background:#FEF2F2}
+
+/* HOTEL LIST */
+.hotel-row{background:var(--white);border:1px solid var(--border);border-radius:11px;padding:11px 13px;margin-bottom:7px;display:flex;align-items:center;gap:11px}
+.hcode{font-size:10px;font-weight:700;color:var(--sky-d);background:#F0F9FF;border:1px solid #BAE6FD;border-radius:6px;padding:3px 8px;min-width:60px;text-align:center;word-break:break-all;flex-shrink:0}
+.hinfo{flex:1;min-width:0}
+.hname{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hmeta{font-size:11px;color:var(--t4);margin-top:1px}
+
+/* COLLAPSIBLE */
+.collap-toggle{display:flex;align-items:center;justify-content:space-between;background:var(--white);border:1px solid var(--border);border-radius:11px;padding:12px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--t1);margin-bottom:8px;transition:background .15s}
+.collap-toggle:hover{background:var(--bg)}
+.collap-toggle .arrow{color:var(--t4);transition:transform .2s}
+.collap-toggle.open .arrow{transform:rotate(180deg)}
+.collap-body{display:none;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px}
+.collap-body.open{display:block}
+
+/* EXPORT */
+.export-hero{background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border:1px solid #FDE68A;border-radius:14px;padding:22px;text-align:center;margin-bottom:14px}
+.sum-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+.sum-row:last-child{border-bottom:none}
+.sum-val{font-weight:700;color:var(--sky-d)}
+</style>
+</head>
+<body>
+<div id="loader"><div class="loader-ring"></div><div class="loader-text" id="load-text">Traitement...</div><div class="loader-sub" id="load-sub"></div></div>
+<div id="toast"></div>
+
+<!-- MODAL: API KEY -->
+<div class="modal-bg" id="modal-key">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-key')">×</button>
+    <div class="modal-title">🔑 Clé API Gemini</div>
+    <div class="alert alert-green" style="display:block;margin-bottom:14px">
+      ✅ <strong>100% gratuit</strong><br>
+      1. Va sur <strong>aistudio.google.com</strong><br>
+      2. Connecte-toi avec Google<br>
+      3. Clique <strong>Get API Key → Create API key</strong><br>
+      4. Copie la clé <code style="background:#e2e8f0;padding:1px 5px;border-radius:3px">AIza...</code>
+    </div>
+    <div class="f"><label>Ta clé Gemini</label><input type="password" id="key-input" placeholder="AIzaSy..." autocomplete="off"></div>
+    <button class="btn btn-amber btn-full" onclick="saveKey()">✓ Sauvegarder</button>
+    <button class="btn btn-ghost btn-full" onclick="closeModal('modal-key')" style="margin-top:8px">Annuler</button>
+  </div>
+</div>
+
+<div id="app">
+
+<!-- TOPBAR -->
+<div id="bar">
+  <div class="bar-l">
+    <img id="logo" src="" alt="Logo">
+    <div>
+      <div class="bar-title">LuxairTours</div>
+      <div class="bar-sub" id="bar-dest">Rep Manager</div>
+    </div>
+  </div>
+  <div class="ai-chip" onclick="openModal('modal-key')">
+    <div class="ai-dot" id="ai-dot"></div>
+    <span id="ai-lbl">Gemini AI</span>
+  </div>
+</div>
+
+<!-- SCROLL AREA -->
+<div id="scroll">
+
+<!-- ═══ SCREEN: PLANNING ═══ -->
+<div class="screen on" id="sc-plan">
+
+  <div id="plan-setup">
+    <div class="stitle">Documents d'arrivée (RV2, RV3, PDF téléphones)</div>
+    <div class="upload-area">
+      <div style="font-size:12px;font-weight:600;color:var(--t3);text-align:center;margin-bottom:2px">Importer les documents LuxairTours</div>
+      <div style="font-size:11px;color:var(--t4);text-align:center;margin-bottom:10px">L'IA lit les dates, hôtels et langues automatiquement</div>
+      <input type="file" id="rv-file" multiple accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg" style="display:none">
+      <input type="file" id="rv-cam" accept="image/*" capture="environment" style="display:none">
+      <div class="upload-grid">
+        <button class="upload-btn" onclick="document.getElementById('rv-file').click()">
+          <span class="upload-icon">📂</span>
+          <span class="upload-label">Ouvrir fichier</span>
+          <span class="upload-sub">PDF · DOC · DOCX · JPG</span>
+        </button>
+        <button class="upload-btn" onclick="document.getElementById('rv-cam').click()">
+          <span class="upload-icon">📷</span>
+          <span class="upload-label">Prendre photo</span>
+          <span class="upload-sub">Document ou liste</span>
+        </button>
+      </div>
+      <div style="margin-top:10px;text-align:center;font-size:11px;color:var(--t4)">— ou —</div>
+      <div class="f" style="margin-top:8px">
+        <label>Coller le texte du document</label>
+        <textarea id="rv-text" placeholder="HOTEL NAME : CAVALIERI ART HOTEL MLACAV&#10;F MR LEROY, Marc 73&#10;E MS MYCK, Sophie 37&#10;...&#10;&#10;Ou le contenu du PDF téléphones..."></textarea>
+      </div>
+      <button class="btn btn-amber btn-full" id="rv-analyze-btn" onclick="analyzeDocuments()" style="margin-top:10px">
+        <span id="rv-spin" class="spin" style="display:none"></span>
+        ✦ Analyser les documents
+      </button>
+    </div>
+
+    <div class="alert alert-red" id="plan-err"></div>
+    <div class="alert alert-green" id="plan-ok"></div>
+
+    <div id="hotel-list-wrap"></div>
+
+    <!-- WEEK CONFIG -->
+    <div id="week-config-wrap" style="display:none">
+      <div class="stitle">Configuration semaine</div>
+      <div class="card">
+        <div class="g2">
+          <div class="f"><label>Représentant</label><input id="cfg-name" value="Paul Robert"></div>
+          <div class="f"><label>Matricule</label><input id="cfg-mat" value="20772"></div>
+        </div>
+        <div class="g2">
+          <div class="f"><label>Destination</label><input id="cfg-dest" placeholder="Malta, Majorque..."></div>
+          <div class="f"><label>Code</label><input id="cfg-code" placeholder="MLA, PMI..." oninput="this.value=this.value.toUpperCase()"></div>
+        </div>
+        <div class="g2">
+          <div class="f"><label>Base de départ</label><input id="cfg-base" placeholder="Bugibba, Palma..."></div>
+          <div class="f"><label>Lundi de la semaine</label><input type="date" id="cfg-date"></div>
+        </div>
+      </div>
+
+      <div class="stitle">Type de journée (touche pour changer)</div>
+      <div class="card"><div class="dtype-grid" id="dtype-grid"></div></div>
+
+      <div class="stitle">Jours aéroport</div>
+      <div id="airport-wrap"></div>
+      <button class="btn btn-ghost btn-sm" onclick="addAirport()" style="margin-bottom:12px">+ Ajouter</button>
+
+      <div class="stitle">Points de départ (autres jours)</div>
+      <div id="depart-wrap"></div>
+      <button class="btn btn-ghost btn-sm" onclick="addDepart()" style="margin-bottom:12px">+ Ajouter</button>
+
+      <button class="btn btn-sky btn-full" id="gen-btn" onclick="generateSchedule()" style="font-size:14px;padding:14px">
+        <span id="gen-spin" class="spin" style="display:none"></span>
+        ✦ Générer le planning
+      </button>
+    </div>
+  </div>
+
+  <!-- SCHEDULE VIEW -->
+  <div id="plan-view" style="display:none">
+    <div class="week-info"><b id="winfo-name">—</b> · <b id="winfo-dates">—</b> · <b id="winfo-dest">—</b></div>
+    <div class="day-tabs" id="day-tabs"></div>
+    <div id="day-slots"></div>
+    <button class="btn btn-ghost btn-full" onclick="showSetup()" style="margin-top:14px;color:var(--t3)">← Modifier / Nouveau planning</button>
+  </div>
+</div>
+
+<!-- ═══ SCREEN: MESSAGES ═══ -->
+<div class="screen" id="sc-msg">
+  <div class="stitle">Documents passagers</div>
+  <div class="upload-area">
+    <div style="font-size:12px;font-weight:600;color:var(--t3);text-align:center;margin-bottom:2px">Importer la liste des passagers</div>
+    <div style="font-size:11px;color:var(--t4);text-align:center;margin-bottom:10px">PDF téléphones, RV2, RV3 — l'IA extrait tout</div>
+    <input type="file" id="pax-file" multiple accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg" style="display:none">
+    <input type="file" id="pax-cam" accept="image/*" capture="environment" style="display:none">
+    <div class="upload-grid">
+      <button class="upload-btn" onclick="document.getElementById('pax-file').click()">
+        <span class="upload-icon">📂</span>
+        <span class="upload-label">Ouvrir fichier</span>
+        <span class="upload-sub">PDF · DOC · DOCX · JPG</span>
+      </button>
+      <button class="upload-btn" onclick="document.getElementById('pax-cam').click()">
+        <span class="upload-icon">📷</span>
+        <span class="upload-label">Prendre photo</span>
+        <span class="upload-sub">Document ou liste</span>
+      </button>
+    </div>
+    <div style="margin-top:10px;text-align:center;font-size:11px;color:var(--t4)">— ou —</div>
+    <div class="f" style="margin-top:8px">
+      <label>Coller le texte</label>
+      <textarea id="pax-text" placeholder="Colle ici le texte du document passagers..."></textarea>
+    </div>
+    <button class="btn btn-amber btn-full" id="pax-analyze-btn" onclick="analyzePax()" style="margin-top:10px">
+      <span id="pax-spin" class="spin" style="display:none"></span>
+      ✦ Importer les passagers
+    </button>
+  </div>
+
+  <div class="alert alert-red" id="pax-err"></div>
+  <div class="alert alert-green" id="pax-ok"></div>
+
+  <!-- Bus horaires -->
+  <div class="collap-toggle" id="bus-toggle"><span>🚌 Horaires navettes</span><span class="arrow">▼</span></div>
+  <div class="collap-body" id="bus-body">
+    <div class="bus-chips" id="bus-chips"></div>
+    <div class="g3" style="margin-bottom:8px">
+      <input id="new-bus-label" placeholder="Navette 1" style="padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;outline:none">
+      <input id="new-bus-time" placeholder="06:30" style="padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;outline:none">
+      <input id="new-bus-note" placeholder="Note" style="padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;outline:none">
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="addBus()">+ Ajouter navette</button>
+  </div>
+
+  <!-- Search + tabs -->
+  <div class="search-row">
+    <input type="search" id="pax-search" placeholder="🔍 Rechercher nom, hôtel..." oninput="renderPax()">
+    <button class="btn btn-ghost btn-sm" onclick="clearPax()">🗑</button>
+  </div>
+  <div class="tabrow">
+    <button class="tabt on" id="tab-dep" onclick="switchTab('dep')">🛫 Départs</button>
+    <button class="tabt" id="tab-arr" onclick="switchTab('arr')">🛬 Arrivées</button>
+    <button class="tabt" id="tab-all" onclick="switchTab('all')">👥 Tous</button>
+  </div>
+  <div id="pax-list"></div>
+</div>
+
+<!-- ═══ SCREEN: HÔTELS (configuration planning) ═══ -->
+<div class="screen" id="sc-hotels">
+  <div id="apib-hotels"></div>
+
+  <div class="stitle">Importer documents (RV2 · RV3 · PDF téléphones)</div>
+  <div class="upload-area">
+    <div style="font-size:12px;font-weight:600;color:var(--t3);text-align:center;margin-bottom:4px">Documents LuxairTours</div>
+    <div style="font-size:11px;color:var(--t4);text-align:center;margin-bottom:10px">L'IA détecte les hôtels, langues et dates automatiquement</div>
+    <input type="file" id="rv-file2" multiple accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg" style="display:none">
+    <input type="file" id="rv-cam2" accept="image/*" capture="environment" style="display:none">
+    <div class="upload-grid">
+      <button class="upload-btn" onclick="document.getElementById('rv-file2').click()">
+        <span class="upload-icon">📂</span>
+        <span class="upload-label">Ouvrir fichier</span>
+        <span class="upload-sub">PDF · DOC · DOCX · JPG</span>
+      </button>
+      <button class="upload-btn" onclick="document.getElementById('rv-cam2').click()">
+        <span class="upload-icon">📷</span>
+        <span class="upload-label">Prendre photo</span>
+        <span class="upload-sub">Document ou liste</span>
+      </button>
+    </div>
+    <div style="margin-top:10px;text-align:center;font-size:11px;color:var(--t4)">— ou coller le texte —</div>
+    <div class="f" style="margin-top:8px">
+      <textarea id="rv-text2" placeholder="HOTEL NAME : CAVALIERI ART HOTEL MLACAV&#10;F MR LEROY, Marc 73&#10;E MS MYCK, Sophie 37&#10;..."></textarea>
+    </div>
+    <button class="btn btn-amber btn-full" id="rv-analyze-btn2" onclick="analyzeDocuments2()" style="margin-top:10px">
+      <span id="rv-spin2" class="spin" style="display:none"></span>
+      ✦ Analyser avec IA
+    </button>
+  </div>
+
+  <div class="alert alert-red" id="hotels-err"></div>
+  <div class="alert alert-green" id="hotels-ok"></div>
+
+  <div id="hotel-list-wrap2"></div>
+
+  <!-- WEEK CONFIG inline -->
+  <div id="week-config-wrap2" style="display:none">
+    <div class="stitle">Configuration de la semaine</div>
+    <div class="card">
+      <div class="g2">
+        <div class="f"><label>Représentant</label><input id="cfg-name2" value="Paul Robert"></div>
+        <div class="f"><label>Matricule</label><input id="cfg-mat2" value="20772"></div>
+      </div>
+      <div class="g2">
+        <div class="f"><label>Destination</label><input id="cfg-dest2" placeholder="Malta, Majorque..."></div>
+        <div class="f"><label>Code</label><input id="cfg-code2" placeholder="MLA, PMI..." oninput="this.value=this.value.toUpperCase()"></div>
+      </div>
+      <div class="g2">
+        <div class="f"><label>Base de départ</label><input id="cfg-base2" placeholder="Bugibba, Palma..."></div>
+        <div class="f"><label>Lundi de la semaine</label><input type="date" id="cfg-date2"></div>
+      </div>
+    </div>
+    <div class="stitle">Type de journée (touche pour changer)</div>
+    <div class="card"><div class="dtype-grid" id="dtype-grid2"></div></div>
+    <div class="stitle">Jours aéroport</div>
+    <div id="airport-wrap2"></div>
+    <button class="btn btn-ghost btn-sm" onclick="addAirport2()" style="margin-bottom:12px">+ Ajouter</button>
+    <div class="stitle">Points de départ (autres jours)</div>
+    <div id="depart-wrap2"></div>
+    <button class="btn btn-ghost btn-sm" onclick="addDepart2()" style="margin-bottom:12px">+ Ajouter</button>
+    <button class="btn btn-sky btn-full" id="gen-btn2" onclick="generateSchedule()" style="font-size:14px;padding:14px;margin-bottom:16px">
+      <span id="gen-spin2" class="spin" style="display:none"></span>
+      ✦ Générer le planning
+    </button>
+  </div>
+</div>
+
+
+<!-- ═══ SCREEN: EXPORT ═══ -->
+<div class="screen" id="sc-export">
+  <div class="export-hero">
+    <div style="font-size:42px">📋</div>
+    <div style="font-size:20px;font-weight:700;margin-top:8px">Planning prêt</div>
+    <div style="font-size:12px;color:var(--t3);margin-top:4px">LuxairTours Weekly Schedule</div>
+  </div>
+  <div class="card" id="export-summary"></div>
+  <button class="btn btn-amber btn-full" onclick="downloadCSV()" style="margin-top:4px;font-size:14px;padding:14px">↓ Télécharger CSV (Numbers / Excel)</button>
+  <button class="btn btn-ghost btn-full" onclick="copyText()" style="margin-top:8px">📋 Copier texte</button>
+  <button class="btn btn-ghost btn-full" onclick="resetAll()" style="margin-top:8px;color:var(--red)">🗑 Réinitialiser</button>
+</div>
+
+</div><!-- /scroll -->
+
+<!-- BOTTOM NAV -->
+<div id="nav">
+  <button class="navbtn on" id="nav-plan" onclick="switchScreen('plan')">
+    <span class="navbtn-icon">📅</span>Planning
+  </button>
+  <button class="navbtn" id="nav-hotels" onclick="switchScreen('hotels')">
+    <span class="navbtn-icon">🏨</span>H&#244;tels
+    <div class="nbadge" id="hotels-badge"></div>
+  </button>
+  <button class="navbtn" id="nav-msg" onclick="switchScreen('msg')" style="position:relative">
+    <span class="navbtn-icon">💬</span>Messages
+    <div class="nbadge" id="pax-badge"></div>
+  </button>
+  <button class="navbtn" id="nav-export" onclick="switchScreen('export')">
+    <span class="navbtn-icon">&#8595;</span>Export
+  </button>
+</div>
+
+</div><!-- /app -->
+
+<script>
+// ═══════════════════════════════
+// CONSTANTS & STATE
+// ═══════════════════════════════
+const DAYS = ['mon','tue','wed','thu','fri','sat','sun'];
+const DAY_FR = {mon:'Lundi',tue:'Mardi',wed:'Mercredi',thu:'Jeudi',fri:'Vendredi',sat:'Samedi',sun:'Dimanche'};
+const DAY_S  = {mon:'Lun',tue:'Mar',wed:'Mer',thu:'Jeu',fri:'Ven',sat:'Sam',sun:'Dim'};
+const LANGS  = ['FR','EN','DE','LU','IT'];
+const MALTA_ZONES = {
+  MLAFOR:'Sliema',MLAVIC:'Sliema',MLAPAL:'Sliema',MLAVER:'Gzira',
+  MLAINT:"St Julian's",MLACAV:"St Julian's",MLARIO:"St Julian's",MLACOR:"St Julian's",
+  MLAHIL:"St Julian's",MLAWES:"St Julian's",MLASOCHS:"St Julian's",
+  MLAEXC:'Valletta',MLABWP:'Valletta',
+  MLAODY:'Qawra',MLADBT:"St Paul's Bay",MLASAN:'Qawra',MLAVIE:"St Paul's Bay",
+  MLAUVAHS:'Naxxar',MLARGS:'Golden Bay',MLARIV:'Mellieha Bay',
+  MLASEA:'Mellieha',MLAPARHS:'Paradise Bay'
+};
+
+let GK = localStorage.getItem('lux_key') || '';
+let PAX = [];
+let BUSES = [];
+let SC = {
+  name:'Paul Robert', mat:'20772', dest:'Malta', code:'MLA', base:'Bugibba',
+  startDate: null,
+  airports: [{day:'tue',from:'08:30',to:'11:00'},{day:'sat',from:'07:25',to:'10:00'}],
+  departs: [{day:'wed',location:'Bugibba'},{day:'sun',location:'Bugibba'}],
+  dayTypes: {mon:'OFFICE',fri:'OFFICE'},
+  hotels: [], schedule: {}, selDay: 'tue'
+};
+let PAX_TAB = 'dep';
+let EDIT_ID = null;
+let ML = new Set(); // manual langs
+
+// Load persisted state
+try {
+  const p = JSON.parse(localStorage.getItem('lux_pax') || '[]');
+  PAX = p;
+  const b = JSON.parse(localStorage.getItem('lux_buses') || '[]');
+  BUSES = b.length ? b : [{id:1,label:'Navette Matin',time:'06:30',note:''},{id:2,label:'Navette Midi',time:'11:00',note:''},{id:3,label:'Navette Soir',time:'14:45',note:''}];
+  const s = JSON.parse(localStorage.getItem('lux_sc') || '{}');
+  if (s.name) {
+    Object.assign(SC, {...s, hotels:(s.hotels||[]).map(h=>({...h,langs:new Set(h.langs||[])}))});
+    if (SC.startDate) SC.startDate = new Date(SC.startDate);
+  }
+} catch(e) {}
+
+// ═══════════════════════════════
+// INIT
+// ═══════════════════════════════
+function init() {
+  // Set logo
+  document.getElementById('logo').src = LOGO_DATA;
+  document.querySelector('link[rel="apple-touch-icon"]') && (document.querySelector('link[rel="apple-touch-icon"]').href = LOGO_DATA);
+
+  // Default start date = next Monday
+  if (!SC.startDate) {
+    const t = new Date(), diff = (8 - t.getDay()) % 7 || 7;
+    SC.startDate = new Date(t);
+    SC.startDate.setDate(t.getDate() + diff);
+  }
+
+  updateAI();
+  bindFormValues();
+  renderDtypeGrid();
+  renderAirports();
+  renderDeparts();
+  renderHotelList();
+  renderBusChips();
+  renderPax();
+  updatePaxBadge();
+
+  // If schedule exists, show it
+  if (Object.keys(SC.schedule).length > 0) showScheduleView();
+
+  // File inputs
+  document.getElementById('rv-file').onchange = e => handleFiles([...e.target.files], 'rv');
+  document.getElementById('rv-cam').onchange  = e => handleFiles([...e.target.files], 'rv');
+  document.getElementById('pax-file').onchange = e => handleFiles([...e.target.files], 'pax');
+  document.getElementById('pax-cam').onchange  = e => handleFiles([...e.target.files], 'pax');
+
+  // Hotels screen file inputs
+  document.getElementById('rv-file2').onchange = e => handleFiles([...e.target.files], 'rv');
+  document.getElementById('rv-cam2').onchange  = e => handleFiles([...e.target.files], 'rv');
+
+  // Bus toggle
+  document.getElementById('bus-toggle').onclick = function() {
+    this.classList.toggle('open');
+    document.getElementById('bus-body').classList.toggle('open');
+  };
+
+  // Service Worker for PWA
+  if ('serviceWorker' in navigator) {
+    const sw = `const C='lux5';self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['./'])));self.skipWaiting();});self.addEventListener('fetch',e=>{if(e.request.url.includes('googleapis'))return;e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).catch(()=>caches.match('./'))));});`;
+    navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw], {type:'application/javascript'}))).catch(()=>{});
+  }
+}
+
+// ═══════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════
+function switchScreen(s) {
+  syncFormValues();
+  document.querySelectorAll('.screen').forEach(x => x.classList.remove('on'));
+  document.querySelectorAll('.navbtn').forEach(x => x.classList.remove('on'));
+  document.getElementById('sc-'+s).classList.add('on');
+  document.getElementById('nav-'+s).classList.add('on');
+  document.getElementById('scroll').scrollTop = 0;
+  if (s === 'export') renderExport();
+  if (s === 'plan' && Object.keys(SC.schedule).length > 0) showScheduleView();
+  if (s === 'hotels') initHotelsScreen();
+}
+
+function showSetup() {
+  document.getElementById('plan-setup').style.display = 'block';
+  document.getElementById('plan-view').style.display = 'none';
+}
+
+function showScheduleView() {
+  document.getElementById('plan-setup').style.display = 'none';
+  document.getElementById('plan-view').style.display = 'block';
+  renderScheduleView();
+}
+
+// ═══════════════════════════════
+// FORM SYNC
+// ═══════════════════════════════
+function syncFormValues() {
+  const g = id => document.getElementById(id);
+  SC.name = g('cfg-name')?.value || SC.name;
+  SC.mat  = g('cfg-mat')?.value  || SC.mat;
+  SC.dest = g('cfg-dest')?.value || SC.dest;
+  SC.code = g('cfg-code')?.value || SC.code;
+  SC.base = g('cfg-base')?.value || SC.base;
+  const ds = g('cfg-date')?.value;
+  if (ds) SC.startDate = new Date(ds);
+  saveSC();
+  document.getElementById('bar-dest').textContent = (SC.code || 'MLA') + ' · ' + (SC.name || 'Rep');
+}
+
+function bindFormValues() {
+  const g = id => document.getElementById(id);
+  if (g('cfg-name')) g('cfg-name').value = SC.name;
+  if (g('cfg-mat'))  g('cfg-mat').value  = SC.mat;
+  if (g('cfg-dest')) g('cfg-dest').value = SC.dest;
+  if (g('cfg-code')) g('cfg-code').value = SC.code;
+  if (g('cfg-base')) g('cfg-base').value = SC.base;
+  if (g('cfg-date') && SC.startDate) g('cfg-date').value = SC.startDate.toISOString().slice(0,10);
+  document.getElementById('bar-dest').textContent = (SC.code || 'MLA') + ' · ' + (SC.name || 'Rep');
+}
+
+// ═══════════════════════════════
+// PERSIST
+// ═══════════════════════════════
+function savePax() { localStorage.setItem('lux_pax', JSON.stringify(PAX)); }
+function saveBus()  { localStorage.setItem('lux_buses', JSON.stringify(BUSES)); }
+function saveSC()   {
+  try {
+    localStorage.setItem('lux_sc', JSON.stringify({
+      ...SC,
+      startDate: SC.startDate?.toISOString(),
+      hotels: SC.hotels.map(h => ({...h, langs: [...h.langs]}))
+    }));
+  } catch(e) {}
+}
+
+// ═══════════════════════════════
+// API KEY
+// ═══════════════════════════════
+function updateAI() {
+  const ok = !!GK;
+  document.getElementById('ai-dot').className = 'ai-dot' + (ok ? ' ok' : '');
+  document.getElementById('ai-lbl').textContent = ok ? 'IA connectée ✓' : 'Gemini AI';
+}
+function saveKey() {
+  const v = document.getElementById('key-input').value.trim();
+  if (v) { GK = v; localStorage.setItem('lux_key', v); updateAI(); toast('Clé sauvegardée ✓', 'ok'); }
+  closeModal('modal-key');
+}
+
+// ═══════════════════════════════
+// GEMINI API
+// ═══════════════════════════════
+async function gemini(parts) {
+  if (!GK) throw new Error('NO_KEY');
+  const r = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GK}`,
+    { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ contents:[{parts}], generationConfig:{temperature:.1, maxOutputTokens:4096} }) }
+  );
+  if (!r.ok) { const e = await r.json(); throw new Error(e.error?.message || 'Erreur Gemini'); }
+  const d = await r.json();
+  return (d.candidates?.[0]?.content?.parts?.[0]?.text || '').replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
+}
+
+// ═══════════════════════════════
+// FILE HANDLING
+// ═══════════════════════════════
+async function handleFiles(files, mode) {
+  if (!GK) { openModal('modal-key'); return; }
+  if (!files.length) return;
+  showLoader('Lecture du document...', "L'IA analyse le fichier");
+  const errEl = mode === 'rv' ? 'plan-err' : 'pax-err';
+  try {
+    for (const file of files) {
+      const nm = file.name.toLowerCase(), tp = file.type;
+      const isPdf  = tp === 'application/pdf'  || nm.endsWith('.pdf');
+      const isImg  = tp.startsWith('image/')    || nm.endsWith('.heic') || nm.endsWith('.heif');
+      const isDoc  = nm.endsWith('.doc') || nm.endsWith('.docx') || tp.includes('word') || tp.includes('officedocument');
+      const isTxt  = tp.startsWith('text/') || nm.endsWith('.txt');
+      const prompt = mode === 'rv' ? RV_PROMPT : PAX_PROMPT;
+
+      let parts = null;
+
+      if (isPdf) {
+        const b64 = await toBase64(file);
+        parts = [{text: prompt}, {inline_data:{mime_type:'application/pdf', data:b64}}];
+
+      } else if (isImg) {
+        const b64 = await toBase64(file);
+        let mt = tp;
+        if (!mt || nm.endsWith('.heic') || nm.endsWith('.heif')) mt = 'image/jpeg';
+        if (!['image/jpeg','image/png','image/gif','image/webp'].includes(mt)) mt = 'image/jpeg';
+        parts = [{text: prompt}, {inline_data:{mime_type:mt, data:b64}}];
+
+      } else if (isDoc || isTxt) {
+        // Read as text — works for .txt and partially for .doc (extracts readable text)
+        // For .doc/.docx the browser reads raw bytes but Gemini handles it as plain text context
+        const text = await readAsText(file);
+        parts = [{text: prompt + '\n\nContenu du document:\n' + text}];
+
+      } else {
+        toast('Format non supporté: ' + nm + ' — utilise PDF, JPG ou colle le texte', 'err');
+        continue;
+      }
+
+      const raw = await gemini(parts);
+      if (mode === 'rv') processRVResult(raw);
+      else processPaxResult(raw);
+    }
+  } catch(e) {
+    if (e.message === 'NO_KEY') openModal('modal-key');
+    else showAlert(errEl, '⚠️ ' + e.message);
+    console.error(e);
+  }
+  hideLoader();
+}
+
+function readAsText(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result);
+    r.onerror = rej;
+    // Try UTF-8 first; for .doc binaries this gives partial text but Gemini handles it
+    r.readAsText(file, 'UTF-8');
+  });
+}
+
+function toBase64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result.split(',')[1]);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+// ═══════════════════════════════
+// PROMPTS
+// ═══════════════════════════════
+const RV_PROMPT = `Tu analyses un document LuxairTours (RV2, RV3, ou liste téléphones PDF).
+Extrais tous les hôtels avec leurs clients.
+
+Format RV2/RV3: lignes "HOTEL NAME : NOM CODE", puis clients "F MR NOM" (F=Français, E=Anglais, D=Allemand, L=Luxembourgeois).
+Format PDF téléphones: sections hôtels avec PNR, nom, date arrivée, date départ, téléphone.
+
+Pour chaque hôtel retourne:
+- code: ex "MLACAV"
+- name: nom complet
+- zone: quartier si mentionné
+- langs: tableau des langues UNIQUES (ex ["FR","EN"])
+- arrivalDate: date arrivée format "JJ.MM.AA" ou "DD-MMM-YY"
+- clientCount: nombre de clients
+
+Réponds UNIQUEMENT en JSON valide, sans backticks:
+{"hotels":[{"code":"MLACAV","name":"Cavalieri Art Hotel","zone":"St Julian's","langs":["FR","EN"],"arrivalDate":"14.04.26","clientCount":3}]}`;
+
+const PAX_PROMPT = `Tu analyses un document LuxairTours (RV2, RV3, ou liste téléphones PDF).
+Extrais tous les passagers avec leurs numéros de téléphone.
+
+Codes langue: F=FR, E=EN, D=DE, L=LU.
+Format dates: JJ.MM.AA ou DD-MMM-YY.
+
+Pour chaque passager retourne:
+- lastName, firstName, hotel (code), hotelName, arrival, departure, phone, lang
+
+Réponds UNIQUEMENT en JSON valide, sans backticks:
+[{"lastName":"DUPONT","firstName":"Marc","hotel":"MLACAV","hotelName":"Cavalieri","arrival":"07-APR-26","departure":"14-APR-26","phone":"+33612345678","lang":"FR"}]`;
+
+// ═══════════════════════════════
+// PLANNING — ANALYZE DOCUMENTS
+// ═══════════════════════════════
+async function analyzeDocuments() {
+  if (!GK) { openModal('modal-key'); return; }
+  const text = document.getElementById('rv-text').value.trim();
+  if (!text) { showAlert('plan-err', '⚠️ Colle le texte du document ou ouvre un fichier'); return; }
+
+  setBtn('rv-analyze-btn', 'rv-spin', true);
+  showAlert('plan-err', '');
+  showLoader('Analyse en cours...', "Détection des hôtels, langues et dates");
+
+  try {
+    const raw = await gemini([{text: RV_PROMPT + '\n\nDocument:\n' + text}]);
+    processRVResult(raw);
+    document.getElementById('rv-text').value = '';
+  } catch(e) {
+    if (e.message === 'NO_KEY') openModal('modal-key');
+    else showAlert('plan-err', '⚠️ ' + e.message);
+    console.error(e);
+  }
+  hideLoader();
+  setBtn('rv-analyze-btn', 'rv-spin', false);
+}
+
+function processRVResult(raw) {
+  try {
+    const data = JSON.parse(raw);
+    const hotels = data.hotels || [];
+    const sd = SC.startDate || new Date();
+    let added = 0;
+    hotels.forEach(h => {
+      const langs = new Set(h.langs || []);
+      let arrivalDay = 'tue';
+      if (h.arrivalDate) {
+        const d = parseDate(h.arrivalDate);
+        if (d) {
+          const diff = Math.round((d - sd) / 86400000);
+          if (diff >= 0 && diff < 7) arrivalDay = DAYS[diff];
+        }
+      }
+      if (!SC.hotels.find(x => x.code === h.code && x.arrivalDay === arrivalDay)) {
+        SC.hotels.push({ code:h.code, name:h.name, zone:h.zone||MALTA_ZONES[h.code]||'—', langs, arrivalDay, clientCount:h.clientCount||0 });
+        added++;
+      }
+    });
+    saveSC();
+    renderHotelList();
+    renderHotelList2();
+    updateHotelsBadge();
+    showAlert('plan-ok', `✓ ${added} hôtel(s) ajouté(s). Total: ${SC.hotels.length}`);
+    showAlert('hotels-ok', `✓ ${added} hôtel(s) ajouté(s). Total: ${SC.hotels.length}`);
+    if (SC.hotels.length > 0) {
+      const w1 = document.getElementById('week-config-wrap');
+      const w2 = document.getElementById('week-config-wrap2');
+      if (w1) w1.style.display = 'block';
+      if (w2) w2.style.display = 'block';
+    }
+    toast(`${added} hôtels importés ✓`, 'ok');
+  } catch(e) {
+    showAlert('plan-err', '⚠️ Erreur lecture résultat IA. Réessaie.');
+    console.error(e, raw);
+  }
+}
+
+function parseDate(s) {
+  if (!s) return null;
+  const m1 = s.match(/(\d{2})\.(\d{2})\.(\d{2,4})/);
+  if (m1) return new Date(2000 + parseInt(m1[3] % 100), parseInt(m1[2])-1, parseInt(m1[1]));
+  const MONTHS = {JAN:0,FEB:1,MAR:2,APR:3,MAY:4,JUN:5,JUL:6,AUG:7,SEP:8,OCT:9,NOV:10,DEC:11};
+  const m2 = s.match(/(\d{2})-([A-Z]{3})-(\d{2,4})/i);
+  if (m2) return new Date(2000 + parseInt(m2[3] % 100), MONTHS[m2[2].toUpperCase()]||0, parseInt(m2[1]));
+  return null;
+}
+
+// ═══════════════════════════════
+// HOTEL LIST
+// ═══════════════════════════════
+function renderHotelList() {
+  const w = document.getElementById('hotel-list-wrap');
+  if (!SC.hotels.length) { w.innerHTML = ''; return; }
+  const byDay = {};
+  SC.hotels.forEach((h, i) => {
+    if (!byDay[h.arrivalDay]) byDay[h.arrivalDay] = [];
+    byDay[h.arrivalDay].push({...h, idx:i});
+  });
+  w.innerHTML = `
+    <div class="stitle">${SC.hotels.length} hôtel(s) importé(s) <button class="btn btn-ghost btn-sm" onclick="SC.hotels=[];saveSC();renderHotelList();document.getElementById('week-config-wrap').style.display='none'" style="float:right;margin-top:-3px;font-size:10px;color:var(--red)">Effacer tout</button></div>
+    ${DAYS.filter(d => byDay[d]).map(d => `
+      <div class="stitle" style="margin-top:10px">${DAY_FR[d]}</div>
+      ${byDay[d].map(h => `
+        <div class="hotel-row">
+          <div class="hcode">${h.code}</div>
+          <div class="hinfo">
+            <div class="hname">${h.name}</div>
+            <div class="hmeta">${h.zone || '—'} · ${[...(h.langs||[])].join('/')} · ${durMins(h.langs)}min</div>
+          </div>
+          <button onclick="SC.hotels.splice(${h.idx},1);saveSC();renderHotelList()" style="background:none;border:none;color:var(--t4);cursor:pointer;font-size:20px;padding:4px;line-height:1">×</button>
+        </div>`).join('')}
+    `).join('')}
+    <button class="btn btn-ghost btn-sm" onclick="toggleManualHotel()" style="margin-bottom:12px">+ Ajouter manuellement</button>
+    <div id="manual-hotel-form" style="display:none;background:var(--bg);border:1.5px dashed var(--border);border-radius:11px;padding:12px;margin-bottom:12px">
+      <div class="g2">
+        <div class="f"><label>Code</label><input id="mh-code" placeholder="MLACAV" oninput="this.value=this.value.toUpperCase()"></div>
+        <div class="f"><label>Nom</label><input id="mh-name" placeholder="Cavalieri"></div>
+      </div>
+      <div class="f"><label>Zone</label><input id="mh-zone" placeholder="St Julian's"></div>
+      <div class="f"><label>Langues</label><div class="lang-row" id="mh-langs"></div></div>
+      <div class="f"><label>Jour arrivée</label>
+        <select id="mh-day">${DAYS.map(d=>`<option value="${d}">${DAY_FR[d]}</option>`).join('')}</select>
+      </div>
+      <button class="btn btn-amber btn-full" onclick="addManualHotel()">+ Ajouter</button>
+    </div>`;
+  renderManualLangs();
+  if (SC.hotels.length > 0) document.getElementById('week-config-wrap').style.display = 'block';
+}
+
+function toggleManualHotel() {
+  const f = document.getElementById('manual-hotel-form');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+
+function renderManualLangs() {
+  const c = document.getElementById('mh-langs');
+  if (!c) return;
+  c.innerHTML = LANGS.map(l => `<div class="lc ${ML.has(l)?'s-'+l:''}" onclick="toggleML('${l}')">${l}</div>`).join('');
+}
+
+function toggleML(l) { ML.has(l) ? ML.delete(l) : ML.add(l); renderManualLangs(); }
+
+function addManualHotel() {
+  const code = document.getElementById('mh-code')?.value.trim().toUpperCase();
+  const name = document.getElementById('mh-name')?.value.trim();
+  const zone = document.getElementById('mh-zone')?.value.trim();
+  const day  = document.getElementById('mh-day')?.value;
+  if (!code || !name) { toast('Code et nom requis', 'err'); return; }
+  if (!ML.size) { toast('Sélectionne au moins une langue', 'err'); return; }
+  SC.hotels.push({ code, name, zone: zone || MALTA_ZONES[code] || '—', langs: new Set(ML), arrivalDay: day || 'tue' });
+  ML.clear(); saveSC(); renderHotelList(); toast(code + ' ajouté ✓', 'ok');
+}
+
+function durMins(langs) {
+  const n = (langs instanceof Set) ? langs.size : (langs||[]).length;
+  return n <= 1 ? 45 : n <= 2 ? 60 : 75;
+}
+
+// ═══════════════════════════════
+// WEEK CONFIG
+// ═══════════════════════════════
+function renderDtypeGrid() {
+  document.getElementById('dtype-grid').innerHTML = DAYS.map(d => {
+    const t = SC.dayTypes[d];
+    return `<div class="dtype-btn ${t==='OFFICE'?'office':t==='DAYOFF'?'dayoff':''}" onclick="cycleDtype('${d}')">
+      <div style="font-size:12px;font-weight:700">${DAY_S[d]}</div>
+      <div style="font-size:9px;margin-top:2px">${t||'normal'}</div>
+    </div>`;
+  }).join('');
+}
+
+function cycleDtype(d) {
+  const c = SC.dayTypes[d];
+  if (!c) SC.dayTypes[d] = 'OFFICE';
+  else if (c === 'OFFICE') SC.dayTypes[d] = 'DAYOFF';
+  else delete SC.dayTypes[d];
+  renderDtypeGrid(); saveSC();
+}
+
+function addAirport()  { SC.airports.push({day:'tue',from:'08:30',to:'11:00'}); renderAirports(); }
+function addDepart()   { SC.departs.push({day:'wed',location:SC.base||''}); renderDeparts(); }
+
+function renderAirports() {
+  document.getElementById('airport-wrap').innerHTML = SC.airports.map((a, i) => `
+    <div class="card" style="margin-bottom:8px">
+      <div class="g3">
+        <div class="f"><label>Jour</label>
+          <select onchange="SC.airports[${i}].day=this.value">${DAYS.map(d=>`<option value="${d}" ${a.day===d?'selected':''}>${DAY_S[d]}</option>`).join('')}</select>
+        </div>
+        <div class="f"><label>Début</label><input type="time" value="${a.from}" onchange="SC.airports[${i}].from=this.value"></div>
+        <div class="f"><label>Fin</label><input type="time" value="${a.to}" onchange="SC.airports[${i}].to=this.value"></div>
+      </div>
+      <button class="btn btn-red btn-sm" onclick="SC.airports.splice(${i},1);renderAirports()" style="margin-top:6px">Supprimer</button>
+    </div>`).join('');
+}
+
+function renderDeparts() {
+  document.getElementById('depart-wrap').innerHTML = SC.departs.map((d, i) => `
+    <div class="card" style="margin-bottom:8px">
+      <div class="g2">
+        <div class="f"><label>Jour</label>
+          <select onchange="SC.departs[${i}].day=this.value">${DAYS.map(dy=>`<option value="${dy}" ${d.day===dy?'selected':''}>${DAY_S[dy]}</option>`).join('')}</select>
+        </div>
+        <div class="f"><label>Départ depuis</label><input type="text" value="${d.location}" placeholder="${SC.base||'ville...'}" onchange="SC.departs[${i}].location=this.value"></div>
+      </div>
+      <button class="btn btn-red btn-sm" onclick="SC.departs.splice(${i},1);renderDeparts()" style="margin-top:6px">Supprimer</button>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════
+// GENERATE SCHEDULE
+// ═══════════════════════════════
+async function generateSchedule() {
+  if (!GK) { openModal('modal-key'); return; }
+  if (!SC.hotels.length) { toast('Importe des hôtels d\'abord', 'err'); return; }
+  syncFormValues();
+  syncHotelsForm();
+  setBtn('gen-btn', 'gen-spin', true);
+  setBtn('gen-btn2', 'gen-spin2', true);
+  showLoader('Calcul du planning...', "L'IA optimise routes et créneaux");
+
+  const byDay = {};
+  SC.hotels.forEach(h => {
+    if (!byDay[h.arrivalDay]) byDay[h.arrivalDay] = [];
+    byDay[h.arrivalDay].push({ code:h.code, name:h.name, zone:h.zone, langs:[...(h.langs||[])] });
+  });
+
+  const airStr = SC.airports.map(a => `${DAY_FR[a.day]}: AIRPORT ${a.from}→${a.to}`).join(' | ');
+  const depStr = SC.departs.map(d => `${DAY_FR[d.day]}: départ depuis "${d.location}"`).join(' | ');
+  const officeStr = Object.entries(SC.dayTypes).filter(([,v])=>v==='OFFICE').map(([d])=>DAY_FR[d]).join(', ') || 'aucun';
+  const offStr    = Object.entries(SC.dayTypes).filter(([,v])=>v==='DAYOFF').map(([d])=>DAY_FR[d]).join(', ') || 'aucun';
+
+  const prompt = `Expert logistique LuxairTours. Génère un planning hebdomadaire OPTIMAL de visites d'hôtels.
+
+DESTINATION: ${SC.dest} (${SC.code}) · Base: ${SC.base}
+
+RÈGLES DURÉE DE MEETING:
+- 1 langue = 45 minutes
+- 2 langues = 60 minutes  
+- 3+ langues = 75 minutes
+
+RÈGLES TRAJET (toujours minimum 15min, arrondir par 5min):
+- Walking/même complexe → COMBO: fusionner 2 hôtels en 1 slot (code "MLAX+MLAY", durée 60min)
+- Zones très proches = 15min
+- Zones adjacentes = 15-20min
+- Zones moyennes (ex: St Julian's↔Qawra) = 30min
+- Zones lointaines (ex: Sliema↔Mellieha) = 45min
+- Après 14h: +5-10min sur trajets >15min
+
+COMBOS WALKING MALTE (même complexe): MLAFOR+MLAVIC, MLAPAL+MLAVIC, MLAINT+MLACAV, MLAHIL+MLAWES, MLACAV+MLACOR
+
+ORDRE GÉOGRAPHIQUE MALTE:
+- Depuis aéroport (Luqa/SUD): Gzira→Sliema→St Julian's(Spinola→Balluta→Dragonara)→Qawra→St Paul's Bay→Naxxar→Golden Bay→Mellieha→Paradise Bay
+- Depuis Bugibba: Naxxar→Golden Bay→Mellieha Bay→Mellieha→Paradise Bay (ou Qawra walking)
+- JAMAIS rebrousser chemin
+
+JOURS OFFICE: ${officeStr}
+JOURS DAYOFF: ${offStr}
+AÉROPORT: ${airStr || 'aucun'}
+DÉPARTS: ${depStr || 'aucun'}
+
+HÔTELS À PLANIFIER:
+${JSON.stringify(byDay, null, 2)}
+
+Réponds UNIQUEMENT en JSON valide, sans backticks:
+{"schedule":{"mon":[{"from":"09:30","to":"17:00","task":"OFFICE","hotel":null,"hotelName":null,"langs":[],"duration":null,"combo":false,"travel":0}],"tue":[{"from":"08:30","to":"11:00","task":"AIRPORT","hotel":null,"hotelName":null,"langs":[],"duration":null,"combo":false,"travel":0},{"from":"11:00","to":"11:45","task":"MEETING","hotel":"MLAVER","hotelName":"Verdi Gzira","langs":["FR"],"duration":45,"combo":false,"travel":15}],"wed":[],"thu":[],"fri":[],"sat":[],"sun":[]}}`;
+
+  try {
+    const raw = await gemini([{text: prompt}]);
+    const data = JSON.parse(raw);
+    SC.schedule = data.schedule;
+    saveSC();
+    toast('Planning généré ✓', 'ok');
+    showScheduleView();
+  } catch(e) {
+    if (e.message === 'NO_KEY') openModal('modal-key');
+    else { toast('Erreur génération — réessaie', 'err'); console.error(e); }
+  }
+  hideLoader();
+  setBtn('gen-btn', 'gen-spin', false);
+  setBtn('gen-btn2', 'gen-spin2', false);
+}
+
+// ═══════════════════════════════
+// SCHEDULE VIEW
+// ═══════════════════════════════
+function renderScheduleView() {
+  const sd = SC.startDate || new Date();
+  document.getElementById('winfo-name').textContent = SC.name || 'Rep';
+  const end = new Date(sd); end.setDate(sd.getDate() + 6);
+  document.getElementById('winfo-dates').textContent =
+    sd.toLocaleDateString('fr-FR', {day:'2-digit',month:'2-digit'}) + '→' +
+    end.toLocaleDateString('fr-FR', {day:'2-digit',month:'2-digit'});
+  document.getElementById('winfo-dest').textContent = SC.code || '—';
+
+  document.getElementById('day-tabs').innerHTML = DAYS.map((d, i) => {
+    const dt = new Date(sd); dt.setDate(sd.getDate() + i);
+    const hasSlots = (SC.schedule[d] || []).length > 0;
+    return `<div class="day-tab ${d===SC.selDay?'on':''}" onclick="selectDay('${d}')">
+      ${DAY_S[d]}<span class="day-tab-date">${dt.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})}</span>
+    </div>`;
+  }).join('');
+
+  renderDaySlots();
+}
+
+function selectDay(d) { SC.selDay = d; saveSC(); renderScheduleView(); }
+
+function renderDaySlots() {
+  const el = document.getElementById('day-slots');
+  const slots = SC.schedule[SC.selDay] || [];
+  if (!slots.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">🗓</div><div class="empty-text">Aucun créneau</div><div class="empty-sub">Génère le planning depuis l'onglet Planning</div></div>`;
+    return;
+  }
+  const LANG_CLASS = {FR:'badge-arr',EN:'badge-dep lang-EN',DE:'badge-red lang-DE',LU:'badge-lu lang-LU'};
+  const LC = {FR:'lang-FR',EN:'lang-EN',DE:'lang-DE',LU:'lang-LU'};
+  el.innerHTML = slots.map(s => {
+    const tl = (s.task || '').toLowerCase();
+    const isCombo = s.combo;
+    const langBadges = (s.langs||[]).map(l => `<span class="lang-chip ${LC[l]||'lang-FR'}">${l}</span>`).join('');
+    return `
+    <div class="slot-row">
+      <div class="slot-time">${s.from}<br><span style="opacity:.6">${s.to}</span></div>
+      <div class="slot-line ${isCombo?'combo':tl}"></div>
+      <div class="slot-body ${isCombo?'combo':tl}">
+        <div class="slot-task">${s.task||''}${isCombo?' · COMBO':''}</div>
+        <div class="slot-hotel">${s.hotel || (s.task==='OFFICE'?'Bureau':s.task==='AIRPORT'?'Aéroport MLA':s.task==='DAYOFF'?'Jour off':'—')}</div>
+        ${s.hotelName && s.hotel && s.hotelName!==s.hotel ? `<div class="slot-detail">${s.hotelName}</div>` : ''}
+        ${langBadges ? `<div class="slot-langs">${langBadges}${s.duration?`<span style="font-size:11px;color:var(--t4)">${s.duration}min</span>`:''}</div>` : ''}
+      </div>
+    </div>
+    ${s.travel && s.travel > 0 && s.task==='MEETING' ? `
+    <div class="travel-row">
+      <div style="min-width:44px"></div>
+      <div style="width:3px;background:var(--border)"></div>
+      <div class="travel-label">🚗 ${s.travel}min trajet</div>
+    </div>` : ''}`;
+  }).join('');
+}
+
+// ═══════════════════════════════
+// MESSAGES — PAX
+// ═══════════════════════════════
+async function analyzePax() {
+  if (!GK) { openModal('modal-key'); return; }
+  const text = document.getElementById('pax-text').value.trim();
+  if (!text) { showAlert('pax-err', '⚠️ Colle le texte du document ou ouvre un fichier'); return; }
+  setBtn('pax-analyze-btn', 'pax-spin', true);
+  showAlert('pax-err', '');
+  showLoader('Import passagers...', "L'IA extrait les données");
+  try {
+    const raw = await gemini([{text: PAX_PROMPT + '\n\nDocument:\n' + text}]);
+    processPaxResult(raw);
+    document.getElementById('pax-text').value = '';
+  } catch(e) {
+    if (e.message === 'NO_KEY') openModal('modal-key');
+    else showAlert('pax-err', '⚠️ ' + e.message);
+    console.error(e);
+  }
+  hideLoader();
+  setBtn('pax-analyze-btn', 'pax-spin', false);
+}
+
+function processPaxResult(raw) {
+  try {
+    const list = JSON.parse(raw);
+    const ex = new Set(PAX.map(p => (p.lastName + p.firstName + p.arrival).toLowerCase()));
+    const fresh = list.map(p => ({
+      id: 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2,5),
+      lastName: p.lastName||'', firstName: p.firstName||'',
+      fullName: ((p.firstName||'') + ' ' + (p.lastName||'')).trim(),
+      hotel: p.hotel||'', hotelName: p.hotelName||'',
+      arrival: p.arrival||'', departure: p.departure||'',
+      phone: p.phone||'', lang: p.lang || guesslang(p.phone||''),
+      pickupTime: '', notes: ''
+    })).filter(p => !ex.has((p.lastName+p.firstName+p.arrival).toLowerCase()));
+    PAX = [...PAX, ...fresh];
+    savePax(); renderPax(); updatePaxBadge();
+    showAlert('pax-ok', `✓ ${fresh.length} passager(s) ajouté(s). Total: ${PAX.length}`);
+    toast(`${fresh.length} passagers importés ✓`, 'ok');
+  } catch(e) {
+    showAlert('pax-err', '⚠️ Erreur lecture résultat IA. Réessaie.');
+    console.error(e, raw);
+  }
+}
+
+function guesslang(phone) {
+  const p = phone.replace(/\s/g,'');
+  if (p.startsWith('+49') || p.startsWith('+43')) return 'DE';
+  if (p.startsWith('+44')) return 'EN';
+  if (p.startsWith('+352')) return 'LU';
+  return 'FR';
+}
+
+function updatePaxBadge() {
+  const b = document.getElementById('pax-badge');
+  b.style.display = PAX.length ? 'flex' : 'none';
+  b.textContent = PAX.length;
+}
+
+function switchTab(t) {
+  PAX_TAB = t;
+  ['dep','arr','all'].forEach(x => {
+    document.getElementById('tab-'+x).className = 'tabt' + (t===x ? ' on' : '');
+  });
+  renderPax();
+}
+
+function todayLabel() {
+  const d = new Date();
+  const M = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  return `${String(d.getDate()).padStart(2,'0')}-${M[d.getMonth()]}-${String(d.getFullYear()).slice(-2)}`;
+}
+
+function buildWAMessage(p, busId) {
+  const lg = p.lang || guesslang(p.phone||'');
+  const buses = busId ? BUSES.filter(b => b.id === parseInt(busId)) : BUSES;
+  const time = buses.length ? buses.map(b => b.time).join(' / ') : '[heure à confirmer]';
+  const name = p.firstName || p.lastName;
+  if (lg === 'DE') return `Guten Tag ${name},\n\nIhr LuxairTours Reiseleiter hier.\nDer Bus holt Sie um ${time} Uhr ab.\n\nBitte bestätigen Sie den Empfang.\n\nMit freundlichen Grüßen,\n${SC.name}\nLuxairTours`;
+  if (lg === 'LU') return `Moien ${name},\n\nIer LuxairTours Reiseleeder hei.\nDen Bus kënnt Iech um ${time} Auer abhalen.\n\nBitte confirméiert d'Empfang.\n\nMat frëndleche Gréiss,\n${SC.name}\nLuxairTours`;
+  if (lg === 'EN') return `Hello ${name},\n\nYour LuxairTours guide here.\nThe bus will pick you up at ${time}.\n\nPlease confirm receipt of this message.\n\nKind regards,\n${SC.name}\nLuxairTours`;
+  return `Bonjour ${name},\n\nVotre guide LuxairTours.\nLe bus vous récupère à ${time}.\n\nMerci de confirmer réception.\n\nCordialement,\n${SC.name}\nLuxairTours`;
+}
+
+function renderPax() {
+  const today = todayLabel();
+  const q = (document.getElementById('pax-search')?.value || '').toLowerCase();
+  const deps = PAX.filter(p => p.departure);
+  const arrs = PAX.filter(p => p.arrival);
+  let list = PAX_TAB === 'dep' ? deps : PAX_TAB === 'arr' ? arrs : PAX;
+  if (q) list = list.filter(p => [p.fullName,p.lastName,p.firstName,p.hotel,p.hotelName,p.phone].some(v => v && v.toLowerCase().includes(q)));
+  list = list.slice().sort((a, b) => (PAX_TAB==='arr' ? a.arrival : a.departure||'').localeCompare(PAX_TAB==='arr' ? b.arrival : b.departure||''));
+  const c = document.getElementById('pax-list');
+  if (!list.length) {
+    c.innerHTML = `<div class="empty-state"><div class="empty-icon">${PAX.length===0?'📂':'🔍'}</div><div class="empty-text">${PAX.length===0?'Importez un document':'Aucun résultat'}</div><div class="empty-sub">${PAX.length===0?'PDF téléphones, RV2 ou RV3':''}</div></div>`;
+    return;
+  }
+  const busOpts = BUSES.map(b => `<option value="${b.id}">${b.label} ${b.time}</option>`).join('');
+  c.innerHTML = list.map(p => {
+    if (EDIT_ID === p.id) return renderEditForm(p);
+    const LC = {FR:'lang-FR',EN:'lang-EN',DE:'lang-DE',LU:'lang-LU'};
+    const lc = LC[p.lang] || 'lang-FR';
+    return `<div class="pax-card" id="pcard-${p.id}">
+      <div class="pax-top">
+        <div class="pax-name">${p.firstName ? `<span class="pax-name-first">${p.firstName}</span> ` : ''}${p.lastName||p.fullName}</div>
+        <span class="lang-chip ${lc}">${p.lang||'FR'}</span>
+      </div>
+      ${p.hotelName || p.hotel ? `<div class="pax-hotel">🏨 ${p.hotelName||p.hotel}</div>` : ''}
+      <div class="pax-badges">
+        ${p.arrival  ? `<span class="badge badge-arr">✈ ${p.arrival}</span>` : ''}
+        ${p.departure? `<span class="badge badge-dep">🛫 ${p.departure}</span>` : ''}
+        ${p.pickupTime ? `<span class="badge badge-pick">🕐 ${p.pickupTime}</span>` : ''}
+      </div>
+      <div class="pax-actions">
+        ${p.phone ? `
+          <select id="bs-${p.id}" class="bus-select"><option value="">Tous les bus</option>${busOpts}</select>
+          <a href="#" onclick="openWA('${p.id}');return false" class="btn btn-wa btn-sm" style="text-decoration:none">📱 WA</a>
+        ` : `<span style="font-size:11px;color:var(--t4)">Pas de téléphone</span>`}
+        <button class="btn btn-ghost btn-sm" onclick="startEdit('${p.id}')">✏️</button>
+        <button class="btn btn-red btn-sm" onclick="deletePax('${p.id}')">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderEditForm(p) {
+  return `<div class="edit-card" id="pcard-${p.id}">
+    <div style="font-size:12px;font-weight:700;color:var(--amber-d);margin-bottom:10px">✏️ Modifier</div>
+    <div class="edit-grid">
+      ${[['firstName','Prénom'],['lastName','Nom'],['arrival','Arrivée'],['departure','Départ'],['phone','Téléphone'],['hotel','Code hôtel'],['hotelName','Nom hôtel'],['pickupTime','Pickup']].map(([k,l])=>
+        `<div class="f"><label>${l}</label><input id="ef-${k}" value="${(p[k]||'').replace(/"/g,'&quot;')}"></div>`
+      ).join('')}
+      <div class="f"><label>Langue</label><select id="ef-lang" style="font-size:12px;padding:7px 10px">${['FR','EN','DE','LU'].map(l=>`<option value="${l}" ${p.lang===l?'selected':''}>${l}</option>`).join('')}</select></div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-amber" onclick="saveEdit('${p.id}')">✓ Enregistrer</button>
+      <button class="btn btn-ghost" onclick="cancelEdit()">Annuler</button>
+    </div>
+  </div>`;
+}
+
+function openWA(id) {
+  const p = PAX.find(x => x.id === id);
+  if (!p || !p.phone) return;
+  const busId = document.getElementById('bs-'+id)?.value || '';
+  window.open('https://wa.me/' + p.phone.replace(/\D/g,'') + '?text=' + encodeURIComponent(buildWAMessage(p, busId)), '_blank');
+}
+function startEdit(id)  { EDIT_ID = id; renderPax(); document.getElementById('ef-firstName')?.focus(); }
+function cancelEdit()   { EDIT_ID = null; renderPax(); }
+function saveEdit(id)   {
+  const fields = ['firstName','lastName','arrival','departure','phone','hotel','hotelName','pickupTime','lang'];
+  const upd = {};
+  fields.forEach(k => { const el = document.getElementById('ef-'+k); if (el) upd[k] = el.value; });
+  PAX = PAX.map(p => { if (p.id !== id) return p; const u = {...p,...upd}; u.fullName = ((u.firstName||'')+' '+(u.lastName||'')).trim(); return u; });
+  EDIT_ID = null; savePax(); renderPax();
+}
+function deletePax(id)  { if (!confirm('Supprimer ?')) return; PAX = PAX.filter(p => p.id !== id); savePax(); renderPax(); updatePaxBadge(); }
+function clearPax()     { if (!confirm('Effacer tous les passagers ?')) return; PAX = []; savePax(); renderPax(); updatePaxBadge(); toast('Liste effacée', 'ok'); }
+
+// Bus
+function renderBusChips() {
+  document.getElementById('bus-chips').innerHTML = BUSES.map(b =>
+    `<span class="bus-chip"><strong>${b.time}</strong> ${b.label}${b.note?` <span style="color:var(--t4);font-size:10px">(${b.note})</span>`:''}&nbsp;<button class="chip-del" onclick="removeBus(${b.id})">✕</button></span>`
+  ).join('');
+}
+function addBus() {
+  const l = document.getElementById('new-bus-label').value.trim();
+  const t = document.getElementById('new-bus-time').value.trim();
+  const n = document.getElementById('new-bus-note').value.trim();
+  if (!l || !t) return;
+  BUSES.push({id:Date.now(), label:l, time:t, note:n});
+  saveBus(); ['new-bus-label','new-bus-time','new-bus-note'].forEach(i=>document.getElementById(i).value='');
+  renderBusChips();
+}
+function removeBus(id) { BUSES = BUSES.filter(b => b.id !== id); saveBus(); renderBusChips(); }
+
+// ═══════════════════════════════
+// EXPORT
+// ═══════════════════════════════
+function renderExport() {
+  let meetings = 0, hotels = new Set(), combos = 0;
+  DAYS.forEach(d => (SC.schedule[d]||[]).forEach(s => {
+    if (s.task === 'MEETING') {
+      meetings++;
+      if (s.combo) combos++;
+      (s.hotel||'').split('+').forEach(h => hotels.add(h.trim()));
+    }
+  }));
+  document.getElementById('export-summary').innerHTML = [
+    ['Représentant', SC.name],
+    ['Matricule', SC.mat],
+    ['Destination', `${SC.dest} (${SC.code})`],
+    ['Semaine du', SC.startDate?.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'}) || '—'],
+    ['Hôtels couverts', hotels.size],
+    ['Créneaux meetings', meetings],
+    ['Combos walking', combos],
+    ['Passagers importés', PAX.length],
+  ].map(([k,v]) => `<div class="sum-row"><span style="color:var(--t3)">${k}</span><span class="sum-val">${v}</span></div>`).join('');
+}
+
+function downloadCSV() {
+  const sd = SC.startDate || new Date();
+  let csv = '\ufeffJour,Date,Début,Fin,Tâche,Code Hôtel,Nom Hôtel,Langues,Durée (min),Combo,Trajet (min)\n';
+  DAYS.forEach((d, i) => {
+    const dt = new Date(sd); dt.setDate(sd.getDate() + i);
+    const ds = dt.toLocaleDateString('fr-FR', {day:'2-digit',month:'2-digit',year:'2-digit'});
+    (SC.schedule[d]||[]).forEach(s => {
+      csv += `${DAY_FR[d]},${ds},${s.from||''},${s.to||''},${s.task||''},${s.hotel||''},${s.hotelName||''},${(s.langs||[]).join('/')},${s.duration||''},${s.combo?'OUI':''},${s.travel||''}\n`;
+    });
+  });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8;'}));
+  a.download = `WS_${SC.code}_${SC.name.replace(/\s/g,'_')}_${(SC.startDate||new Date()).toISOString().slice(0,10)}.csv`;
+  a.click();
+  toast('CSV téléchargé ✓', 'ok');
+}
+
+function copyText() {
+  const sd = SC.startDate || new Date();
+  const end = new Date(sd); end.setDate(sd.getDate() + 6);
+  let t = `WEEKLY SCHEDULE — ${SC.name} (${SC.mat})\n${SC.dest} · ${sd.toLocaleDateString('fr-FR')} → ${end.toLocaleDateString('fr-FR')}\n${'─'.repeat(44)}\n\n`;
+  DAYS.forEach((d, i) => {
+    const slots = SC.schedule[d] || [];
+    if (!slots.length) return;
+    const dt = new Date(sd); dt.setDate(sd.getDate() + i);
+    t += `${DAY_FR[d].toUpperCase()} ${dt.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})}\n`;
+    slots.forEach(s => { t += `  ${s.from}–${s.to}  ${(s.task||'').padEnd(11)} ${s.hotel||''}\n`; });
+    t += '\n';
+  });
+  navigator.clipboard.writeText(t).then(() => toast('Copié ✓', 'ok')).catch(() => toast('Erreur copie', 'err'));
+}
+
+function resetAll() {
+  if (!confirm('Réinitialiser le planning et les hôtels ?')) return;
+  SC.hotels = []; SC.schedule = {}; SC.selDay = 'tue';
+  saveSC(); renderHotelList(); showSetup(); switchScreen('plan');
+  toast('Réinitialisé ✓', 'ok');
+}
+
+// ═══════════════════════════════
+// UI HELPERS
+// ═══════════════════════════════
+function showLoader(text, sub) { document.getElementById('load-text').textContent = text||''; document.getElementById('load-sub').textContent = sub||''; document.getElementById('loader').classList.add('on'); }
+function hideLoader()           { document.getElementById('loader').classList.remove('on'); }
+function openModal(id)          { document.getElementById(id).classList.add('on'); }
+function closeModal(id)         { document.getElementById(id).classList.remove('on'); }
+function showAlert(id, msg)     { const el = document.getElementById(id); if (msg) { el.innerHTML = msg; el.style.display = 'block'; } else el.style.display = 'none'; }
+function setBtn(btnId, spinId, loading) {
+  const btn = document.getElementById(btnId), sp = document.getElementById(spinId);
+  btn.disabled = loading;
+  sp.style.display = loading ? 'inline-block' : 'none';
+}
+let toastTimer;
+function toast(msg, type='') {
+  clearTimeout(toastTimer);
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = 'on' + (type ? ' '+type : '');
+  toastTimer = setTimeout(() => el.classList.remove('on'), 2400);
+}
+
+// Close modal on backdrop click
+document.querySelectorAll('.modal-bg').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('on'); }));
+
+// ═══════════════════════════════
+// HOTELS SCREEN HELPERS
+// ═══════════════════════════════
+function initHotelsScreen() {
+  // Sync form values from main config
+  const g = id => document.getElementById(id);
+  if (g('cfg-name2')) g('cfg-name2').value = SC.name;
+  if (g('cfg-mat2'))  g('cfg-mat2').value  = SC.mat;
+  if (g('cfg-dest2')) g('cfg-dest2').value = SC.dest;
+  if (g('cfg-code2')) g('cfg-code2').value = SC.code;
+  if (g('cfg-base2')) g('cfg-base2').value = SC.base;
+  if (g('cfg-date2') && SC.startDate) g('cfg-date2').value = SC.startDate.toISOString().slice(0,10);
+  renderHotelList2();
+  renderDtypeGrid2();
+  renderAirports2();
+  renderDeparts2();
+  // Show config if hotels already loaded
+  if (SC.hotels.length > 0) document.getElementById('week-config-wrap2').style.display = 'block';
+  // AI banner
+  const w = document.getElementById('apib-hotels');
+  if (w) w.innerHTML = !GK
+    ? '<div class="alert alert-amber" style="display:block;margin-bottom:12px">⚡ <strong>IA non connectée</strong> — <span style="color:var(--sky-d);cursor:pointer;text-decoration:underline" onclick="openModal('modal-key')">Ajouter ta clé Gemini (gratuit)</span></div>'
+    : '<div class="alert alert-green" style="display:block;margin-bottom:12px">✅ Gemini connectée (gratuit) · <span style="cursor:pointer;text-decoration:underline;color:var(--green)" onclick="openModal('modal-key')">Changer</span></div>';
+}
+
+function syncHotelsForm() {
+  const g = id => document.getElementById(id);
+  if (g('cfg-name2')) SC.name = g('cfg-name2').value || SC.name;
+  if (g('cfg-mat2'))  SC.mat  = g('cfg-mat2').value  || SC.mat;
+  if (g('cfg-dest2')) SC.dest = g('cfg-dest2').value || SC.dest;
+  if (g('cfg-code2')) SC.code = g('cfg-code2').value || SC.code;
+  if (g('cfg-base2')) SC.base = g('cfg-base2').value || SC.base;
+  const ds = g('cfg-date2')?.value;
+  if (ds) SC.startDate = new Date(ds);
+  saveSC();
+}
+
+async function analyzeDocuments2() {
+  if (!GK) { openModal('modal-key'); return; }
+  const text = document.getElementById('rv-text2').value.trim();
+  if (!text) { showAlert('hotels-err', '⚠️ Colle le texte du document ou ouvre un fichier'); return; }
+  setBtn('rv-analyze-btn2', 'rv-spin2', true);
+  showAlert('hotels-err', '');
+  showLoader('Analyse en cours...', "Détection des hôtels, langues et dates");
+  try {
+    const raw = await gemini([{text: RV_PROMPT + '\n\nDocument:\n' + text}]);
+    processRVResult(raw);
+    document.getElementById('rv-text2').value = '';
+    renderHotelList2();
+  } catch(e) {
+    if (e.message === 'NO_KEY') openModal('modal-key');
+    else showAlert('hotels-err', '⚠️ ' + e.message);
+    console.error(e);
+  }
+  hideLoader();
+  setBtn('rv-analyze-btn2', 'rv-spin2', false);
+}
+
+function renderHotelList2() {
+  const w = document.getElementById('hotel-list-wrap2');
+  if (!w) return;
+  if (!SC.hotels.length) { w.innerHTML = ''; return; }
+  const byDay = {};
+  SC.hotels.forEach((h, i) => {
+    if (!byDay[h.arrivalDay]) byDay[h.arrivalDay] = [];
+    byDay[h.arrivalDay].push({...h, idx:i});
+  });
+  w.innerHTML = `
+    <div class="stitle">${SC.hotels.length} hôtel(s) chargé(s)
+      <button class="btn btn-ghost btn-sm" onclick="SC.hotels=[];saveSC();renderHotelList2();document.getElementById('week-config-wrap2').style.display='none';updateHotelsBadge()" style="float:right;margin-top:-3px;font-size:10px;color:var(--red)">Effacer tout</button>
+    </div>
+    ${DAYS.filter(d => byDay[d]).map(d => `
+      <div class="stitle" style="margin-top:10px">${DAY_FR[d]}</div>
+      ${byDay[d].map(h => `
+        <div class="hotel-row">
+          <div class="hcode">${h.code}</div>
+          <div class="hinfo">
+            <div class="hname">${h.name}</div>
+            <div class="hmeta">${h.zone||'—'} · ${[...(h.langs||[])].join('/')} · ${durMins(h.langs)}min</div>
+          </div>
+          <button onclick="SC.hotels.splice(${h.idx},1);saveSC();renderHotelList2();updateHotelsBadge()" style="background:none;border:none;color:var(--t4);cursor:pointer;font-size:20px;padding:4px;line-height:1">×</button>
+        </div>`).join('')}
+    `).join('')}
+    <button class="btn btn-ghost btn-sm" onclick="toggleManualHotel2()" style="margin-top:6px;margin-bottom:8px">+ Ajouter manuellement</button>
+    <div id="manual-hotel-form2" style="display:none;background:var(--bg);border:1.5px dashed var(--border);border-radius:11px;padding:12px;margin-bottom:12px">
+      <div class="g2">
+        <div class="f"><label>Code</label><input id="mh-code2" placeholder="MLACAV" oninput="this.value=this.value.toUpperCase()"></div>
+        <div class="f"><label>Nom</label><input id="mh-name2" placeholder="Cavalieri"></div>
+      </div>
+      <div class="f"><label>Zone</label><input id="mh-zone2" placeholder="St Julian's"></div>
+      <div class="f"><label>Langues</label><div class="lang-row" id="mh-langs2"></div></div>
+      <div class="f"><label>Jour arrivée</label>
+        <select id="mh-day2">${DAYS.map(d=>'<option value="'+d+'">'+DAY_FR[d]+'</option>').join('')}</select>
+      </div>
+      <button class="btn btn-amber btn-full" onclick="addManualHotel2()">+ Ajouter</button>
+    </div>`;
+  renderManualLangs2();
+  document.getElementById('week-config-wrap2').style.display = 'block';
+  updateHotelsBadge();
+}
+
+function updateHotelsBadge() {
+  const b = document.getElementById('hotels-badge');
+  if (!b) return;
+  b.style.display = SC.hotels.length ? 'flex' : 'none';
+  b.textContent = SC.hotels.length;
+}
+
+function toggleManualHotel2() {
+  const f = document.getElementById('manual-hotel-form2');
+  if (f) f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+
+let ML2 = new Set();
+function renderManualLangs2() {
+  const c = document.getElementById('mh-langs2');
+  if (!c) return;
+  c.innerHTML = LANGS.map(l => '<div class="lc '+(ML2.has(l)?'s-'+l:'')+'" onclick="toggleML2(''+l+'')">'+l+'</div>').join('');
+}
+function toggleML2(l) { ML2.has(l) ? ML2.delete(l) : ML2.add(l); renderManualLangs2(); }
+function addManualHotel2() {
+  const code = document.getElementById('mh-code2')?.value.trim().toUpperCase();
+  const name = document.getElementById('mh-name2')?.value.trim();
+  const zone = document.getElementById('mh-zone2')?.value.trim();
+  const day  = document.getElementById('mh-day2')?.value;
+  if (!code || !name) { toast('Code et nom requis', 'err'); return; }
+  if (!ML2.size) { toast('Sélectionne au moins une langue', 'err'); return; }
+  SC.hotels.push({ code, name, zone: zone||MALTA_ZONES[code]||'—', langs: new Set(ML2), arrivalDay: day||'tue' });
+  ML2.clear(); saveSC(); renderHotelList2(); updateHotelsBadge(); toast(code+' ajouté ✓', 'ok');
+}
+
+function renderDtypeGrid2() {
+  const el = document.getElementById('dtype-grid2');
+  if (!el) return;
+  el.innerHTML = DAYS.map(d => {
+    const t = SC.dayTypes[d];
+    return '<div class="dtype-btn '+(t==='OFFICE'?'office':t==='DAYOFF'?'dayoff':'')+'" onclick="cycleDtype(''+d+'')" style="min-width:56px;text-align:center"><div style="font-size:12px;font-weight:700">'+DAY_S[d]+'</div><div style="font-size:9px;margin-top:2px">'+(t||'normal')+'</div></div>';
+  }).join('');
+}
+function addAirport2() { SC.airports.push({day:'tue',from:'08:30',to:'11:00'}); renderAirports2(); }
+function addDepart2()  { SC.departs.push({day:'wed',location:SC.base||''}); renderDeparts2(); }
+function renderAirports2() {
+  const el = document.getElementById('airport-wrap2');
+  if (!el) return;
+  el.innerHTML = SC.airports.map((a,i) => '<div class="card" style="margin-bottom:8px"><div class="g3"><div class="f"><label>Jour</label><select onchange="SC.airports['+i+'].day=this.value">'+DAYS.map(d=>'<option value="'+d+'"'+(a.day===d?' selected':'')+'>'+DAY_S[d]+'</option>').join('')+'</select></div><div class="f"><label>Début</label><input type="time" value="'+a.from+'" onchange="SC.airports['+i+'].from=this.value"></div><div class="f"><label>Fin</label><input type="time" value="'+a.to+'" onchange="SC.airports['+i+'].to=this.value"></div></div><button class="btn btn-red btn-sm" onclick="SC.airports.splice('+i+',1);renderAirports2()" style="margin-top:6px">Supprimer</button></div>').join('');
+}
+function renderDeparts2() {
+  const el = document.getElementById('depart-wrap2');
+  if (!el) return;
+  el.innerHTML = SC.departs.map((d,i) => '<div class="card" style="margin-bottom:8px"><div class="g2"><div class="f"><label>Jour</label><select onchange="SC.departs['+i+'].day=this.value">'+DAYS.map(dy=>'<option value="'+dy+'"'+(d.day===dy?' selected':'')+'>'+DAY_S[dy]+'</option>').join('')+'</select></div><div class="f"><label>Depuis</label><input type="text" value="'+d.location+'" placeholder="'+(SC.base||'ville...')+'" onchange="SC.departs['+i+'].location=this.value"></div></div><button class="btn btn-red btn-sm" onclick="SC.departs.splice('+i+',1);renderDeparts2()" style="margin-top:6px">Supprimer</button></div>').join('');
+}
+
+
+// ═══════════════════════════════
+// LOGO (injected)
+// ═══════════════════════════════
+const LOGO_DATA = 'data:image/png;base64,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PH3xQ1DOi2stwsjEPcMPkB9zX3b8N/2K9D0tftfjyf7bKwGYE/1YP14NfcWmaTpek2q2umQJBGowAigVpVr4hfSy4pztyw2SWwWG2ShZ1Lec7af9upW7k8CfRf4byhRxOc3xmI3fNpTT8o9f+3mzivDPw78GeEbOOy0DTordIxgALk/mc12YXaNq8L6CnUV/L+OzDFY2rLEYyrKpUerlKTk2/Nu7P6PwWX4XB0o0MLSjCC0SilFL0S0DGKKKK5DsCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//0f3IpCOcjr/Slor/ACbP7IOfHhjQ11l/ES2sZvZAFMpGW2rwOfpXQUUVvXxVatyutNy5UkrtuyWyV9kui2OehhaNHm9jBR5m27JK7e7dur6sKKKKwOgKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//9L9yKKKK/ybP7ICiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//2Q==';
+
+// BOOT
+init();
+</script>
+</body>
+</html>
