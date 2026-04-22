@@ -1,538 +1,627 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
-<meta name="apple-mobile-web-app-title" content="LuxairTours"/>
-<meta name="theme-color" content="#FFB90F"/>
-<title>LuxairTours Rep</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-:root{
-  --gold:#FFB90F;--gold-d:#d4960a;--blue:#1A91C3;
-  --text:#1a1a1a;--text2:#555;--text3:#888;--border:#e0e0e0;
-  --bg:#f5f5f5;--red:#e53e3e;--green:#38a169;
-  --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);
-}
-html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
-#app{display:flex;flex-direction:column;height:100dvh;}
-#hdr{background:var(--gold);padding:10px 16px;padding-top:calc(10px + var(--st));display:flex;align-items:center;justify-content:space-between;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.15);}
-.logo-w{display:flex;align-items:center;gap:10px;}
-.logo-img{width:38px;height:38px;border-radius:8px;object-fit:cover;background:#fff;padding:2px;}
-.logo-t{font-size:15px;font-weight:700;color:#fff;letter-spacing:.3px;line-height:1.1;}
-.logo-s{font-size:9px;color:rgba(255,255,255,.85);letter-spacing:1.5px;text-transform:uppercase;}
-.hdr-r{display:flex;align-items:center;gap:10px;}
-.stats{display:flex;gap:14px;}
-.stat-n{font-size:17px;font-weight:700;color:#fff;text-align:center;}
-.stat-l{font-size:8px;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.5px;text-align:center;}
-.aib{background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.5);border-radius:20px;padding:5px 11px;font-size:10px;font-weight:600;color:#fff;cursor:pointer;display:flex;align-items:center;gap:5px;}
-.aidot{width:6px;height:6px;border-radius:50%;background:#fff;animation:pu 2s infinite;}
-.aidot.ok{background:#4ade80;animation:none;}
-@keyframes pu{0%,100%{opacity:1}50%{opacity:.4}}
-#cnt{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
-#cnt::-webkit-scrollbar{display:none;}
-#nav{display:flex;background:#fff;border-top:1px solid var(--border);padding-bottom:var(--sb);flex-shrink:0;}
-.nb{flex:1;padding:10px 4px 11px;border:none;background:none;color:var(--text3);font-family:inherit;font-size:9px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;text-transform:uppercase;letter-spacing:.3px;transition:color .15s;position:relative;}
-.nb.on{color:var(--gold-d);}
-.nb .ni{font-size:22px;}
-.nbadge{position:absolute;top:5px;right:calc(50% - 18px);background:var(--red);color:#fff;border-radius:10px;font-size:8px;font-weight:700;padding:1px 5px;min-width:16px;text-align:center;display:none;}
-.sc{display:none;padding:14px;animation:fi .2s ease;}
-.sc.on{display:block;}
-@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-.slbl{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;margin-top:14px;}
-.slbl:first-child{margin-top:0;}
-.card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px;}
-label{font-size:11px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px;}
-input,select,textarea{width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid var(--border);background:#fff;color:var(--text);font-family:inherit;font-size:13px;outline:none;transition:border-color .2s;-webkit-appearance:none;appearance:none;}
-input:focus,select:focus,textarea:focus{border-color:var(--gold);}
-textarea{resize:vertical;min-height:90px;line-height:1.5;}
-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
-.ig{margin-bottom:10px;}.ig:last-child{margin-bottom:0;}
-.r2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.r3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
-.btn{border:none;border-radius:8px;padding:9px 14px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;}
-.btn:active{transform:scale(.97);}
-.bg{background:var(--gold);color:#fff;}.bg:hover{background:var(--gold-d);}
-.bl{background:var(--blue);color:#fff;}
-.bo{background:#fff;border:1.5px solid var(--border);color:var(--text);}
-.bo:hover{border-color:var(--gold);color:var(--gold-d);}
-.br{background:var(--red);color:#fff;}
-.bgr{background:#25D366;color:#fff;}
-.bf{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;font-size:13px;}
-.iz{background:#fff;border:2px dashed var(--border);border-radius:12px;padding:16px;margin-bottom:12px;}
-.ig2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
-.ib{background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:18px 10px;cursor:pointer;color:var(--text);font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:7px;transition:all .15s;}
-.ib:hover,.ib:active{border-color:var(--gold);background:#fffbf0;}
-.ib .ii{font-size:30px;}.ib .it{font-size:12px;font-weight:600;}.ib .is{font-size:10px;color:var(--text3);}
-.sp{display:inline-block;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
-.sp2{display:inline-block;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg)}}
-.eb{background:#fff5f5;border:1px solid #fed7d7;border-radius:8px;padding:9px 12px;color:var(--red);font-size:11px;margin-bottom:10px;display:none;}
-.ob{background:#f0fff4;border:1px solid #c6f6d5;border-radius:8px;padding:9px 12px;color:var(--green);font-size:11px;margin-bottom:10px;display:none;}
-.lo{position:fixed;inset:0;background:rgba(255,255,255,.92);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:500;gap:14px;}
-.lo.on{display:flex;}
-.lsp{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;}
-.tst{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-8px);background:var(--text);color:#fff;border-radius:20px;padding:8px 18px;font-size:12px;opacity:0;transition:all .25s;z-index:600;white-space:nowrap;pointer-events:none;}
-.tst.on{opacity:1;transform:translateX(-50%) translateY(0);}
-.tst.ok{background:var(--green);}.tst.er{background:var(--red);}
-.mo{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;z-index:400;}
-.mo.on{display:flex;}
-.md{background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:430px;margin:0 auto;padding:20px 16px calc(20px + var(--sb));animation:su .3s ease;max-height:88dvh;overflow-y:auto;}
-@keyframes su{from{transform:translateY(100%)}to{transform:none}}
-.md-t{font-size:16px;font-weight:700;margin-bottom:14px;}
-.md-x{float:right;background:none;border:none;color:var(--text3);font-size:24px;cursor:pointer;margin-top:-4px;line-height:1;}
-.pax{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px;}
-.pax-name{font-size:14px;font-weight:700;}
-.pax-sub{font-size:11px;color:var(--text3);margin-top:2px;}
-.bgs{display:flex;gap:5px;flex-wrap:wrap;margin:6px 0;}
-.bg2{padding:3px 8px;border-radius:5px;font-size:10px;font-weight:600;}
-.ba{background:#ebf8ff;color:#2b6cb0;border:1px solid #bee3f8;}
-.bd{background:#fff7ed;color:#c05621;border:1px solid #fbd38d;}
-.bp{background:#f0fff4;color:#276749;border:1px solid #9ae6b4;}
-.bfr{background:#ebf8ff;color:#2b6cb0;border:1px solid #bee3f8;}
-.bde{background:#fff5f5;color:#c53030;border:1px solid #fed7d7;}
-.blu{background:#fffbf0;color:#b7791f;border:1px solid #faf089;}
-.ben{background:#f0fff4;color:#276749;border:1px solid #9ae6b4;}
-.pa{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:8px;}
-.pa select{flex:1;min-width:110px;font-size:11px;padding:6px 8px;}
-.bc{display:inline-flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:11px;margin:3px;}
-.bc strong{color:var(--blue);}
-.db{background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;padding:0;line-height:1;}
-.br2{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
-.br2 input{flex:1;min-width:80px;font-size:11px;}
-.sb-row{display:flex;gap:8px;margin-bottom:10px;align-items:center;}
-.tb-row{display:flex;gap:6px;margin-bottom:10px;}
-.tb{flex:1;padding:8px 6px;border:1.5px solid var(--border);border-radius:8px;background:#fff;font-family:inherit;font-size:10px;font-weight:600;color:var(--text3);cursor:pointer;transition:all .15s;}
-.tb.on{background:var(--gold);border-color:var(--gold);color:#fff;}
-.ec{background:#fffbf0;border:1.5px solid var(--gold);border-radius:10px;padding:12px;margin-bottom:8px;}
-.eg{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;}
-.eg label{font-size:10px;}.eg input{font-size:12px;padding:7px 10px;}
-.dts{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none;}
-.dts::-webkit-scrollbar{display:none;}
-.dt{flex-shrink:0;padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:#fff;color:var(--text3);font-size:10px;font-weight:600;cursor:pointer;text-align:center;transition:all .15s;}
-.dt.on{background:var(--gold);border-color:var(--gold);color:#fff;}
-.dt .dd{font-size:8px;display:block;margin-top:1px;opacity:.75;}
-.sl{display:flex;gap:10px;margin-bottom:4px;align-items:stretch;}
-.sl-t{font-size:10px;color:var(--text3);min-width:42px;text-align:right;padding-top:10px;line-height:1.4;flex-shrink:0;font-weight:500;}
-.sl-b{width:3px;background:var(--border);border-radius:3px;flex-shrink:0;position:relative;}
-.sl-b::before{content:'';position:absolute;top:10px;left:-4px;width:9px;height:9px;border-radius:50%;background:#fff;border:2px solid var(--border);}
-.sl-b.meeting::before,.sl-b.combo::before{border-color:var(--gold);background:var(--gold);}
-.sl-b.airport::before{border-color:var(--blue);background:var(--blue);}
-.sl-b.office::before{border-color:var(--text3);background:var(--text3);}
-.sl-c{flex:1;background:#fff;border:1px solid var(--border);border-radius:10px;padding:9px 12px;min-width:0;}
-.sl-c.meeting{border-left:3px solid var(--gold);}
-.sl-c.combo{border-left:3px solid var(--gold);background:#fffbf0;}
-.sl-c.airport{border-left:3px solid var(--blue);background:#ebf8ff;}
-.sl-c.office{border-left:3px solid #aaa;background:#fafafa;}
-.sl-c.permanence{border-left:3px solid #805ad5;}
-.sl-task{font-size:9px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;}
-.sl-h{font-size:13px;font-weight:700;color:var(--text);margin:2px 0;word-break:break-word;}
-.sl-d{font-size:10px;color:var(--text3);}
-.sl-l{display:flex;gap:4px;margin-top:4px;align-items:center;flex-wrap:wrap;}
-.lt{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;}
-.wc{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:11px;color:var(--text3);margin-bottom:12px;}
-.wc span{color:var(--blue);font-weight:600;}
-.pt{display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid var(--border);border-radius:10px;padding:11px 14px;cursor:pointer;margin-bottom:8px;font-size:12px;font-weight:600;}
-.pt .ch{transition:transform .2s;color:var(--text3);}
-.pt.op .ch{transform:rotate(180deg);}
-.pb{display:none;background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px;}
-.pb.op{display:block;}
-.dgrid{display:flex;flex-wrap:wrap;gap:6px;}
-.dc{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:10px;font-weight:600;cursor:pointer;user-select:none;transition:all .15s;}
-.dc.ofc{border-color:var(--blue);color:var(--blue);background:#ebf8ff;}
-.dc.dof{border-color:var(--red);color:var(--red);background:#fff5f5;}
-.hc{background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:7px;display:flex;align-items:center;gap:10px;}
-.hcode{font-size:10px;font-weight:700;color:var(--blue);background:#ebf8ff;border:1px solid #bee3f8;border-radius:5px;padding:3px 7px;min-width:60px;text-align:center;word-break:break-all;}
-.hi{flex:1;min-width:0;}
-.hn{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.hm{font-size:10px;color:var(--text3);margin-top:1px;}
-.lcs{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px;}
-.lc{padding:5px 10px;border-radius:6px;border:1.5px solid var(--border);background:#fff;font-size:11px;font-weight:600;cursor:pointer;color:var(--text3);user-select:none;transition:all .15s;}
-.lc.sFR{background:#ebf8ff;border-color:#4a9eff;color:#2b6cb0;}
-.lc.sEN{background:#f0fff4;border-color:#40d080;color:#276749;}
-.lc.sDE{background:#fff5f5;border-color:#e77755;color:#c53030;}
-.lc.sLU{background:#fffbf0;border-color:#d69e2e;color:#b7791f;}
-.lc.sIT{background:#fffbf0;border-color:#d69e2e;color:#b7791f;}
-.emp{text-align:center;padding:40px 20px;color:var(--text3);}
-.emp-i{font-size:40px;margin-bottom:10px;}
-.exh{background:linear-gradient(135deg,#fffbf0,#fff8e1);border:1px solid #fbd38d;border-radius:14px;padding:22px;text-align:center;margin-bottom:14px;}
-.sr{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:12px;}
-.sr:last-child{border-bottom:none;}
-.sv{font-weight:700;color:var(--blue);}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guide Planner Pro</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.min.js"></script>
+  <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    :root{
+      --bg:#f4f7fb; --card:#fff; --line:#d8e1ec; --text:#182230; --muted:#667085;
+      --primary:#111827; --blue:#2563eb; --soft:#eef4ff; --green:#eaf8ef; --danger:#b42318;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+    .wrap{max-width:1400px;margin:0 auto;padding:18px}
+    h1{margin:0 0 6px;font-size:30px}
+    .sub{color:var(--muted);font-size:14px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 8px 28px rgba(16,24,40,.04)}
+    .grid{display:grid;gap:16px}
+    .top{grid-template-columns:1.4fr .8fr}
+    .row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .row5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    input,select,textarea,button{width:100%;padding:10px 12px;border-radius:12px;font-size:14px}
+    input,select,textarea{border:1px solid var(--line);background:#fff}
+    textarea{min-height:120px;resize:vertical}
+    button{border:none;background:var(--primary);color:#fff;font-weight:700;cursor:pointer}
+    button.secondary{background:#fff;color:var(--primary);border:1px solid var(--line)}
+    button.blue{background:var(--blue)}
+    button.danger{background:#fff;color:var(--danger);border:1px solid #f2c9c5}
+    button.small{padding:8px 10px;font-size:13px}
+    .title{font-weight:700;font-size:18px;margin-bottom:12px}
+    .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px 0}
+    .tab{background:#fff;border:1px solid var(--line);color:var(--primary)}
+    .tab.active{background:var(--primary);color:#fff}
+    .screen{display:none}
+    .screen.active{display:block}
+    .drop{border:2px dashed var(--line);padding:20px;border-radius:16px;background:#fafcff;text-align:center}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .stat{background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center}
+    .stat .num{font-size:28px;font-weight:700}
+    .pill{display:inline-flex;padding:6px 10px;border-radius:999px;background:var(--soft);color:var(--blue);font-size:12px;font-weight:700;margin:2px}
+    .good{background:var(--green);color:#067647}
+    .list{display:grid;gap:8px}
+    .item{border:1px solid var(--line);border-radius:14px;padding:10px;background:#fff}
+    .muted{color:var(--muted);font-size:12px}
+    .split{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .hotelGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+    .pick{padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff;text-align:left}
+    .pick.active{background:var(--primary);border-color:var(--primary);color:#fff}
+    .day{border:1px solid var(--line);border-radius:16px;padding:12px;background:#fff}
+    .dayHead{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+    .dayRows{display:grid;gap:8px}
+    .dayRow{display:grid;grid-template-columns:100px 100px 160px 1fr 42px;gap:8px}
+    .preview{overflow:auto;border:1px solid var(--line);border-radius:16px;background:#fff}
+    table{border-collapse:collapse;width:100%;min-width:1050px}
+    th,td{border-right:1px solid var(--line);vertical-align:top;padding:10px}
+    th:last-child,td:last-child{border-right:none}
+    thead th{background:#f8fafc;text-align:left}
+    .previewItem{border:1px solid var(--line);border-radius:12px;padding:8px;margin-bottom:8px}
+    .note{font-size:13px;color:var(--muted);line-height:1.5}
+    .bar{display:flex;gap:8px;flex-wrap:wrap}
+    .hidden{display:none}
+    @media (max-width:1000px){
+      .top,.row,.row5,.split,.hotelGrid,.dayRow,.stats,.tabs{grid-template-columns:1fr}
+    }
+    @media print{
+      body{background:#fff}
+      .no-print{display:none!important}
+      .print-wrap{display:block!important}
+    }
+  </style>
 </head>
 <body>
-<div class="lo" id="lo"><div class="lsp"></div><div id="lt2" style="font-size:13px;font-weight:600;color:var(--text)">Traitement...</div><div id="ls2" style="font-size:11px;color:var(--text3);text-align:center;padding:0 24px"></div></div>
-<div class="tst" id="tst"></div>
+<div class="wrap">
+  <div class="no-print">
+    <h1>Guide Planner Pro</h1>
+    <div class="sub">Importe tes documents, vérifie ce que l'app a compris, génère ton planning, corrige si besoin, puis exporte en Excel ou PDF.</div>
 
-<!-- API Modal -->
-<div class="mo" id="api-m">
-<div class="md">
-  <button class="md-x" onclick="cm('api-m')">×</button>
-  <div class="md-t">🔑 Clé API Gemini</div>
-  <div style="background:#f0fff4;border:1px solid #9ae6b4;border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:11px;color:#276749;line-height:1.8">
-    ✅ <strong>100% gratuit</strong> — Google AI Studio<br>
-    1. Va sur <strong>aistudio.google.com</strong><br>
-    2. Connecte-toi avec Google → <strong>Get API Key → Create</strong><br>
-    3. Copie la clé <code style="background:#e2e8f0;padding:1px 5px;border-radius:3px;font-size:11px">AIza...</code>
-  </div>
-  <div class="ig"><label>Ta clé Gemini</label><input type="password" id="aki" placeholder="AIzaSy..." autocomplete="off"/></div>
-  <button class="btn bg bf" onclick="saveKey()">✓ Sauvegarder</button>
-  <button class="btn bo bf" onclick="cm('api-m')" style="margin-top:8px">Annuler</button>
-</div>
-</div>
-
-<div id="app">
-<div id="hdr">
-  <div class="logo-w">
-    <img class="logo-img" src="data:image/png;base64,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PH3xQ1DOi2stwsjEPcMPkB9zX3b8N/2K9D0tftfjyf7bKwGYE/1YP14NfcWmaTpek2q2umQJBGowAigVpVr4hfSy4pztyw2SWwWG2ShZ1Lec7af9upW7k8CfRf4byhRxOc3xmI3fNpTT8o9f+3mzivDPw78GeEbOOy0DTordIxgALk/mc12YXaNq8L6CnUV/L+OzDFY2rLEYyrKpUerlKTk2/Nu7P6PwWX4XB0o0MLSjCC0SilFL0S0DGKKKK5DsCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//0f3IpCOcjr/Slor/ACbP7IOfHhjQ11l/ES2sZvZAFMpGW2rwOfpXQUUVvXxVatyutNy5UkrtuyWyV9kui2OehhaNHm9jBR5m27JK7e7dur6sKKKKwOgKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//9L9yKKKK/ybP7ICiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//2Q==" alt="Logo"/>
-    <div><div class="logo-t">LUXAIRTOURS</div><div class="logo-s" id="hdest">Rep Manager · MLA</div></div>
-  </div>
-  <div class="hdr-r">
-    <div class="stats">
-      <div><div class="stat-n" id="stot">0</div><div class="stat-l">Pax</div></div>
-      <div><div class="stat-n" id="sdep">0</div><div class="stat-l">Dép.</div></div>
-    </div>
-    <div class="aib" onclick="om('api-m')"><div class="aidot" id="aidot"></div><span id="ailbl">AI</span></div>
-  </div>
-</div>
-
-<div id="cnt">
-
-<!-- TRANSFER -->
-<div class="sc on" id="sc-tf">
-  <div class="iz">
-    <input type="file" id="fi" multiple accept=".pdf,.txt,.png,.jpg,.jpeg,.heic,.doc,.docx" style="display:none"/>
-    <input type="file" id="ci" accept="image/*" capture="environment" style="display:none"/>
-    <div id="i-idle">
-      <div style="font-size:11px;font-weight:600;color:var(--text3);text-align:center;margin-bottom:10px">IMPORTER UN DOCUMENT</div>
-      <div class="ig2">
-        <button class="ib" onclick="document.getElementById('fi').click()"><span class="ii">📂</span><span class="it">Ouvrir fichier</span><span class="is">PDF · DOC · JPG · PNG</span></button>
-        <button class="ib" onclick="document.getElementById('ci').click()"><span class="ii">📷</span><span class="it">Prendre photo</span><span class="is">Appareil photo</span></button>
+    <div class="grid" style="margin-top:16px">
+      <div class="card">
+        <div class="row5">
+          <div><label>Nom</label><input id="repName" value="Paul Robert"></div>
+          <div><label>Matricule</label><input id="matricule" value="20772"></div>
+          <div><label>Destination</label><input id="destination" value="PMI"></div>
+          <div><label>Semaine commence le</label><input id="weekStart" type="date" value="2026-04-20"></div>
+          <div><label>Base logement</label><input id="homeBase" value="Cala Figuera"></div>
+        </div>
       </div>
     </div>
-    <div id="i-load" style="display:none;text-align:center;padding:14px 0">
-      <div class="sp2" style="width:22px;height:22px"></div>
-      <div style="margin-top:10px;font-size:12px;font-weight:600">ANALYSE EN COURS...</div>
-      <div style="font-size:10px;color:var(--text3);margin-top:3px">L'IA extrait les données</div>
+
+    <div class="tabs">
+      <button class="tab active" data-screen="import">1. Importer</button>
+      <button class="tab" data-screen="verify">2. Vérifier</button>
+      <button class="tab" data-screen="planning">3. Planning</button>
+      <button class="tab" data-screen="export">4. Exporter</button>
     </div>
-  </div>
-  <div class="eb" id="eb"></div>
-  <div class="ob" id="ob"></div>
-  <div class="pt" id="bt"><span>🚌 Horaires navettes</span><span class="ch">▼</span></div>
-  <div class="pb" id="bp"><div id="bch"></div>
-    <div class="br2"><input id="nbl" placeholder="Nom navette"/><input id="nbt" placeholder="06:30"/><input id="nbn" placeholder="Note"/><button class="btn bg" onclick="addBus()">+</button></div>
-  </div>
-  <div class="sb-row"><input type="search" id="sb" placeholder="🔍  Nom, hôtel..." oninput="rPax()" style="flex:1"/><button class="btn bo" onclick="clearAll()" style="font-size:11px;white-space:nowrap">🗑 Tout</button></div>
-  <div class="tb-row">
-    <button class="tb on" id="tab-dep" onclick="swT('dep')">🛫 Départs</button>
-    <button class="tb" id="tab-arr" onclick="swT('arr')">🛬 Arrivées</button>
-    <button class="tb" id="tab-all" onclick="swT('all')">👥 Tous</button>
-  </div>
-  <div id="plist"></div>
-</div>
 
-<!-- SEMAINE -->
-<div class="sc" id="sc-wk">
-  <div class="slbl">Représentant</div>
-  <div class="card">
-    <div class="r2"><div class="ig"><label>Nom</label><input id="rn" value="Paul Robert"/></div><div class="ig"><label>Matricule</label><input id="rm" value="20772"/></div></div>
-    <div class="ig"><label>Destination</label><input id="rd" placeholder="Malta, Majorque..."/></div>
-    <div class="ig"><label>Code</label><input id="rc" placeholder="MLA, PMI..." oninput="this.value=this.value.toUpperCase()"/></div>
-    <div class="ig"><label>Base de départ</label><input id="rb" placeholder="Bugibba, Palma..."/></div>
-    <div class="ig"><label>Lundi de la semaine</label><input type="date" id="ws"/></div>
+    <section id="screen-import" class="screen active">
+      <div class="grid top">
+        <div class="card">
+          <div class="title">Importer les documents</div>
+          <div class="drop" id="dropZone">
+            <div style="font-size:16px;font-weight:700;margin-bottom:8px">Glisse-dépose tes fichiers ici</div>
+            <div class="note">PDF, DOCX, TXT, CSV, JPEG, PNG. Les images sont lues par OCR dans ton navigateur. Les anciens fichiers .DOC ne sont pas garantis.</div>
+            <div class="bar" style="margin-top:12px;justify-content:center">
+              <button onclick="document.getElementById('fileInput').click()">Ajouter documents</button>
+              <button class="secondary" onclick="document.getElementById('imageInput').click()">Ajouter photo</button>
+            </div>
+            <input id="fileInput" type="file" multiple accept=".pdf,.docx,.txt,.csv,.json,.jpg,.jpeg,.png,.webp" class="hidden">
+            <input id="imageInput" type="file" multiple accept=".jpg,.jpeg,.png,.webp" class="hidden">
+          </div>
+
+          <div style="margin-top:14px">
+            <label>Ou colle directement ton texte</label>
+            <textarea id="manualText" placeholder="Colle ici RV2 / RV3 / RV4 / note aéroport / note hôtels"></textarea>
+          </div>
+
+          <div class="bar" style="margin-top:12px">
+            <button class="blue" onclick="analyzeAll()">Analyser</button>
+            <button class="secondary" onclick="clearImports()">Tout vider</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="title">Résumé import</div>
+          <div class="stats">
+            <div class="stat"><div class="num" id="statDocs">0</div><div class="muted">documents</div></div>
+            <div class="stat"><div class="num" id="statHotels">0</div><div class="muted">hôtels</div></div>
+            <div class="stat"><div class="num" id="statFlights">0</div><div class="muted">vols</div></div>
+            <div class="stat"><div class="num" id="statDays">0</div><div class="muted">jours</div></div>
+          </div>
+          <div style="margin-top:14px" class="list" id="docList"></div>
+          <div class="note" style="margin-top:12px">
+            Cette version fonctionne localement dans ton navigateur. Pour lire les PDF / DOCX / images, elle utilise des bibliothèques web chargées automatiquement. Si le réseau bloque, certaines lectures peuvent être limitées.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-verify" class="screen">
+      <div class="grid split">
+        <div class="card">
+          <div class="title">Hôtels détectés</div>
+          <div class="list" id="hotelDetectedList"></div>
+          <div style="margin-top:10px">
+            <label>Ajouter un hôtel manuellement</label>
+            <select id="addHotelSelect"></select>
+          </div>
+          <div class="bar" style="margin-top:8px">
+            <button class="secondary" onclick="addHotelManual()">Ajouter</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="title">Vols / aéroports détectés</div>
+          <div class="list" id="flightDetectedList"></div>
+          <div style="margin-top:10px">
+            <label>Ajouter un service aéroport manuellement</label>
+            <select id="addFlightSelect"></select>
+          </div>
+          <div class="bar" style="margin-top:8px">
+            <button class="secondary" onclick="addFlightManual()">Ajouter</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <div class="title">Jours détectés</div>
+        <div id="daysDetectedWrap"></div>
+        <div class="bar" style="margin-top:14px">
+          <button onclick="buildPlanning()">Créer le planning</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-planning" class="screen">
+      <div class="card">
+        <div class="title">Paramètres planning</div>
+        <div class="row">
+          <div><label>Durée meeting (min)</label><input id="meetingMinutes" type="number" value="45"></div>
+          <div><label>Temps trajet mini (min)</label><input id="gapMinutes" type="number" value="15"></div>
+          <div><label>Pause (min)</label><input id="breakMinutes" type="number" value="30"></div>
+          <div><label>Heure de départ sans aéroport</label><input id="firstMeetingTime" value="09:30"></div>
+        </div>
+      </div>
+      <div class="grid" style="margin-top:16px" id="planningDays"></div>
+    </section>
+
+    <section id="screen-export" class="screen">
+      <div class="grid split">
+        <div class="card">
+          <div class="title">Aperçu final</div>
+          <div class="preview">
+            <table>
+              <thead><tr id="previewHead"></tr></thead>
+              <tbody><tr id="previewBody"></tr></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="title">Exporter</div>
+          <div class="note">Excel exporte un vrai fichier .xlsx. Pour le PDF, l'app ouvre la mise en page finale puis lance l'impression. Tu choisis ensuite “Enregistrer en PDF”.</div>
+          <div class="bar" style="margin-top:12px">
+            <button onclick="exportExcel()">Exporter Excel</button>
+            <button class="secondary" onclick="printSchedule()">Exporter PDF</button>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
-  <div class="slbl">Jours aéroport</div>
-  <div id="aw"></div>
-  <button class="btn bo" onclick="addAir()" style="margin-bottom:12px;font-size:11px">+ Ajouter</button>
-  <div class="slbl">Points de départ</div>
-  <div id="dw"></div>
-  <button class="btn bo" onclick="addDep()" style="margin-bottom:12px;font-size:11px">+ Ajouter</button>
-  <div class="slbl">Type de journée</div>
-  <div class="card"><div class="dgrid" id="dg"></div></div>
-  <button class="btn bg bf" onclick="nv('ht')" style="margin-top:10px">Suivant → Hôtels</button>
-</div>
 
-<!-- HOTELS -->
-<div class="sc" id="sc-ht">
-  <div id="apib"></div>
-  <div class="slbl">Importer rapport RV2 / RV3 / PDF téléphones</div>
-  <div class="card">
-    <p style="font-size:11px;color:var(--text3);margin-bottom:10px;line-height:1.6">Colle le texte du rapport (RV2, RV3, PDF). L'IA reconnaît automatiquement le format.</p>
-    <div class="ig"><textarea id="rv3" placeholder="Colle ici le texte du document...&#10;&#10;HOTEL NAME : CAVALIERI ART HOTEL MLACAV&#10;F MR LEROY, Marc 73&#10;E MS MYCK, Sophie 37"></textarea></div>
-    <button class="btn bg bf" id="pb" onclick="parseRV3()"><div class="sp" id="ps" style="display:none;width:14px;height:14px"></div>Analyser avec IA</button>
+  <div id="printSchedule" class="print-wrap" style="display:none">
+    <div style="text-align:center;font-weight:700;font-size:20px;margin-bottom:12px">WEEKLY WORKING SCHEDULE</div>
+    <div style="font-size:12px;margin-bottom:8px"><strong>REPS NAME:</strong> <span id="pRep"></span> &nbsp;&nbsp; <strong>MATRICULE:</strong> <span id="pMat"></span></div>
+    <div style="font-size:12px;margin-bottom:14px"><strong>CONCERNED WEEK:</strong> FROM: <span id="pWeek"></span> &nbsp;&nbsp; <strong>DESTINATION:</strong> <span id="pDest"></span></div>
+    <table style="border-collapse:collapse;width:100%;table-layout:fixed;font-size:10px">
+      <thead><tr id="printHead"></tr></thead>
+      <tbody><tr id="printBody"></tr></tbody>
+    </table>
   </div>
-  <div class="slbl">Ajouter manuellement</div>
-  <div style="background:var(--bg);border:1.5px dashed var(--border);border-radius:10px;padding:12px;margin-bottom:10px">
-    <div class="r2"><div class="ig"><label>Code</label><input id="mc" placeholder="MLACAV" oninput="this.value=this.value.toUpperCase()"/></div><div class="ig"><label>Nom</label><input id="mn" placeholder="Cavalieri"/></div></div>
-    <div class="ig"><label>Zone</label><input id="mz" placeholder="St Julian's, Sliema..."/></div>
-    <div class="ig"><label>Langues</label><div class="lcs" id="lcs"></div></div>
-    <div class="ig"><label>Jour d'arrivée</label><select id="md"><option value="mon">Lundi</option><option value="tue">Mardi</option><option value="wed">Mercredi</option><option value="thu">Jeudi</option><option value="fri">Vendredi</option><option value="sat" selected>Samedi</option><option value="sun">Dimanche</option></select></div>
-    <button class="btn bo bf" onclick="addMH()">+ Ajouter</button>
-  </div>
-  <div id="hl"></div>
-  <button class="btn bl bf" id="gb" onclick="genSched()"><div class="sp" id="gs" style="display:none;width:14px;height:14px"></div>✦ Générer le planning</button>
-</div>
-
-<!-- PLANNING -->
-<div class="sc" id="sc-pl">
-  <div class="wc"><span id="cnm">—</span> · <span id="cdt">—</span> · <span id="cde">—</span></div>
-  <div class="dts" id="dtabs"></div>
-  <div id="dslots"></div>
-</div>
-
-<!-- EXPORT -->
-<div class="sc" id="sc-ex">
-  <div class="exh"><div style="font-size:40px">📋</div><div style="font-size:20px;font-weight:700;margin-top:8px">Planning prêt</div><div style="font-size:11px;color:var(--text3);margin-top:4px">LuxairTours Weekly Schedule</div></div>
-  <div class="card" id="exs"></div>
-  <button class="btn bg bf" onclick="dlCSV()" style="margin-top:4px">↓ Télécharger CSV</button>
-  <button class="btn bo bf" onclick="cpTxt()" style="margin-top:8px">📋 Copier texte</button>
-  <button class="btn bo bf" onclick="rstPlan()" style="margin-top:8px;color:var(--red);border-color:#fed7d7">🗑 Nouvelle semaine</button>
-</div>
-
-</div><!-- /cnt -->
-<div id="nav">
-  <button class="nb on" id="nb-tf" onclick="nv('tf')"><span class="ni">✈️</span>Transfers<div class="nbadge" id="bdg-tf"></div></button>
-  <button class="nb" id="nb-wk" onclick="nv('wk')"><span class="ni">📅</span>Semaine</button>
-  <button class="nb" id="nb-ht" onclick="nv('ht')" style="position:relative"><span class="ni">🏨</span>Hôtels<div class="nbadge" id="bdg-ht"></div></button>
-  <button class="nb" id="nb-pl" onclick="nv('pl')"><span class="ni">🕐</span>Planning</button>
-  <button class="nb" id="nb-ex" onclick="nv('ex')"><span class="ni">↓</span>Export</button>
-</div>
 </div>
 
 <script>
-const DAYS=['mon','tue','wed','thu','fri','sat','sun'];
-const DFR={mon:'Lundi',tue:'Mardi',wed:'Mercredi',thu:'Jeudi',fri:'Vendredi',sat:'Samedi',sun:'Dimanche'};
-const DS={mon:'Lun',tue:'Mar',wed:'Mer',thu:'Jeu',fri:'Ven',sat:'Sam',sun:'Dim'};
-const LANGS=['FR','EN','DE','LU','IT'];
-const MZ={MLAFOR:'Sliema',MLAVIC:'Sliema',MLAPAL:'Sliema',MLAVER:'Gzira',MLAINT:"St Julian's",MLACAV:"St Julian's",MLARIO:"St Julian's",MLACOR:"St Julian's",MLAHIL:"St Julian's",MLAWES:"St Julian's",MLASOCHS:"St Julian's",MLABWP:'Valletta',MLAEXC:'Valletta',MLAODY:'Qawra',MLADBT:"St Paul's Bay",MLASAN:'Qawra',MLAVIE:"St Paul's Bay",MLAUVAHS:'Naxxar',MLARGS:'Golden Bay',MLARIV:'Mellieha Bay',MLASEA:'Mellieha',MLAPARHS:'Paradise Bay'};
+  if (window.pdfjsLib) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.min.js";
+  }
 
-let GK=localStorage.getItem('lux_gk')||'';
-let PAX=JSON.parse(localStorage.getItem('lux_pax')||'[]');
-let BUSES=JSON.parse(localStorage.getItem('lux_bus')||JSON.stringify([{id:1,label:"Navette Matin",time:"06:30",note:""},{id:2,label:"Navette Midi",time:"11:00",note:""},{id:3,label:"Navette Soir",time:"14:45",note:""}]));
-let TAB='dep',EDITID=null;
-const SC={repName:'Paul Robert',matricule:'20772',dest:'Malta, Malte',code:'MLA',base:'Bugibba',startDate:null,airports:[{day:'tue',from:'08:30',to:'11:00'},{day:'sat',from:'07:25',to:'10:00'}],departs:[{day:'wed',location:'Bugibba'},{day:'sun',location:'Bugibba'}],dayTypes:{mon:'OFFICE',fri:'OFFICE'},hotels:[],schedule:{},selDay:'tue'};
-let ML=new Set();
-try{const sv=JSON.parse(localStorage.getItem('lux_sc')||'{}');if(sv.repName){Object.assign(SC,{...sv,hotels:(sv.hotels||[]).map(h=>({...h,langs:new Set(h.langs||[])}))});if(SC.startDate)SC.startDate=new Date(SC.startDate);}}catch(e){}
+  const DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 
-function spx(){localStorage.setItem('lux_pax',JSON.stringify(PAX));localStorage.setItem('lux_bus',JSON.stringify(BUSES));}
-function ssc(){try{localStorage.setItem('lux_sc',JSON.stringify({...SC,startDate:SC.startDate?.toISOString(),hotels:SC.hotels.map(h=>({...h,langs:[...h.langs]}))}))}catch(e){}}
+  const HOTEL_DB = [
+    {name:"PALIA MARIA EUGENIA", code:"PMIEUGHS", area:"CALAS DE MALLORCA"},
+    {name:"IBEROSTAR WAVES CALA DOMINGOS", code:"PMIICD", area:"CALAS DE MALLORCA"},
+    {name:"BLAU PUNTA REINA RESORT", code:"PMIPUN", area:"CALA MENDIA"},
+    {name:"INSOTEL CALA MANDIA R&SPA", code:"PMIMAN", area:"CALA MENDIA"},
+    {name:"CLUB CASTELL DELS HAMS", code:"PMICASHS", area:"PORTO CRISTO"},
+    {name:"GLOBALES BOUGANVILLA", code:"PMIBOUHS", area:"SA COMA"},
+    {name:"PALIA SA COMA PLAYA", code:"PMIPALHS", area:"SA COMA"},
+    {name:"ALUASOUL MALLORCA RESORT", code:"PMIAMA", area:"CALA D'OR"},
+    {name:"PALIA DOLCE FARNIENTE", code:"PMIFARHS", area:"CALA D'OR"},
+    {name:"BARCELÓ PONENT BEACH", code:"PMIBAG", area:"CALA FERRERA"},
+    {name:"RIU CONCORDIA", code:"PMICON", area:"PLAYA DE PALMA"},
+    {name:"IBEROSTAR WAVES CRISTINA", code:"PMICRI", area:"PLAYA DE PALMA"},
+    {name:"MYSEAHOUSE FLAMINGO", code:"PMIFLG", area:"PLAYA DE PALMA"},
+    {name:"BG JAVA", code:"PMIJAVHS", area:"C'AN PASTILLA"},
+    {name:"ZAFIRO BAHIA", code:"PMIBAH", area:"PLAYA DE MURO"},
+    {name:"HIPOTELS DON JUAN", code:"PMIDON", area:"CALA MILLOR"},
+    {name:"IBER.WAVES BAHIA DE PALMA", code:"PMICUP", area:"PLAYA DE PALMA"},
+    {name:"PALIA MARIA EUGENIA", code:"PMIEUGHS", area:"CALAS DE MALLORCA"}
+  ];
 
-function init(){
-  if(!SC.startDate){const t=new Date();const d=(8-t.getDay())%7||7;SC.startDate=new Date(t);SC.startDate.setDate(t.getDate()+d);}
-  bwf();rBus();rPax();rLC();rAir();rDep();rDG();rHL();ubh();ubdg();rAB();uAI();
-  document.getElementById('hdest').textContent='Rep Manager · '+(SC.code||'MLA');
-  if('serviceWorker' in navigator){const sw="const C='lux-v4';self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['./'])));self.skipWaiting();});self.addEventListener('fetch',e=>{if(e.request.url.includes('googleapis'))return;e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).catch(()=>caches.match('./'))));});";navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});}
-}
+  const AIRPORT_SERVICES = [
+    {label:"LG601 + LG602 matin", flight:"LG601 + LG602", from:"06:30", to:"09:30"},
+    {label:"LG617 + LG618 matin", flight:"LG617 + LG618", from:"07:00", to:"10:00"},
+    {label:"LG619 + LG620 soir", flight:"LG619 + LG620", from:"18:30", to:"21:30"},
+    {label:"LG621 + LG622 après-midi", flight:"LG621 + LG622", from:"13:00", to:"16:00"},
+    {label:"LG623 + LG624 matin", flight:"LG623 + LG624", from:"07:00", to:"10:00"}
+  ];
 
-function nv(s){swf();document.querySelectorAll('.sc').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.nb').forEach(x=>x.classList.remove('on'));document.getElementById('sc-'+s)?.classList.add('on');document.getElementById('nb-'+s)?.classList.add('on');document.getElementById('cnt').scrollTop=0;if(s==='pl')rSV();if(s==='ex')rEx();if(s==='wk')bwf();}
-function swf(){SC.repName=document.getElementById('rn')?.value||SC.repName;SC.matricule=document.getElementById('rm')?.value||SC.matricule;SC.dest=document.getElementById('rd')?.value||SC.dest;SC.code=document.getElementById('rc')?.value||SC.code;SC.base=document.getElementById('rb')?.value||SC.base;const ds=document.getElementById('ws')?.value;if(ds)SC.startDate=new Date(ds);ssc();document.getElementById('hdest').textContent='Rep Manager · '+(SC.code||'MLA');}
-function bwf(){const g=id=>document.getElementById(id);if(g('rn'))g('rn').value=SC.repName;if(g('rm'))g('rm').value=SC.matricule;if(g('rd'))g('rd').value=SC.dest;if(g('rc'))g('rc').value=SC.code;if(g('rb'))g('rb').value=SC.base;if(g('ws')&&SC.startDate)g('ws').value=SC.startDate.toISOString().slice(0,10);}
+  const AREA_ORDER = [
+    "SANTANYI","PORTOPETRO","CALA D'OR","CALA FERRERA","CALAS DE MALLORCA","CALA MENDIA",
+    "PORTO CRISTO","SA COMA","CALA MILLOR","C'AN PASTILLA","PLAYA DE PALMA","PLAYA DE MURO","Unknown"
+  ];
 
-function uAI(){const ok=!!GK;document.getElementById('aidot').className='aidot'+(ok?' ok':'');document.getElementById('ailbl').textContent=ok?'AI ✓':'AI';}
-function rAB(){const w=document.getElementById('apib');if(!w)return;w.innerHTML=!GK?'<div style="background:#fff7ed;border:1px solid #fbd38d;border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:11px;color:#c05621;line-height:1.7">⚡ <strong>IA non connectée</strong> — Gratuit via Google.<br><span style="color:var(--blue);cursor:pointer;text-decoration:underline" onclick="om(\'api-m\')">Ajouter ma clé Gemini →</span></div>':'<div style="background:#f0fff4;border:1px solid #9ae6b4;border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:11px;color:var(--green)">✅ Gemini connectée (gratuit) · <span style="cursor:pointer;text-decoration:underline" onclick="om(\'api-m\')">Changer</span></div>';}
-function saveKey(){const v=document.getElementById('aki').value.trim();if(v){GK=v;localStorage.setItem('lux_gk',v);uAI();rAB();toast('Clé sauvegardée ✓','ok');}cm('api-m');}
+  const state = {
+    docs: [],
+    rawTexts: [],
+    detectedHotels: [],
+    detectedFlights: [],
+    detectedDays: [],
+    planning: {}
+  };
 
-async function gCall(parts){
-  if(!GK)throw new Error('NK');
-  const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+GK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts}],generationConfig:{temperature:.1,maxOutputTokens:4000}})});
-  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'err');}
-  const d=await r.json();
-  return(d.candidates?.[0]?.content?.parts?.[0]?.text||'').replace(/\n?/g,'').trim();
-}
+  function qs(id){ return document.getElementById(id); }
+  function areaRank(area){
+    const i = AREA_ORDER.findIndex(x => x.toLowerCase() === (area || "Unknown").toLowerCase());
+    return i === -1 ? 999 : i;
+  }
+  function addMinutes(time, mins){
+    const [h,m] = time.split(":").map(Number);
+    const total = h*60 + m + Number(mins || 0);
+    return String(Math.floor(total/60)).padStart(2,"0") + ":" + String(total%60).padStart(2,"0");
+  }
+  function dedupeBy(arr, key){
+    const map = new Map();
+    arr.forEach(item => map.set(item[key], item));
+    return [...map.values()];
+  }
 
-document.getElementById('fi').onchange=e=>pFiles([...e.target.files]);
-document.getElementById('ci').onchange=e=>pFiles([...e.target.files]);
-function sIL(on){document.getElementById('i-idle').style.display=on?'none':'block';document.getElementById('i-load').style.display=on?'block':'none';}
-function sEb(m){const e=document.getElementById('eb');if(m){e.textContent='⚠️ '+m;e.style.display='block';}else e.style.display='none';}
-function sOb(m){const e=document.getElementById('ob');if(m){e.textContent='✓ '+m;e.style.display='block';setTimeout(()=>e.style.display='none',3000);}else e.style.display='none';}
-
-async function pFiles(files){if(!GK){om('api-m');return;}sIL(true);sEb('');let tot=0;for(const f of files){try{const n=await pFile(f);tot+=n;}catch(e){sEb(e.message);}}sIL(false);spx();rPax();if(tot>0)sOb(tot+' passager(s) importé(s)');}
-
-async function pFile(file){
-  const nm=file.name.toLowerCase(),tp=file.type;
-  const isPdf=tp==='application/pdf'||nm.endsWith('.pdf');
-  const isImg=tp.startsWith('image/')||nm.endsWith('.heic')||nm.endsWith('.heif');
-  const isTxt=tp.startsWith('text/')||nm.endsWith('.txt');
-  const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file);});
-  const PROMPT='You are a LuxairTours document expert. Extract ALL passengers. Detect format automatically: RV3/RV2 booking report (lines starting F/E/D/L = FR/EN/DE/LU), or phone list PDF (hotel sections with PNR, name, arrival, departure, phone). Return ONLY valid JSON array, no markdown: [{"lastName":"DUPONT","firstName":"Marc","hotel":"MLACAV","hotelName":"Cavalieri Art Hotel","arrival":"07-APR-26","departure":"14-APR-26","phone":"+33612345678","lang":"FR","notes":""}]. Empty string for missing. Return [] if nothing.';
-  let parts;
-  if(isPdf)parts=[{text:PROMPT+' PDF document.'},{inline_data:{mime_type:'application/pdf',data:b64}}];
-  else if(isImg){let mt=tp;if(!mt||nm.endsWith('.heic'))mt='image/jpeg';if(!['image/jpeg','image/png','image/gif','image/webp'].includes(mt))mt='image/jpeg';parts=[{text:PROMPT+' Photo of document.'},{inline_data:{mime_type:mt,data:b64}}];}
-  else if(isTxt){const t=await file.text();const x=exTxt(t);mPax(x);return x.length;}
-  else throw new Error('Format non supporté: '+file.name);
-  const raw=await gCall(parts);const list=JSON.parse(raw);mPax(list);return list.length;
-}
-
-function exTxt(text){const out=[];const lines=text.split('\n');let hotel='',hcode='';for(const line of lines){const hm=line.match(/HOTEL NAME\s*:\s*(.+?)\s+(MLA\w+)/);if(hm){hcode=hm[2];hotel=hm[1].trim();continue;}const pm=line.match(/^([FEDL])\s+(MR|MS|CHD)\s+([A-Z][A-Za-z\-]+),\s*([A-Za-z][A-Za-z\- ]+)/);if(pm){const lg=pm[1]==='F'?'FR':pm[1]==='E'?'EN':pm[1]==='D'?'DE':'LU';out.push({lastName:pm[3],firstName:pm[4].trim(),hotel:hcode,hotelName:hotel,lang:lg,arrival:'',departure:'',phone:'',notes:'',});}}return out;}
-function uid(){return'p_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);}
-function mPax(list){const ex=new Set(PAX.map(p=>(p.lastName+p.firstName+p.arrival).toLowerCase()));const fr=list.map(p=>({id:uid(),lastName:p.lastName||'',firstName:p.firstName||'',fullName:((p.firstName||'')+' '+(p.lastName||'')).trim(),hotel:p.hotel||'',hotelName:p.hotelName||'',arrival:p.arrival||'',departure:p.departure||'',phone:p.phone||'',lang:p.lang||dLang(p.phone||''),pickupTime:'',notes:p.notes||''})).filter(p=>!ex.has((p.lastName+p.firstName+p.arrival).toLowerCase()));PAX=[...PAX,...fr];}
-
-function dLang(phone){const c=phone.replace(/\s/g,'');if(c.startsWith('+49')||c.startsWith('+43'))return'DE';if(c.startsWith('+44'))return'EN';if(c.startsWith('+352'))return'LU';return'FR';}
-function lBadge(lang){const m={FR:'bfr',DE:'bde',LU:'blu',EN:'ben'};return '<span class="bg2 '+(m[lang]||'bfr')+'">'+lang+'</span>';}
-
-function bMsg(p,busId){
-  const lg=p.lang||dLang(p.phone||'');
-  const sc=busId?BUSES.filter(b=>b.id===parseInt(busId)):BUSES;
-  const t=sc.length?sc.map(b=>b.time).join(' / '):'[heure à préciser]';
-  const nm=p.firstName||p.lastName;
-  if(lg==='DE')return'Guten Tag '+nm+',\n\nIhr LuxairTours Reiseleiter hier.\nDer Bus wird Sie um '+t+' Uhr abholen.\n\nBitte bestätigen Sie den Empfang.\n\nMit freundlichen Grüßen,\n'+SC.repName+'\nLuxairTours';
-  if(lg==='LU')return'Moien '+nm+',\n\nIer LuxairTours Reiseleeder hei.\nDen Bus kënnt Iech um '+t+' Auer ofhuelen.\n\nBitte confirméiert den Empfang.\n\nMat frëndleche Gréiss,\n'+SC.repName+'\nLuxairTours';
-  if(lg==='EN')return'Hello '+nm+',\n\nYour LuxairTours guide here.\nThe bus will pick you up at '+t+'.\n\nPlease confirm receipt.\n\nKind regards,\n'+SC.repName+'\nLuxairTours';
-  return'Bonjour '+nm+',\n\nVotre guide LuxairTours.\nLe bus vous récupère à '+t+'.\n\nMerci de confirmer réception.\n\nCordialement,\n'+SC.repName+'\nLuxairTours';
-}
-function waUrl(p,busId){if(!p.phone)return null;return'https://wa.me/'+p.phone.replace(/\D/g,'')+'?text='+encodeURIComponent(bMsg(p,busId));}
-
-function tdl(){const d=new Date();const M=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];return String(d.getDate()).padStart(2,'0')+'-'+M[d.getMonth()]+'-'+String(d.getFullYear()).slice(-2);}
-function swT(t){TAB=t;['dep','arr','all'].forEach(x=>{const b=document.getElementById('tab-'+x);b.className='tb'+(t===x?' on':'');});rPax();}
-function ubdg(){const b=document.getElementById('bdg-tf');b.style.display=PAX.length?'block':'none';b.textContent=PAX.length;}
-
-function rPax(){
-  const td=tdl(),q=document.getElementById('sb')?.value.toLowerCase()||'';
-  const deps=PAX.filter(p=>p.departure),arrs=PAX.filter(p=>p.arrival);
-  document.getElementById('stot').textContent=PAX.length;
-  document.getElementById('sdep').textContent=deps.filter(p=>p.departure===td).length;
-  ubdg();
-  let list=TAB==='dep'?deps:TAB==='arr'?arrs:PAX;
-  if(q)list=list.filter(p=>[p.fullName,p.lastName,p.firstName,p.hotel,p.hotelName,p.phone].some(v=>v&&v.toLowerCase().includes(q)));
-  list=list.slice().sort((a,b)=>(TAB==='arr'?a.arrival:a.departure||'').localeCompare(TAB==='arr'?b.arrival:b.departure||''));
-  const c=document.getElementById('plist');
-  if(!list.length){c.innerHTML='<div class="emp"><div class="emp-i">'+(PAX.length===0?'📂':'🔍')+'</div>'+(PAX.length===0?'Importez un document pour commencer':'Aucun résultat')+'</div>';return;}
-  c.innerHTML=list.map(p=>EDITID===p.id?rEF(p):rCard(p)).join('');
-}
-
-function rCard(p){
-  const bo=BUSES.map(b=>'<option value="'+b.id+'">'+b.label+' — '+b.time+'</option>').join('');
-  return '<div class="pax" id="card-'+p.id+'"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px"><div class="pax-name">'+(p.firstName?'<span style="font-weight:400;color:var(--text2)">'+p.firstName+'</span> ':'')+(p.lastName||p.fullName)+'</div>'+lBadge(p.lang||dLang(p.phone||''))+'</div><div class="pax-sub">'+(p.hotelName||p.hotel||'')+'</div><div class="bgs">'+(p.arrival?'<span class="bg2 ba">✈ '+p.arrival+'</span>':'')+(p.departure?'<span class="bg2 bd">🛫 '+p.departure+'</span>':'')+(p.pickupTime?'<span class="bg2 bp">🕐 '+p.pickupTime+'</span>':'')+'</div><div class="pa">'+(p.phone?'<select id="bs-'+p.id+'" style="flex:1;min-width:110px;padding:6px 8px;border-radius:7px;border:1.5px solid var(--border);background:#fff;font-family:inherit;font-size:10px;outline:none"><option value="">Tous les bus</option>'+bo+'</select><a href="#" onclick="oWA(\''+p.id+'\');return false;" class="btn bgr" style="text-decoration:none;font-size:11px">📱 WA</a>':'<span style="font-size:10px;color:var(--text3)">Pas de tél.</span>')+'<button class="btn bo" onclick="sEdit(\''+p.id+'\')">✏️</button><button class="btn br" onclick="dPax(\''+p.id+'\')">🗑</button></div></div>';
-}
-
-function rEF(p){
-  return '<div class="ec" id="card-'+p.id+'"><div style="font-size:11px;font-weight:700;color:var(--gold-d);margin-bottom:8px">✏️ MODIFIER</div><div class="eg">'+[['firstName','Prénom'],['lastName','Nom'],['arrival','Arrivée'],['departure','Départ'],['phone','Téléphone'],['hotel','Code hôtel'],['hotelName','Nom hôtel'],['pickupTime','Pickup'],['notes','Notes']].map(([k,l])=>'<div class="ig"><label>'+l+'</label><input id="ef-'+k+'" value="'+(p[k]||'').replace(/"/g,'&quot;')+'"/></div>').join('')+'<div class="ig"><label>Langue</label><select id="ef-lang" style="font-size:12px;padding:7px 8px">'+'FR,EN,DE,LU'.split(',').map(l=>'<option value="'+l+'"'+(p.lang===l?' selected':'')+'>'+l+'</option>').join('')+'</select></div></div><div style="display:flex;gap:6px"><button class="btn bg" onclick="svEdit(\''+p.id+'\')">✓ Enregistrer</button><button class="btn bo" onclick="cEdit()">✕ Annuler</button></div></div>';
-}
-
-function oWA(id){const p=PAX.find(x=>x.id===id);if(!p||!p.phone)return;const u=waUrl(p,document.getElementById('bs-'+id)?.value||'');if(u)window.open(u,'_blank');}
-function sEdit(id){EDITID=id;rPax();document.getElementById('ef-firstName')?.focus();}
-function cEdit(){EDITID=null;rPax();}
-function svEdit(id){const fs=['firstName','lastName','arrival','departure','phone','hotel','hotelName','pickupTime','notes','lang'];const u={};fs.forEach(k=>{const e=document.getElementById('ef-'+k);if(e)u[k]=e.value;});PAX=PAX.map(p=>{if(p.id!==id)return p;const x={...p,...u};x.fullName=((x.firstName||'')+' '+(x.lastName||'')).trim();return x;});EDITID=null;spx();rPax();}
-function dPax(id){if(!confirm('Supprimer ?'))return;PAX=PAX.filter(p=>p.id!==id);spx();rPax();}
-function clearAll(){if(!confirm('Effacer tous les passagers ?'))return;PAX=[];spx();rPax();toast('Liste effacée','ok');}
-
-document.getElementById('bt').onclick=function(){this.classList.toggle('op');document.getElementById('bp').classList.toggle('op');};
-function rBus(){document.getElementById('bch').innerHTML=BUSES.map(b=>'<span class="bc"><strong>'+b.time+'</strong> '+b.label+(b.note?' <span style="color:var(--text3);font-size:9px">('+b.note+')</span>':'')+'  <button class="db" onclick="rmBus('+b.id+')">✕</button></span>').join('');}
-function addBus(){const l=document.getElementById('nbl').value.trim(),t=document.getElementById('nbt').value.trim(),n=document.getElementById('nbn').value.trim();if(!l||!t)return;BUSES.push({id:Date.now(),label:l,time:t,note:n});spx();['nbl','nbt','nbn'].forEach(i=>document.getElementById(i).value='');rBus();}
-function rmBus(id){BUSES=BUSES.filter(b=>b.id!==id);spx();rBus();}
-
-function rDG(){document.getElementById('dg').innerHTML=DAYS.map(d=>{const t=SC.dayTypes[d];return'<div class="dc '+(t==='OFFICE'?'ofc':t==='DAYOFF'?'dof':'')+'" onclick="cDT(\''+d+'\')" style="min-width:58px;text-align:center"><div style="font-size:12px;font-weight:700">'+DS[d]+'</div><div style="font-size:8px;margin-top:2px">'+(t||'normal')+'</div></div>';}).join('');}
-function cDT(d){const c=SC.dayTypes[d];if(!c)SC.dayTypes[d]='OFFICE';else if(c==='OFFICE')SC.dayTypes[d]='DAYOFF';else delete SC.dayTypes[d];rDG();ssc();}
-
-function addAir(){SC.airports.push({day:'tue',from:'08:30',to:'11:00'});rAir();}
-function rmAir(i){SC.airports.splice(i,1);rAir();}
-function rAir(){document.getElementById('aw').innerHTML=SC.airports.map((a,i)=>'<div class="card" style="margin-bottom:8px"><div class="r3"><div class="ig"><label>Jour</label><select onchange="SC.airports['+i+'].day=this.value">'+DAYS.map(d=>'<option value="'+d+'"'+(a.day===d?' selected':'')+'>'+DS[d]+'</option>').join('')+'</select></div><div class="ig"><label>Début</label><input type="time" value="'+a.from+'" onchange="SC.airports['+i+'].from=this.value"/></div><div class="ig"><label>Fin</label><input type="time" value="'+a.to+'" onchange="SC.airports['+i+'].to=this.value"/></div></div><button class="btn br" onclick="rmAir('+i+')" style="margin-top:6px;font-size:11px">Supprimer</button></div>').join('');}
-
-function addDep(){SC.departs.push({day:'wed',location:SC.base||''});rDep();}
-function rmDep(i){SC.departs.splice(i,1);rDep();}
-function rDep(){document.getElementById('dw').innerHTML=SC.departs.map((d,i)=>'<div class="card" style="margin-bottom:8px"><div class="r2"><div class="ig"><label>Jour</label><select onchange="SC.departs['+i+'].day=this.value">'+DAYS.map(day=>'<option value="'+day+'"'+(d.day===day?' selected':'')+'>'+DS[day]+'</option>').join('')+'</select></div><div class="ig"><label>Depuis</label><input type="text" value="'+d.location+'" placeholder="'+(SC.base||'ville...')+'" onchange="SC.departs['+i+'].location=this.value"/></div></div><button class="btn br" onclick="rmDep('+i+')" style="margin-top:6px;font-size:11px">Supprimer</button></div>').join('');}
-
-function rLC(){document.getElementById('lcs').innerHTML=LANGS.map(l=>'<div class="lc '+(ML.has(l)?'s'+l:'')+'" id="lc-'+l+'" onclick="tgL(\''+l+'\')">'+l+'</div>').join('');}
-function tgL(l){ML.has(l)?ML.delete(l):ML.add(l);rLC();}
-function addMH(){const c=document.getElementById('mc').value.trim().toUpperCase(),n=document.getElementById('mn').value.trim(),z=document.getElementById('mz').value.trim(),d=document.getElementById('md').value;if(!c||!n){toast('Code et nom requis','er');return;}if(!ML.size){toast('Sélectionne une langue','er');return;}SC.hotels.push({code:c,name:n,zone:z||MZ[c]||'—',langs:new Set(ML),arrivalDay:d});['mc','mn','mz'].forEach(i=>document.getElementById(i).value='');ML.clear();rLC();rHL();ubh();ssc();toast(c+' ajouté ✓','ok');}
-function rmH(i){SC.hotels.splice(i,1);rHL();ubh();ssc();}
-function ubh(){const b=document.getElementById('bdg-ht');b.style.display=SC.hotels.length?'block':'none';b.textContent=SC.hotels.length;}
-function dur(l){const n=(l instanceof Set)?l.size:(l||[]).length;return n<=1?45:n<=2?60:75;}
-function wkD(dk){const sd=new Date(document.getElementById('ws')?.value||SC.startDate||new Date());const d=new Date(sd);d.setDate(sd.getDate()+DAYS.indexOf(dk));return d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});}
-
-function rHL(){const w=document.getElementById('hl');if(!SC.hotels.length){w.innerHTML='';return;}const bd={};SC.hotels.forEach((h,i)=>{if(!bd[h.arrivalDay])bd[h.arrivalDay]=[];bd[h.arrivalDay].push({...h,idx:i});});w.innerHTML=DAYS.filter(d=>bd[d]).map(d=>'<div class="slbl">'+DFR[d]+' '+wkD(d)+'</div>'+bd[d].map(h=>'<div class="hc"><div class="hcode">'+h.code+'</div><div class="hi"><div class="hn">'+h.name+'</div><div class="hm">'+(h.zone||'—')+' · '+[...(h.langs||[])].join('/')+' · '+dur(h.langs)+'min</div></div><button onclick="rmH('+h.idx+')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:20px;padding:4px;line-height:1">×</button></div>').join('')).join('');}
-
-async function parseRV3(){
-  if(!GK){om('api-m');return;}
-  const text=document.getElementById('rv3').value.trim();if(!text){toast('Colle du texte d\'abord','er');return;}
-  document.getElementById('pb').disabled=true;document.getElementById('ps').style.display='inline-block';
-  const sd=new Date(document.getElementById('ws')?.value||SC.startDate||new Date());
-  const pr='Tu analyses des rapports LuxairTours (RV2, RV3, PDF téléphones). Formats:\n- RV3/RV2: "HOTEL NAME : NOM CODE", lignes clients "F/E/D/L MR/MS NOM"\n- PDF téléphones: sections hôtels avec PNR, noms, dates, téléphones\nPour chaque hôtel: code, name, zone, langs(tableau unique), arrivalDate(JJ.MM.AA ou DD-MMM-YY), clientCount.\nJSON uniquement: {"hotels":[{"code":"MLACAV","name":"Cavalieri","zone":"St Julian\'s","langs":["FR","EN"],"arrivalDate":"14.04.26","clientCount":3}]}\nTexte:\n'+text;
-  try{
-    const raw=await gCall([{text:pr}]);const p=JSON.parse(raw);let added=0;
-    p.hotels.forEach(h=>{
-      const l=new Set(h.langs||[]);let ad='tue';
-      if(h.arrivalDate){
-        const m1=h.arrivalDate.match(/(\d{2})\.(\d{2})\.(\d{2,4})/);
-        const m2=h.arrivalDate.match(/(\d{2})-([A-Z]{3})-(\d{2,4})/i);
-        let dt=null;
-        if(m1)dt=new Date(2000+parseInt(m1[3]),parseInt(m1[2])-1,parseInt(m1[1]));
-        else if(m2){const MN={JAN:0,FEB:1,MAR:2,APR:3,MAY:4,JUN:5,JUL:6,AUG:7,SEP:8,OCT:9,NOV:10,DEC:11};dt=new Date(2000+parseInt(m2[3]),MN[m2[2].toUpperCase()]||0,parseInt(m2[1]));}
-        if(dt){const diff=Math.round((dt-sd)/86400000);if(diff>=0&&diff<7)ad=DAYS[diff];}
-      }
-      if(!SC.hotels.find(e=>e.code===h.code&&e.arrivalDay===ad)){SC.hotels.push({code:h.code,name:h.name,zone:h.zone||MZ[h.code]||'—',langs:l,arrivalDay:ad,clientCount:h.clientCount||0});added++;}
+  document.querySelectorAll(".tab").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const scr = btn.dataset.screen;
+      document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+      qs("screen-" + scr).classList.add("active");
+      if (scr === "export") renderExportPreview();
     });
-    document.getElementById('rv3').value='';rHL();ubh();ssc();toast(added+' hôtels importés ✓','ok');
-  }catch(e){if(e.message==='NK')om('api-m');else toast('Erreur — réessaie','er');console.error(e);}
-  document.getElementById('pb').disabled=false;document.getElementById('ps').style.display='none';
-}
+  });
 
-async function genSched(){
-  if(!GK){om('api-m');return;}if(!SC.hotels.length){toast('Ajoute des hôtels d\'abord','er');return;}
-  showLdr('Calcul du planning...','L\'IA optimise routes et créneaux');
-  document.getElementById('gb').disabled=true;swf();
-  const bd={};SC.hotels.forEach(h=>{if(!bd[h.arrivalDay])bd[h.arrivalDay]=[];bd[h.arrivalDay].push({code:h.code,name:h.name,zone:h.zone,langs:[...(h.langs||[])]});});
-  const aS=SC.airports.map(a=>DFR[a.day]+': AIRPORT '+a.from+'→'+a.to).join(' | ');
-  const dS=SC.departs.map(d=>DFR[d.day]+': départ depuis "'+d.location+'"').join(' | ');
-  const ofc=Object.entries(SC.dayTypes).filter(([,v])=>v==='OFFICE').map(([d])=>DFR[d]).join(', ')||'aucun';
-  const off=Object.entries(SC.dayTypes).filter(([,v])=>v==='DAYOFF').map(([d])=>DFR[d]).join(', ')||'aucun';
-  const pr='Expert logistique LuxairTours. Planning hebdomadaire OPTIMAL.\nDESTINATION: '+SC.dest+' ('+SC.code+') · Base: '+SC.base+'\nDURÉE: 1 langue=45min | 2 langues=60min | 3+ langues=75min\nTRAJET (min 15min, arrondir par 5min): walking=COMBO(code"A+B",60min) | proches=15min | moyens=30min | lointains=45min | après 14h +5-10min\nROUTE: depuis aéroport=s\'éloigner sans rebrousser | regrouper proches\nOFFICE: '+ofc+' | DAYOFF: '+off+'\nAÉROPORT: '+aS+' | DÉPARTS: '+dS+'\nHÔTELS: '+JSON.stringify(bd)+'\nJSON: {"schedule":{"mon":[{"from":"09:30","to":"17:00","task":"OFFICE","hotel":null,"hotelName":null,"langs":[],"duration":null,"combo":false,"travel":0}],"tue":[{"from":"08:30","to":"11:00","task":"AIRPORT","hotel":null,"hotelName":null,"langs":[],"duration":null,"combo":false,"travel":0},{"from":"11:00","to":"11:45","task":"MEETING","hotel":"MLAVER","hotelName":"Verdi Gzira","langs":["FR"],"duration":45,"combo":false,"travel":15}],"wed":[],"thu":[],"fri":[],"sat":[],"sun":[]}}';
-  try{const raw=await gCall([{text:pr}]);const p=JSON.parse(raw);SC.schedule=p.schedule;ssc();toast('Planning généré ✓','ok');nv('pl');}
-  catch(e){if(e.message==='NK')om('api-m');else{toast('Erreur — réessaie','er');console.error(e);}}
-  hideLdr();document.getElementById('gb').disabled=false;
-}
+  qs("fileInput").addEventListener("change", e => handleFiles([...e.target.files]));
+  qs("imageInput").addEventListener("change", e => handleFiles([...e.target.files]));
+  qs("dropZone").addEventListener("dragover", e => { e.preventDefault(); });
+  qs("dropZone").addEventListener("drop", e => {
+    e.preventDefault();
+    handleFiles([...e.dataTransfer.files]);
+  });
 
-function rSV(){
-  const sd=SC.startDate||new Date();
-  document.getElementById('cnm').textContent=SC.repName||'Rep';
-  const en=new Date(sd);en.setDate(sd.getDate()+6);
-  document.getElementById('cdt').textContent=sd.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})+'→'+en.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
-  document.getElementById('cde').textContent=SC.code||'—';
-  document.getElementById('dtabs').innerHTML=DAYS.map((d,i)=>{const dt=new Date(sd);dt.setDate(sd.getDate()+i);return'<div class="dt '+(d===SC.selDay?'on':'')+'" onclick="selD(\''+d+'\')">'+DS[d]+'<span class="dd">'+dt.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})+'</span></div>';}).join('');
-  rDS();
-}
-function selD(d){SC.selDay=d;ssc();rSV();}
-function rDS(){
-  const el=document.getElementById('dslots');const sl=SC.schedule[SC.selDay]||[];
-  if(!sl.length){el.innerHTML='<div class="emp"><div class="emp-i">🗓</div>Aucun créneau<br><span style="font-size:11px">Génère le planning depuis Hôtels</span></div>';return;}
-  const LC={FR:'bfr',EN:'ben',DE:'bde',LU:'blu'};
-  el.innerHTML=sl.map(s=>{
-    const tl=(s.task||'').toLowerCase();const iC=s.combo;
-    const lH=(s.langs||[]).map(l=>'<span class="lt '+(LC[l]||'bfr')+'">'+l+'</span>').join('');
-    return '<div class="sl"><div class="sl-t">'+s.from+'<br><span style="opacity:.6">'+s.to+'</span></div><div class="sl-b '+(iC?'combo':tl)+'"></div><div class="sl-c '+(iC?'combo':tl)+'"><div class="sl-task">'+s.task+(iC?' · COMBO':'')+'</div><div class="sl-h">'+(s.hotel||(s.task==='OFFICE'?'Bureau':s.task==='AIRPORT'?'Aéroport':s.task==='DAYOFF'?'Jour off':'—'))+'</div>'+(s.hotelName&&s.hotel&&s.hotelName!==s.hotel?'<div class="sl-d">'+s.hotelName+'</div>':'')+(lH?'<div class="sl-l">'+lH+(s.duration?'<span style="font-size:10px;color:var(--text3)">'+s.duration+'min</span>':'')+'</div>':'')+'</div></div>'+(s.travel&&s.travel>0&&s.task==='MEETING'?'<div style="display:flex;gap:10px;margin-bottom:2px;opacity:.4;align-items:center"><div style="min-width:42px"></div><div style="width:3px;background:var(--border)"></div><div style="flex:1;font-size:9px;color:var(--text3);padding:2px 10px">🚗 '+s.travel+'min trajet</div></div>':'');
-  }).join('');
-}
+  function clearImports(){
+    state.docs = [];
+    state.rawTexts = [];
+    state.detectedHotels = [];
+    state.detectedFlights = [];
+    state.detectedDays = [];
+    qs("manualText").value = "";
+    refreshImportUI();
+    refreshVerifyUI();
+  }
 
-function rEx(){
-  let m=0,h=new Set(),c=0;
-  DAYS.forEach(d=>(SC.schedule[d]||[]).forEach(s=>{if(s.task==='MEETING'){m++;if(s.combo)c++;(s.hotel||'').split('+').forEach(x=>h.add(x.trim()));}}));
-  document.getElementById('exs').innerHTML=[['Représentant',SC.repName],['Matricule',SC.matricule],['Destination',SC.dest+' ('+SC.code+')'],['Semaine du',(SC.startDate?.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'}))||'—'],['Hôtels',h.size],['Meetings',m],['Combos walking',c]].map(([k,v])=>'<div class="sr"><span style="color:var(--text2)">'+k+'</span><span class="sv">'+v+'</span></div>').join('');
-}
-function dlCSV(){
-  const sd=SC.startDate||new Date();let csv='\ufeffJour,Date,Début,Fin,Tâche,Code,Hôtel,Langues,Durée,Combo,Trajet\n';
-  DAYS.forEach((d,i)=>{const dt=new Date(sd);dt.setDate(sd.getDate()+i);const ds=dt.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'});(SC.schedule[d]||[]).forEach(s=>{csv+=DFR[d]+','+ds+','+s.from+','+s.to+','+(s.task||'')+','+(s.hotel||'')+','+(s.hotelName||'')+','+(s.langs||[]).join('/')+(s.duration?','+s.duration:',')+','+(s.combo?'OUI':'')+','+(s.travel||'')+'\n';});});
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));a.download='WS_'+SC.code+'_'+SC.repName.replace(/\s/g,'_')+'_'+(SC.startDate||new Date()).toISOString().slice(0,10)+'.csv';a.click();toast('CSV téléchargé ✓','ok');
-}
-function cpTxt(){
-  const sd=SC.startDate||new Date();const en=new Date(sd);en.setDate(sd.getDate()+6);
-  let t='WEEKLY SCHEDULE — '+SC.repName+' ('+SC.matricule+')\n'+SC.dest+' · '+sd.toLocaleDateString('fr-FR')+' → '+en.toLocaleDateString('fr-FR')+'\n'+'-'.repeat(44)+'\n\n';
-  DAYS.forEach((d,i)=>{const sl=SC.schedule[d]||[];if(!sl.length)return;const dt=new Date(sd);dt.setDate(sd.getDate()+i);t+=DFR[d].toUpperCase()+' '+dt.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})+'\n';sl.forEach(s=>{t+='  '+s.from+'–'+s.to+'  '+(s.task||'').padEnd(10)+' '+(s.hotel||'')+'\n';});t+='\n';});
-  navigator.clipboard.writeText(t).then(()=>toast('Copié ✓','ok')).catch(()=>toast('Erreur','er'));
-}
-function rstPlan(){if(!confirm('Effacer planning et hôtels ?'))return;SC.hotels=[];SC.schedule={};SC.selDay='tue';rHL();ubh();ssc();nv('wk');toast('Réinitialisé ✓','ok');}
+  async function handleFiles(files){
+    for (const file of files){
+      state.docs.push({ name:file.name, type:file.type || file.name.split(".").pop() || "file" });
+      const text = await extractTextFromFile(file);
+      if (text && text.trim()) state.rawTexts.push(text);
+    }
+    refreshImportUI();
+  }
 
-function showLdr(t,s){document.getElementById('lt2').textContent=t||'';document.getElementById('ls2').textContent=s||'';document.getElementById('lo').classList.add('on');}
-function hideLdr(){document.getElementById('lo').classList.remove('on');}
-function om(id){document.getElementById(id).classList.add('on');}
-function cm(id){document.getElementById(id).classList.remove('on');}
-document.querySelectorAll('.mo').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');}));
-let tT;function toast(m,t=''){clearTimeout(tT);const el=document.getElementById('tst');el.textContent=m;el.className='tst on'+(t?' '+t:'');tT=setTimeout(()=>el.classList.remove('on'),2400);}
+  async function extractTextFromFile(file){
+    const name = file.name.toLowerCase();
+    try{
+      if (name.endsWith(".txt") || name.endsWith(".csv") || name.endsWith(".json")){
+        return await file.text();
+      }
+      if (name.endsWith(".pdf")){
+        const buf = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({data: buf}).promise;
+        let text = "";
+        for (let i=1;i<=pdf.numPages;i++){
+          const page = await pdf.getPage(i);
+          const content = await page.getTextContent();
+          text += content.items.map(x => x.str).join(" ") + "\n";
+        }
+        return text;
+      }
+      if (name.endsWith(".docx")){
+        const buf = await file.arrayBuffer();
+        const result = await mammoth.extractRawText({ arrayBuffer: buf });
+        return result.value || "";
+      }
+      if (name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".png") || name.endsWith(".webp")){
+        const { data } = await Tesseract.recognize(file, "eng");
+        return data.text || "";
+      }
+    }catch(err){
+      return "";
+    }
+    return "";
+  }
 
-init();
+  function refreshImportUI(){
+    qs("statDocs").textContent = state.docs.length;
+    qs("statHotels").textContent = state.detectedHotels.length;
+    qs("statFlights").textContent = state.detectedFlights.length;
+    qs("statDays").textContent = state.detectedDays.length;
+    qs("docList").innerHTML = state.docs.length ? state.docs.map(d => `
+      <div class="item"><div><strong>${escapeHtml(d.name)}</strong></div><div class="muted">${escapeHtml(String(d.type))}</div></div>
+    `).join("") : `<div class="note">Aucun document ajouté pour l’instant.</div>`;
+  }
+
+  function analyzeAll(){
+    const manual = qs("manualText").value.trim();
+    const allText = [...state.rawTexts, manual].join("\n\n");
+    const parsed = parseDocuments(allText);
+    state.detectedHotels = parsed.hotels;
+    state.detectedFlights = parsed.flights;
+    state.detectedDays = parsed.days;
+    refreshImportUI();
+    refreshVerifyUI();
+    goTo("verify");
+  }
+
+  function parseDocuments(text){
+    const upper = text.toUpperCase();
+
+    const hotelCodes = [...upper.matchAll(/\b(PMI[A-Z0-9]{3,})\b/g)].map(m => m[1]);
+    const hotels = dedupeBy(
+      hotelCodes.map(code => HOTEL_DB.find(h => h.code === code)).filter(Boolean),
+      "code"
+    ).sort((a,b) => areaRank(a.area)-areaRank(b.area) || a.name.localeCompare(b.name));
+
+    const flightsFound = new Set([...upper.matchAll(/\bLG\s?(\d{3,4})\b/g)].map(m => "LG" + m[1]));
+    const flightBuckets = [];
+    const has = n => flightsFound.has("LG"+n);
+    if (has("601") || has("602")) flightBuckets.push(AIRPORT_SERVICES[0]);
+    if (has("617") || has("618")) flightBuckets.push(AIRPORT_SERVICES[1]);
+    if (has("619") || has("620")) flightBuckets.push(AIRPORT_SERVICES[2]);
+    if (has("621") || has("622")) flightBuckets.push(AIRPORT_SERVICES[3]);
+    if (has("623") || has("624")) flightBuckets.push(AIRPORT_SERVICES[4]);
+
+    const dates = dedupeBy(
+      [...text.matchAll(/\b(\d{2}\.\d{2}\.\d{2})\b/g)].map(m => ({ value:m[1] })),
+      "value"
+    );
+
+    return { hotels, flights: flightBuckets, days: dates };
+  }
+
+  function refreshVerifyUI(){
+    qs("hotelDetectedList").innerHTML = state.detectedHotels.length ? state.detectedHotels.map(h => `
+      <div class="item">
+        <div><strong>${escapeHtml(h.name)}</strong></div>
+        <div class="muted">${escapeHtml(h.code)} • ${escapeHtml(h.area)}</div>
+        <div style="margin-top:8px"><button class="danger small" onclick="removeHotel('${h.code}')">Supprimer</button></div>
+      </div>
+    `).join("") : `<div class="note">Aucun hôtel détecté.</div>`;
+
+    qs("flightDetectedList").innerHTML = state.detectedFlights.length ? state.detectedFlights.map(f => `
+      <div class="item">
+        <div><strong>${escapeHtml(f.label)}</strong></div>
+        <div class="muted">${escapeHtml(f.from)} → ${escapeHtml(f.to)} • ${escapeHtml(f.flight)}</div>
+        <div style="margin-top:8px"><button class="danger small" onclick="removeFlight('${escapeHtmlAttr(f.label)}')">Supprimer</button></div>
+      </div>
+    `).join("") : `<div class="note">Aucun vol détecté.</div>`;
+
+    qs("daysDetectedWrap").innerHTML = state.detectedDays.length
+      ? state.detectedDays.map(d => `<span class="pill">${escapeHtml(d.value)}</span>`).join("")
+      : `<div class="note">Aucune date claire détectée.</div>`;
+
+    qs("addHotelSelect").innerHTML = `<option value="">Choisir...</option>` + HOTEL_DB
+      .filter(h => !state.detectedHotels.find(x => x.code === h.code))
+      .map(h => `<option value="${escapeHtmlAttr(h.code)}">${escapeHtml(h.name)} • ${escapeHtml(h.code)}</option>`).join("");
+
+    qs("addFlightSelect").innerHTML = `<option value="">Choisir...</option>` + AIRPORT_SERVICES
+      .filter(f => !state.detectedFlights.find(x => x.label === f.label))
+      .map(f => `<option value="${escapeHtmlAttr(f.label)}">${escapeHtml(f.label)}</option>`).join("");
+  }
+
+  function addHotelManual(){
+    const code = qs("addHotelSelect").value;
+    const found = HOTEL_DB.find(h => h.code === code);
+    if (found && !state.detectedHotels.find(h => h.code === code)){
+      state.detectedHotels.push(found);
+      state.detectedHotels = dedupeBy(state.detectedHotels, "code");
+      refreshImportUI(); refreshVerifyUI();
+    }
+  }
+  function addFlightManual(){
+    const label = qs("addFlightSelect").value;
+    const found = AIRPORT_SERVICES.find(f => f.label === label);
+    if (found && !state.detectedFlights.find(f => f.label === label)){
+      state.detectedFlights.push(found);
+      state.detectedFlights = dedupeBy(state.detectedFlights, "label");
+      refreshImportUI(); refreshVerifyUI();
+    }
+  }
+  function removeHotel(code){
+    state.detectedHotels = state.detectedHotels.filter(h => h.code !== code);
+    refreshImportUI(); refreshVerifyUI();
+  }
+  function removeFlight(label){
+    state.detectedFlights = state.detectedFlights.filter(f => f.label !== label);
+    refreshImportUI(); refreshVerifyUI();
+  }
+
+  function buildPlanning(){
+    const meetingMinutes = Number(qs("meetingMinutes")?.value || 45);
+    const gapMinutes = Number(qs("gapMinutes")?.value || 15);
+    const breakMinutes = Number(qs("breakMinutes")?.value || 30);
+    const startTime = qs("firstMeetingTime")?.value || "09:30";
+
+    const hotels = [...state.detectedHotels].sort((a,b) => areaRank(a.area)-areaRank(b.area) || a.name.localeCompare(b.name));
+    const flights = [...state.detectedFlights];
+
+    const planning = {};
+    DAYS.forEach(d => planning[d] = []);
+
+    planning["Monday"].push({from:"10:00", to:"13:00", task:"OFFICE", hotelCode:""});
+    if (flights[0]) planning["Tuesday"].push({from:flights[0].from, to:flights[0].to, task:"AIRPORT", hotelCode:""});
+    if (flights[1]) planning["Thursday"].push({from:flights[1].from, to:flights[1].to, task:"AIRPORT", hotelCode:""});
+    if (flights[2]) planning["Sunday"].push({from:flights[2].from, to:flights[2].to, task:"AIRPORT", hotelCode:""});
+    planning["Saturday"].push({from:"", to:"", task:"DAYOFF", hotelCode:""});
+
+    let cursor = startTime;
+    hotels.slice(0, 5).forEach((hotel, idx) => {
+      const duration = idx === 0 ? 75 : meetingMinutes;
+      const to = addMinutes(cursor, duration);
+      planning["Wednesday"].push({from:cursor, to, task:"MEETING", hotelCode:hotel.code});
+      cursor = addMinutes(to, gapMinutes);
+      if (idx === 2){
+        const bTo = addMinutes(cursor, breakMinutes);
+        planning["Wednesday"].push({from:cursor, to:bTo, task:"BREAK", hotelCode:""});
+        cursor = addMinutes(bTo, gapMinutes);
+      }
+    });
+
+    if (!planning["Friday"].length) {
+      if (flights[0]) planning["Friday"].push({from:flights[0].from, to:flights[0].to, task:"AIRPORT", hotelCode:""});
+      planning["Friday"].push({from:"11:00", to:"12:00", task:"OFFICE", hotelCode:""});
+    }
+
+    state.planning = planning;
+    renderPlanning();
+    goTo("planning");
+  }
+
+  function renderPlanning(){
+    const wrap = qs("planningDays");
+    wrap.innerHTML = "";
+    DAYS.forEach(day => {
+      const rows = state.planning[day] || [];
+      const div = document.createElement("div");
+      div.className = "day card";
+      div.innerHTML = `
+        <div class="dayHead">
+          <div><strong>${escapeHtml(day)}</strong></div>
+          <button class="secondary small" onclick="addPlanningRow('${day}')">Ajouter ligne</button>
+        </div>
+        <div class="dayRows" id="rows-${day}"></div>
+      `;
+      wrap.appendChild(div);
+      renderPlanningRows(day);
+    });
+  }
+
+  function renderPlanningRows(day){
+    const el = qs("rows-" + day);
+    const rows = state.planning[day] || [];
+    el.innerHTML = rows.map((row, idx) => `
+      <div class="dayRow">
+        <input value="${escapeHtmlAttr(row.from || '')}" onchange="updatePlanningRow('${day}', ${idx}, 'from', this.value)">
+        <input value="${escapeHtmlAttr(row.to || '')}" onchange="updatePlanningRow('${day}', ${idx}, 'to', this.value)">
+        <select onchange="updatePlanningRow('${day}', ${idx}, 'task', this.value)">
+          ${["AIRPORT","MEETING","PERMANENCE","OFFICE","BREAK","DAYOFF"].map(t => `<option value="${t}" ${row.task===t?'selected':''}>${t}</option>`).join("")}
+        </select>
+        <select onchange="updatePlanningRow('${day}', ${idx}, 'hotelCode', this.value)">
+          <option value="" ${!row.hotelCode?'selected':''}>Aucun</option>
+          ${state.detectedHotels.map(h => `<option value="${h.code}" ${row.hotelCode===h.code?'selected':''}>${escapeHtml(h.code)} • ${escapeHtml(h.name)}</option>`).join("")}
+        </select>
+        <button class="danger small" onclick="deletePlanningRow('${day}', ${idx})">X</button>
+      </div>
+    `).join("");
+  }
+
+  function addPlanningRow(day){
+    if (!state.planning[day]) state.planning[day] = [];
+    state.planning[day].push({from:"", to:"", task:"MEETING", hotelCode:""});
+    renderPlanningRows(day);
+  }
+  function updatePlanningRow(day, idx, key, value){
+    state.planning[day][idx][key] = value;
+  }
+  function deletePlanningRow(day, idx){
+    state.planning[day].splice(idx, 1);
+    renderPlanningRows(day);
+  }
+
+  function renderExportPreview(){
+    qs("previewHead").innerHTML = DAYS.map(d => `<th>${escapeHtml(d)}</th>`).join("");
+    qs("previewBody").innerHTML = DAYS.map(day => {
+      const rows = state.planning[day] || [];
+      return `<td>${rows.map(r => {
+        const hotel = HOTEL_DB.find(h => h.code === r.hotelCode);
+        return `<div class="previewItem">
+          <div><strong>${escapeHtml(r.from || '')}${r.to ? ' - ' + escapeHtml(r.to) : ''}</strong></div>
+          <div>${escapeHtml(r.task)}</div>
+          <div class="muted">${escapeHtml(r.hotelCode || '')}${hotel ? ' • ' + escapeHtml(hotel.name) : ''}</div>
+        </div>`;
+      }).join("")}</td>`;
+    }).join("");
+  }
+
+  function exportExcel(){
+    const rows = [["Date","Day","From","To","Task","Hotel Code","Rep","Matricule","Destination"]];
+    const weekStart = qs("weekStart").value;
+    DAYS.forEach((day, offset) => {
+      const base = new Date(weekStart);
+      base.setDate(base.getDate() + offset);
+      const iso = base.toISOString().slice(0,10);
+      (state.planning[day] || []).forEach(row => {
+        rows.push([iso, day, row.from, row.to, row.task, row.hotelCode, qs("repName").value, qs("matricule").value, qs("destination").value]);
+      });
+    });
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    XLSX.utils.book_append_sheet(wb, ws, "Planning");
+    XLSX.writeFile(wb, `PMI_WS_${qs("repName").value.replaceAll(" ","")}_${weekStart}.xlsx`);
+  }
+
+  function printSchedule(){
+    qs("pRep").textContent = qs("repName").value;
+    qs("pMat").textContent = qs("matricule").value;
+    qs("pWeek").textContent = qs("weekStart").value;
+    qs("pDest").textContent = qs("destination").value;
+
+    qs("printHead").innerHTML = DAYS.map(d => `<th style="border:1px solid #bbb;background:#f3f4f6;padding:6px;text-align:left">${escapeHtml(d)}</th>`).join("");
+    qs("printBody").innerHTML = DAYS.map(day => {
+      const rows = state.planning[day] || [];
+      return `<td style="border:1px solid #bbb;padding:6px;vertical-align:top">${rows.map(r => `
+        <div style="margin-bottom:7px;padding-bottom:6px;border-bottom:1px dashed #ddd">
+          <div><strong>${escapeHtml(r.from || '')}${r.to ? ' - ' + escapeHtml(r.to) : ''}</strong></div>
+          <div>${escapeHtml(r.task)}</div>
+          <div style="font-size:9px;color:#666">${escapeHtml(r.hotelCode || '')}</div>
+        </div>
+      `).join("")}</td>`;
+    }).join("");
+    window.print();
+  }
+
+  function goTo(name){
+    document.querySelectorAll(".tab").forEach(b => b.classList.toggle("active", b.dataset.screen === name));
+    document.querySelectorAll(".screen").forEach(s => s.classList.toggle("active", s.id === "screen-" + name));
+    if (name === "export") renderExportPreview();
+  }
+
+  function escapeHtml(str){
+    return String(str).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
+  }
+  function escapeHtmlAttr(str){ return escapeHtml(str).replaceAll("'","&#39;"); }
+
+  refreshImportUI();
+  refreshVerifyUI();
 </script>
 </body>
 </html>
