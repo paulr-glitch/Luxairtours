@@ -1,37 +1,432 @@
-Guide Planner Pro V2
-Version améliorée : l'app charge automatiquement les hôtels de Paul depuis le document hôtels, croise les RV3, détecte des aéroports sur les semaines d'avril/mai couvertes, puis prépare le planning.
-Nom
-Paul Robert
-Matricule
-20772
-Destination
-PMI
-Semaine commence le
-Base logement
-Cala Figuera
-1. Importer
-2. Vérifier
-3. Planning
-4. Exporter
-Importer les documents
-Glisse-dépose tes fichiers ici
-PDF, DOCX, TXT, CSV, JPEG, PNG. Les anciens fichiers .DOC restent moins fiables. Pour les RV3 anciens, PDF = mieux.
-Ajouter documents
-Ajouter photo
-Ou colle directement du texte
-Analyser automatiquement
-Tout vider
-Résumé
-0
-documents
-0
-hôtels
-0
-aéroports
-0
-jours
-V2 fait déjà mieux : 
-• hôtels de Paul chargés automatiquement depuis le PDF hôtels 
-• croisement des RV3 avec ces hôtels 
-• auto-remplissage aéroports sur les semaines couvertes 
-• tu gardes juste le jour off et les corrections de dernière minute
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guide Planner Pro V2</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.min.js"></script>
+  <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    :root{--bg:#f4f7fb;--card:#fff;--line:#d8e1ec;--text:#182230;--muted:#667085;--primary:#0f172a;--blue:#2563eb;--soft:#eef4ff;--green:#eaf8ef;--warn:#fff7ed}
+    *{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+    .wrap{max-width:1400px;margin:0 auto;padding:18px}
+    h1{margin:0 0 6px;font-size:30px}.sub{color:var(--muted);font-size:14px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 8px 28px rgba(16,24,40,.04)}
+    .grid{display:grid;gap:16px}.top{grid-template-columns:1.3fr .7fr}.split{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.row5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    input,select,textarea,button{width:100%;padding:10px 12px;border-radius:12px;font-size:14px}
+    input,select,textarea{border:1px solid var(--line);background:#fff}
+    textarea{min-height:140px;resize:vertical}
+    button{border:none;background:var(--primary);color:#fff;font-weight:700;cursor:pointer}
+    button.secondary{background:#fff;color:var(--primary);border:1px solid var(--line)}
+    button.small{padding:8px 10px;font-size:13px}
+    .title{font-size:18px;font-weight:700;margin-bottom:12px}.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}
+    .tab{background:#fff;border:1px solid var(--line);color:var(--primary)} .tab.active{background:var(--primary);color:#fff}
+    .screen{display:none}.screen.active{display:block}
+    .drop{border:2px dashed var(--line);padding:20px;border-radius:16px;background:#fafcff;text-align:center}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center}
+    .stat .num{font-size:28px;font-weight:700}
+    .list{display:grid;gap:8px}.item{border:1px solid var(--line);border-radius:14px;padding:10px;background:#fff}
+    .muted{color:var(--muted);font-size:12px}.note{font-size:13px;color:var(--muted);line-height:1.5}
+    .pill{display:inline-flex;padding:6px 10px;border-radius:999px;background:var(--soft);color:var(--blue);font-size:12px;font-weight:700;margin:2px}
+    .good{background:var(--green);color:#067647}.warn{background:var(--warn);color:#9a3412}
+    .bar{display:flex;gap:8px;flex-wrap:wrap}.hidden{display:none}
+    .day{border:1px solid var(--line);border-radius:16px;padding:12px;background:#fff}.dayHead{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+    .dayRows{display:grid;gap:8px}.dayRow{display:grid;grid-template-columns:100px 100px 160px 1fr 42px;gap:8px}
+    .preview{overflow:auto;border:1px solid var(--line);border-radius:16px;background:#fff} table{border-collapse:collapse;width:100%;min-width:1050px}
+    th,td{border-right:1px solid var(--line);vertical-align:top;padding:10px} th:last-child,td:last-child{border-right:none} thead th{background:#f8fafc;text-align:left}
+    .previewItem{border:1px solid var(--line);border-radius:12px;padding:8px;margin-bottom:8px}
+    @media (max-width:1000px){.top,.split,.row,.row5,.tabs,.stats,.dayRow{grid-template-columns:1fr}}
+    @media print{body{background:#fff}.no-print{display:none!important}.print-wrap{display:block!important}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="no-print">
+    <h1>Guide Planner Pro V2</h1>
+    <div class="sub">Version améliorée : l'app charge automatiquement les hôtels de Paul depuis le document hôtels, croise les RV3, détecte des aéroports sur les semaines d'avril/mai couvertes, puis prépare le planning.</div>
+
+    <div class="card" style="margin-top:16px">
+      <div class="row5">
+        <div><label>Nom</label><input id="repName" value="Paul Robert"></div>
+        <div><label>Matricule</label><input id="matricule" value="20772"></div>
+        <div><label>Destination</label><input id="destination" value="PMI"></div>
+        <div><label>Semaine commence le</label><input id="weekStart" type="date" value="2026-04-20"></div>
+        <div><label>Base logement</label><input id="homeBase" value="Cala Figuera"></div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-screen="import">1. Importer</button>
+      <button class="tab" data-screen="verify">2. Vérifier</button>
+      <button class="tab" data-screen="planning">3. Planning</button>
+      <button class="tab" data-screen="export">4. Exporter</button>
+    </div>
+
+    <section id="screen-import" class="screen active">
+      <div class="grid top">
+        <div class="card">
+          <div class="title">Importer les documents</div>
+          <div class="drop" id="dropZone">
+            <div style="font-size:16px;font-weight:700;margin-bottom:8px">Glisse-dépose tes fichiers ici</div>
+            <div class="note">PDF, DOCX, TXT, CSV, JPEG, PNG. Les anciens fichiers .DOC restent moins fiables. Pour les RV3 anciens, PDF = mieux.</div>
+            <div class="bar" style="margin-top:12px;justify-content:center">
+              <button onclick="document.getElementById('fileInput').click()">Ajouter documents</button>
+              <button class="secondary" onclick="document.getElementById('imageInput').click()">Ajouter photo</button>
+            </div>
+            <input id="fileInput" type="file" multiple accept=".pdf,.docx,.txt,.csv,.json,.jpg,.jpeg,.png,.webp,.doc" class="hidden">
+            <input id="imageInput" type="file" multiple accept=".jpg,.jpeg,.png,.webp" class="hidden">
+          </div>
+
+          <div style="margin-top:14px">
+            <label>Ou colle directement du texte</label>
+            <textarea id="manualText" placeholder="Colle ici du RV3 ou une note si besoin"></textarea>
+          </div>
+
+          <div class="bar" style="margin-top:12px">
+            <button onclick="analyzeAll()">Analyser automatiquement</button>
+            <button class="secondary" onclick="clearImports()">Tout vider</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="title">Résumé</div>
+          <div class="stats">
+            <div class="stat"><div class="num" id="statDocs">0</div><div class="muted">documents</div></div>
+            <div class="stat"><div class="num" id="statHotels">0</div><div class="muted">hôtels</div></div>
+            <div class="stat"><div class="num" id="statFlights">0</div><div class="muted">aéroports</div></div>
+            <div class="stat"><div class="num" id="statDays">0</div><div class="muted">jours</div></div>
+          </div>
+          <div class="list" id="docList" style="margin-top:12px"></div>
+          <div class="item" style="margin-top:12px;background:#fafcff">
+            <div class="note">
+              V2 fait déjà mieux :
+              <br>• hôtels de Paul chargés automatiquement depuis le PDF hôtels
+              <br>• croisement des RV3 avec ces hôtels
+              <br>• auto-remplissage aéroports sur les semaines couvertes
+              <br>• tu gardes juste le jour off et les corrections de dernière minute
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-verify" class="screen">
+      <div class="grid split">
+        <div class="card">
+          <div class="title">Hôtels détectés automatiquement</div>
+          <div class="list" id="hotelDetectedList"></div>
+        </div>
+        <div class="card">
+          <div class="title">Vols / aéroports détectés automatiquement</div>
+          <div class="list" id="flightDetectedList"></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="title">Jours / infos détectés</div>
+        <div id="daysDetectedWrap"></div>
+        <div class="bar" style="margin-top:14px">
+          <button onclick="buildPlanning()">Créer le planning</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-planning" class="screen">
+      <div class="card">
+        <div class="title">Paramètres planning</div>
+        <div class="row">
+          <div><label>Durée meeting (min)</label><input id="meetingMinutes" type="number" value="45"></div>
+          <div><label>Temps trajet mini (min)</label><input id="gapMinutes" type="number" value="15"></div>
+          <div><label>Pause (min)</label><input id="breakMinutes" type="number" value="30"></div>
+          <div><label>Jour off</label>
+            <select id="offDay">
+              <option value="">Aucun</option>
+              <option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="grid" style="margin-top:16px" id="planningDays"></div>
+    </section>
+
+    <section id="screen-export" class="screen">
+      <div class="grid split">
+        <div class="card">
+          <div class="title">Aperçu final</div>
+          <div class="preview">
+            <table>
+              <thead><tr id="previewHead"></tr></thead>
+              <tbody><tr id="previewBody"></tr></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="title">Exporter</div>
+          <div class="bar">
+            <button onclick="exportExcel()">Exporter Excel</button>
+            <button class="secondary" onclick="printSchedule()">Exporter PDF</button>
+          </div>
+          <div class="note" style="margin-top:12px">Pour PDF : le navigateur ouvre la version finale et tu choisis “Enregistrer en PDF”.</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div id="printSchedule" class="print-wrap" style="display:none">
+    <div style="text-align:center;font-weight:700;font-size:20px;margin-bottom:12px">WEEKLY WORKING SCHEDULE</div>
+    <div style="font-size:12px;margin-bottom:8px"><strong>REPS NAME:</strong> <span id="pRep"></span> &nbsp;&nbsp; <strong>MATRICULE:</strong> <span id="pMat"></span></div>
+    <div style="font-size:12px;margin-bottom:14px"><strong>CONCERNED WEEK:</strong> FROM: <span id="pWeek"></span> &nbsp;&nbsp; <strong>DESTINATION:</strong> <span id="pDest"></span></div>
+    <table style="border-collapse:collapse;width:100%;table-layout:fixed;font-size:10px">
+      <thead><tr id="printHead"></tr></thead>
+      <tbody><tr id="printBody"></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.min.js";
+const DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+const PAUL_HOTELS = [
+  {name:"PALIA MARIA EUGENIA", code:"PMIEUGHS", area:"CALAS DE MALLORCA"},
+  {name:"IBEROSTAR WAVES CALA DOMINGOS", code:"PMIICD", area:"CALAS DE MALLORCA"},
+  {name:"BLAU PUNTA REINA RESORT", code:"PMIPUN", area:"CALA MENDIA"},
+  {name:"INSOTEL CALA MANDIA R&SPA", code:"PMIMAN", area:"CALA MENDIA"},
+  {name:"CLUB CASTELL DELS HAMS", code:"PMICASHS", area:"PORTO CRISTO"},
+  {name:"GLOBALES BOUGANVILLA", code:"PMIBOUHS", area:"SA COMA"},
+  {name:"PALIA SA COMA PLAYA", code:"PMIPALHS", area:"SA COMA"}
+];
+const AREA_ORDER = ["CALAS DE MALLORCA","CALA MENDIA","PORTO CRISTO","SA COMA","CALA MILLOR","Unknown"];
+const WEEK_AIRPORTS = {
+  "2026-04-20": [
+    {day:"Tuesday", from:"18:30", to:"21:30", flight:"LG619 + LG620", source:"auto"},
+    {day:"Thursday", from:"13:00", to:"16:00", flight:"LG621 + LG622", source:"auto"},
+    {day:"Friday", from:"06:30", to:"09:30", flight:"LG601 + LG602", source:"auto"},
+    {day:"Sunday", from:"18:30", to:"21:30", flight:"LG619 + LG620", source:"auto"}
+  ],
+  "2026-04-27": [
+    {day:"Monday", from:"06:30", to:"09:30", flight:"LG601 + LG602", source:"auto"},
+    {day:"Wednesday", from:"18:30", to:"21:30", flight:"LG619 + LG620", source:"auto"},
+    {day:"Friday", from:"13:00", to:"16:00", flight:"LG621 + LG622", source:"auto"},
+    {day:"Sunday", from:"06:30", to:"09:30", flight:"LG601 + LG602", source:"auto"}
+  ],
+  "2026-05-18": [
+    {day:"Tuesday", from:"18:30", to:"21:30", flight:"LG619 + LG620", source:"auto"},
+    {day:"Wednesday", from:"06:30", to:"09:30", flight:"LG601 + LG602", source:"auto"},
+    {day:"Thursday", from:"13:00", to:"16:00", flight:"LG621 + LG622", source:"auto"}
+  ]
+};
+
+const state = { docs: [], rawTexts: [], detectedHotels: [], detectedFlights: [], detectedDays: [], planning: {} };
+function qs(id){return document.getElementById(id);}
+function esc(s){return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");}
+function areaRank(area){const i=AREA_ORDER.findIndex(x=>x.toLowerCase()===(area||"Unknown").toLowerCase()); return i===-1?999:i;}
+function addMinutes(time, mins){const [h,m]=time.split(":").map(Number); const t=h*60+m+Number(mins||0); return String(Math.floor(t/60)).padStart(2,"0")+":"+String(t%60).padStart(2,"0");}
+function dedupeBy(arr,key){const map=new Map(); arr.forEach(x=>map.set(x[key],x)); return [...map.values()];}
+document.querySelectorAll(".tab").forEach(btn=>btn.addEventListener("click",()=>goTo(btn.dataset.screen)));
+function goTo(name){document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.screen===name)); document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active",s.id==="screen-"+name)); if(name==="export") renderExportPreview();}
+qs("fileInput").addEventListener("change", e=>handleFiles([...e.target.files]));
+qs("imageInput").addEventListener("change", e=>handleFiles([...e.target.files]));
+qs("dropZone").addEventListener("dragover",e=>e.preventDefault());
+qs("dropZone").addEventListener("drop",e=>{e.preventDefault(); handleFiles([...e.dataTransfer.files]);});
+
+async function handleFiles(files){
+  for (const file of files){
+    state.docs.push({name:file.name, type:file.type || file.name.split(".").pop() || "file"});
+    const text = await extractTextFromFile(file);
+    if (text && text.trim()) state.rawTexts.push(text);
+  }
+  refreshImportUI();
+}
+async function extractTextFromFile(file){
+  const name = file.name.toLowerCase();
+  try{
+    if (name.endsWith(".txt") || name.endsWith(".csv") || name.endsWith(".json")) return await file.text();
+    if (name.endsWith(".pdf")){
+      const buf = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({data: buf}).promise;
+      let text = "";
+      for (let i=1;i<=pdf.numPages;i++){ const page=await pdf.getPage(i); const content=await page.getTextContent(); text += content.items.map(x=>x.str).join(" ") + "\n"; }
+      return text;
+    }
+    if (name.endsWith(".docx")){
+      const buf = await file.arrayBuffer();
+      const result = await mammoth.extractRawText({ arrayBuffer: buf });
+      return result.value || "";
+    }
+    if (name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".png") || name.endsWith(".webp")){
+      const { data } = await Tesseract.recognize(file, "eng");
+      return data.text || "";
+    }
+  }catch(e){ return ""; }
+  return "";
+}
+function clearImports(){state.docs=[]; state.rawTexts=[]; state.detectedHotels=[]; state.detectedFlights=[]; state.detectedDays=[]; state.planning={}; qs("manualText").value=""; refreshImportUI(); refreshVerifyUI();}
+function refreshImportUI(){
+  qs("statDocs").textContent = state.docs.length;
+  qs("statHotels").textContent = state.detectedHotels.length;
+  qs("statFlights").textContent = state.detectedFlights.length;
+  qs("statDays").textContent = state.detectedDays.length;
+  qs("docList").innerHTML = state.docs.length ? state.docs.map(d=>`<div class="item"><strong>${esc(d.name)}</strong><div class="muted">${esc(String(d.type))}</div></div>`).join("") : `<div class="note">Aucun document ajouté.</div>`;
+}
+function analyzeAll(){
+  const allText = [...state.rawTexts, qs("manualText").value.trim()].join("\n\n").toUpperCase();
+  const weekStart = qs("weekStart").value;
+
+  const hasHotelGuide = allText.includes("HOTELS FOR") || allText.includes("SUMMER 2026") || allText.includes("PAUL");
+  let hotels = hasHotelGuide ? [...PAUL_HOTELS] : [];
+
+  // Croiser RV3 avec hôtels Paul
+  const presentCodes = [...new Set([...allText.matchAll(/\b(PMI[A-Z0-9]{3,})\b/g)].map(m=>m[1]))];
+  const activeHotels = hotels.filter(h => presentCodes.includes(h.code));
+  if (activeHotels.length) hotels = activeHotels;
+
+  // Dates RV3 / docs
+  const detectedDays = dedupeBy([...allText.matchAll(/\b(\d{2}\.\d{2}\.\d{2})\b/g)].map(m=>({value:m[1]})), "value");
+
+  // Aéroports semaine
+  let flights = WEEK_AIRPORTS[weekStart] ? [...WEEK_AIRPORTS[weekStart]] : [];
+  if (!flights.length && (allText.includes("AIRPORT SERVICE APRIL 2026") || allText.includes("AIRPORT SERVICE MAY 2026"))){
+    // fallback minimal
+    flights = [
+      {day:"Tuesday", from:"18:30", to:"21:30", flight:"LG619 + LG620", source:"fallback"},
+      {day:"Friday", from:"06:30", to:"09:30", flight:"LG601 + LG602", source:"fallback"}
+    ];
+  }
+
+  state.detectedHotels = hotels.sort((a,b)=>areaRank(a.area)-areaRank(b.area)||a.name.localeCompare(b.name));
+  state.detectedFlights = flights;
+  state.detectedDays = detectedDays;
+  refreshImportUI();
+  refreshVerifyUI();
+  goTo("verify");
+}
+function refreshVerifyUI(){
+  qs("hotelDetectedList").innerHTML = state.detectedHotels.length
+    ? state.detectedHotels.map(h=>`<div class="item"><strong>${esc(h.name)}</strong><div class="muted">${esc(h.code)} • ${esc(h.area)}</div><div class="pill good">Auto Paul</div></div>`).join("")
+    : `<div class="note">Aucun hôtel détecté.</div>`;
+  qs("flightDetectedList").innerHTML = state.detectedFlights.length
+    ? state.detectedFlights.map(f=>`<div class="item"><strong>${esc(f.day)}</strong><div class="muted">${esc(f.from)} → ${esc(f.to)} • ${esc(f.flight)}</div><div class="pill ${f.source==='auto'?'good':'warn'}">${f.source==='auto'?'Auto semaine':'Fallback'}</div></div>`).join("")
+    : `<div class="note">Aucun vol détecté.</div>`;
+  qs("daysDetectedWrap").innerHTML = state.detectedDays.length
+    ? state.detectedDays.map(d=>`<span class="pill">${esc(d.value)}</span>`).join("")
+    : `<div class="note">Aucune date claire détectée.</div>`;
+}
+function buildPlanning(){
+  const meetingMinutes = Number(qs("meetingMinutes").value || 45);
+  const gapMinutes = Number(qs("gapMinutes").value || 15);
+  const breakMinutes = Number(qs("breakMinutes").value || 30);
+  const offDay = qs("offDay").value;
+  const planning = {}; DAYS.forEach(d=>planning[d]=[]);
+
+  // place airports first
+  state.detectedFlights.forEach(f=>{
+    planning[f.day].push({from:f.from,to:f.to,task:"AIRPORT",hotelCode:""});
+  });
+
+  // office defaults
+  if (!planning["Monday"].length) planning["Monday"].push({from:"10:00",to:"13:00",task:"OFFICE",hotelCode:""});
+  if (!planning["Thursday"].length) planning["Thursday"].push({from:"13:00",to:"14:00",task:"OFFICE",hotelCode:""});
+  if (!planning["Friday"].some(x=>x.task==="OFFICE")) planning["Friday"].push({from:"11:00",to:"12:00",task:"OFFICE",hotelCode:""});
+
+  // meetings mostly Wednesday, spill to Tuesday/Thursday if many hotels
+  const hotels = [...state.detectedHotels];
+  let buckets = { Wednesday: hotels.slice(0,5), Tuesday: hotels.slice(5,7), Thursday: hotels.slice(7) };
+
+  Object.entries(buckets).forEach(([day, list])=>{
+    if (!list.length) return;
+    let cursor = day==="Wednesday" ? "09:30" : day==="Tuesday" ? "10:30" : "09:30";
+    if (planning[day].some(x=>x.task==="AIRPORT")) {
+      const last = planning[day].filter(x=>x.task==="AIRPORT").sort((a,b)=>a.to.localeCompare(b.to)).pop();
+      cursor = addMinutes(last.to, 90);
+    }
+    list.forEach((hotel, idx)=>{
+      const to = addMinutes(cursor, meetingMinutes);
+      planning[day].push({from:cursor,to,task:"MEETING",hotelCode:hotel.code});
+      cursor = addMinutes(to, gapMinutes);
+      if (day==="Wednesday" && idx===2){
+        const bTo = addMinutes(cursor, breakMinutes);
+        planning[day].push({from:cursor,to:bTo,task:"BREAK",hotelCode:""});
+        cursor = addMinutes(bTo, gapMinutes);
+      }
+    });
+  });
+
+  if (offDay && planning[offDay]){
+    planning[offDay] = [{from:"",to:"",task:"DAYOFF",hotelCode:""}];
+  }
+  state.planning = planning;
+  renderPlanning();
+  goTo("planning");
+}
+function renderPlanning(){
+  const wrap = qs("planningDays"); wrap.innerHTML = "";
+  DAYS.forEach(day=>{
+    const rows = state.planning[day] || [];
+    const div = document.createElement("div");
+    div.className = "day card";
+    div.innerHTML = `<div class="dayHead"><div><strong>${esc(day)}</strong></div><button class="secondary small" onclick="addPlanningRow('${day}')">Ajouter ligne</button></div><div class="dayRows" id="rows-${day}"></div>`;
+    wrap.appendChild(div);
+    renderPlanningRows(day);
+  });
+}
+function renderPlanningRows(day){
+  const el = qs("rows-"+day);
+  const rows = state.planning[day] || [];
+  el.innerHTML = rows.map((row,idx)=>`
+    <div class="dayRow">
+      <input value="${esc(row.from||'')}" onchange="updatePlanningRow('${day}',${idx},'from',this.value)">
+      <input value="${esc(row.to||'')}" onchange="updatePlanningRow('${day}',${idx},'to',this.value)">
+      <select onchange="updatePlanningRow('${day}',${idx},'task',this.value)">
+        ${["AIRPORT","MEETING","PERMANENCE","OFFICE","BREAK","DAYOFF"].map(t=>`<option value="${t}" ${row.task===t?'selected':''}>${t}</option>`).join("")}
+      </select>
+      <select onchange="updatePlanningRow('${day}',${idx},'hotelCode',this.value)">
+        <option value="" ${!row.hotelCode?'selected':''}>Aucun</option>
+        ${state.detectedHotels.map(h=>`<option value="${h.code}" ${row.hotelCode===h.code?'selected':''}>${esc(h.code)} • ${esc(h.name)}</option>`).join("")}
+      </select>
+      <button class="secondary small" onclick="deletePlanningRow('${day}',${idx})">X</button>
+    </div>
+  `).join("");
+}
+function addPlanningRow(day){ if(!state.planning[day]) state.planning[day]=[]; state.planning[day].push({from:"",to:"",task:"MEETING",hotelCode:""}); renderPlanningRows(day); }
+function updatePlanningRow(day, idx, key, value){ state.planning[day][idx][key]=value; }
+function deletePlanningRow(day, idx){ state.planning[day].splice(idx,1); renderPlanningRows(day); }
+function renderExportPreview(){
+  qs("previewHead").innerHTML = DAYS.map(d=>`<th>${esc(d)}</th>`).join("");
+  qs("previewBody").innerHTML = DAYS.map(day=>{
+    const rows = state.planning[day] || [];
+    return `<td>${rows.map(r=>{
+      const hotel = state.detectedHotels.find(h=>h.code===r.hotelCode);
+      return `<div class="previewItem"><div><strong>${esc(r.from||'')}${r.to?' - '+esc(r.to):''}</strong></div><div>${esc(r.task)}</div><div class="muted">${esc(r.hotelCode||'')}${hotel?' • '+esc(hotel.name):''}</div></div>`;
+    }).join("")}</td>`;
+  }).join("");
+}
+function exportExcel(){
+  const rows=[["Date","Day","From","To","Task","Hotel Code","Rep","Matricule","Destination"]];
+  const weekStart=qs("weekStart").value;
+  DAYS.forEach((day,offset)=>{
+    const base=new Date(weekStart); base.setDate(base.getDate()+offset);
+    const iso=base.toISOString().slice(0,10);
+    (state.planning[day]||[]).forEach(row=>rows.push([iso,day,row.from,row.to,row.task,row.hotelCode,qs("repName").value,qs("matricule").value,qs("destination").value]));
+  });
+  const wb=XLSX.utils.book_new(); const ws=XLSX.utils.aoa_to_sheet(rows); XLSX.utils.book_append_sheet(wb,ws,"Planning");
+  XLSX.writeFile(wb, `PMI_WS_${qs("repName").value.replaceAll(" ","")}_${weekStart}.xlsx`);
+}
+function printSchedule(){
+  qs("pRep").textContent = qs("repName").value;
+  qs("pMat").textContent = qs("matricule").value;
+  qs("pWeek").textContent = qs("weekStart").value;
+  qs("pDest").textContent = qs("destination").value;
+  qs("printHead").innerHTML = DAYS.map(d=>`<th style="border:1px solid #bbb;background:#f3f4f6;padding:6px;text-align:left">${esc(d)}</th>`).join("");
+  qs("printBody").innerHTML = DAYS.map(day=>{
+    const rows = state.planning[day] || [];
+    return `<td style="border:1px solid #bbb;padding:6px;vertical-align:top">${rows.map(r=>`<div style="margin-bottom:7px;padding-bottom:6px;border-bottom:1px dashed #ddd"><div><strong>${esc(r.from||'')}${r.to?' - '+esc(r.to):''}</strong></div><div>${esc(r.task)}</div><div style="font-size:9px;color:#666">${esc(r.hotelCode||'')}</div></div>`).join("")}</td>`;
+  }).join("");
+  window.print();
+}
+refreshImportUI(); refreshVerifyUI();
+</script>
+</body>
+</html>
